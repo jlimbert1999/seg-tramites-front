@@ -1,0 +1,12 @@
+<mat-nav-list>
+  @for (item of menu; track item.resource) {
+  <mat-list-item
+    [routerLink]="item.routerLink"
+    [routerLinkActive]="['is-active']"
+    class="item-link"
+  >
+    <mat-icon matListItemIcon>{{ item.icon }}</mat-icon>
+    <div matListItemTitle>{{ item.text }}</div>
+  </mat-list-item>
+  }
+</mat-nav-list>

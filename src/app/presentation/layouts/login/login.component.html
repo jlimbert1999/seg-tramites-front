@@ -1,0 +1,84 @@
+<section class="ftco-section">
+  <div class="container animate__animated animate__fadeInDown">
+    <div class="row justify-content-center">
+      <div class="col-md-12 col-lg-10">
+        <div class="wrap d-md-flex">
+          <div class="img"></div>
+          <div class="login-wrap p-4 p-md-5">
+            <div class="d-flex">
+              <div class="w-100">
+                <h3 class="mb-4">Inicio de sesion</h3>
+              </div>
+            </div>
+            <form
+              [formGroup]="loginForm"
+              (submit)="login()"
+              autocomplete="off"
+              action="#"
+              class="signin-form"
+            >
+              <img src="" alt="" />
+              <div class="form-group mb-3">
+                <label class="label" for="name">Nombre de usuario</label>
+                <mat-form-field appearance="fill">
+                  <input
+                    formControlName="login"
+                    matInput
+                    placeholder="Ingrese su nombre de usuario"
+                    required
+                  />
+                </mat-form-field>
+              </div>
+              <div class="form-group mb-3">
+                <label class="label" for="password">Contraseña</label>
+                <mat-form-field appearance="fill">
+                  <input
+                    type="password"
+                    [autocomplete]="false"
+                    formControlName="password"
+                    matInput
+                    [type]="hidePassword ? 'password' : 'text'"
+                    placeholder="Ingrese su contraseña"
+                  />
+                  <button
+                    type="button"
+                    mat-icon-button
+                    matSuffix
+                    (click)="hidePassword = !hidePassword"
+                    [attr.aria-label]="'Hide password'"
+                    [attr.aria-pressed]="hidePassword"
+                  >
+                    <mat-icon>{{
+                      hidePassword ? "visibility_off" : "visibility"
+                    }}</mat-icon>
+                  </button>
+                </mat-form-field>
+              </div>
+
+              <div class="form-group">
+                <div class="d-grid gap-2">
+                  <button type="submit" mat-raised-button color="primary">
+                    Ingresar
+                  </button>
+                </div>
+              </div>
+              <div class="form-group d-md-flex">
+                <div class="w-50 text-left">
+                  <br />
+                  <div class="form-check">
+                    <p>
+                      <mat-checkbox formControlName="remember"
+                        >Recordar nombre usuario</mat-checkbox
+                      >
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+        <p class="fw-bold">2024 - Version 1.8.0</p>
+      </div>
+    </div>
+  </div>
+</section>
