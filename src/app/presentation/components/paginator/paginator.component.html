@@ -1,0 +1,12 @@
+@if(length>0){
+<mat-paginator
+  [length]="length"
+  [pageSize]="limit"
+  [pageIndex]="index"
+  [pageSizeOptions]="pageSizeOptions"
+  (page)="changePage($event)"
+  showFirstLastButtons
+  aria-label="Select page"
+/>
+
+}

@@ -1,5 +1,18 @@
 <mat-nav-list>
-  @for (item of menu; track item.resource) {
+  @for (item of menu; track item.resource) { @if(item.children){
+  <!-- <mat-expansion-panel>
+    <mat-expansion-panel-header> 
+      <mat-icon matListItemIcon style=" flex-basis: 0;">{{ item.icon }}</mat-icon>
+    </mat-expansion-panel-header>
+    @for (subitem of item.children; track subitem.resource) {
+    <mat-list-item>
+      <mat-icon matListItemIcon>{{ item.icon }}</mat-icon>
+      <div matListItemTitle>{{ subitem.text }}</div>
+    </mat-list-item>
+    }
+  </mat-expansion-panel> -->
+
+  } @else {
   <mat-list-item
     [routerLink]="item.routerLink"
     [routerLinkActive]="['is-active']"
@@ -8,5 +21,5 @@
     <mat-icon matListItemIcon>{{ item.icon }}</mat-icon>
     <div matListItemTitle>{{ item.text }}</div>
   </mat-list-item>
-  }
+  } }
 </mat-nav-list>

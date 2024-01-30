@@ -14,6 +14,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { RouterModule } from '@angular/router';
 import { AuthService } from '../../services';
 import { NavigationListComponent } from '../../components/navigation-list/navigation-list.component';
+import { AppearanceService } from './services/appearance.service';
+import { SidenavButtonComponent } from '../../components/sidenav-button/sidenav-button.component';
 
 @Component({
   selector: 'app-home',
@@ -27,6 +29,7 @@ import { NavigationListComponent } from '../../components/navigation-list/naviga
     MatButtonModule,
     RouterModule,
     NavigationListComponent,
+    SidenavButtonComponent,
   ],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss',
@@ -37,6 +40,7 @@ export class HomeComponent {
   private _mobileQueryListener: () => void;
 
   authService = inject(AuthService);
+  appearanceService = inject(AppearanceService);
 
   constructor(changeDetectorRef: ChangeDetectorRef, media: MediaMatcher) {
     this.mobileQuery = media.matchMedia('(max-width: 600px)');
@@ -50,5 +54,9 @@ export class HomeComponent {
 
   get menu() {
     return this.authService.menu();
+  }
+
+  get isToggle() {
+    return this.appearanceService.toggleSidenav();
   }
 }

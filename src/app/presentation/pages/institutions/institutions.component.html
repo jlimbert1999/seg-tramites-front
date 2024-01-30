@@ -1,1 +1,84 @@
-<p>institutions works!</p>,
+<p>
+  <mat-toolbar color="primary">
+    <sidenav-button />
+    <span>Instituciones</span>
+    <span class="toolbar-spacer"></span>
+    <button (click)="add()" mat-icon-button matTooltip="Crear institucion">
+      <mat-icon>add</mat-icon>
+    </button>
+  </mat-toolbar>
+</p>
+<div class="container-fluid">
+  <mat-form-field>
+    <mat-label>Buscar institucion</mat-label>
+    <input
+      matInput
+      [(ngModel)]="text"
+      (keydown.enter)="applyFilter()"
+      placeholder="Nombre / Sigla"
+      #input
+    />
+    <button
+      *ngIf="text"
+      matSuffix
+      mat-icon-button
+      aria-label="Clear"
+      (click)="cancelFilter()"
+    >
+      <mat-icon>close</mat-icon>
+    </button>
+  </mat-form-field>
+  <div class="example-container mat-elevation-z8">
+    <div class="example-table-container">
+      <table mat-table [dataSource]="dataSource()">
+        <ng-container matColumnDef="sigla">
+          <th mat-header-cell *matHeaderCellDef>Sigla</th>
+          <td mat-cell *matCellDef="let element">
+            {{ element.sigla | uppercase }}
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="nombre">
+          <th mat-header-cell *matHeaderCellDef>Nombre</th>
+          <td mat-cell *matCellDef="let element">{{ element.nombre }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="situacion">
+          <th mat-header-cell *matHeaderCellDef>Situacion</th>
+          <td mat-cell *matCellDef="let element">
+            <span
+              [ngClass]="element.activo ? 'c-pill--success' : 'c-pill--danger'"
+              class="c-pill"
+              >{{ element.activo ? "HABILITADO" : "NO HABILITADO" }}
+            </span>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="menu">
+          <th mat-header-cell *matHeaderCellDef></th>
+          <td mat-cell *matCellDef="let element">
+            <button mat-icon-button (click)="edit(element)">
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button mat-icon-button (click)="changeStatus(element)">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+        <tr class="mat-row" *matNoDataRow>
+          <td class="mat-cell p-3" colspan="4">No se encontraron resultados</td>
+        </tr>
+      </table>
+      <paginator
+        [limit]="10"
+        [index]="0"
+        [length]="length()"
+        [pageSizeOptions]="[10, 20, 30, 50]"
+        (onPageChage)="onPageChage($event)"
+      ></paginator>
+    </div>
+  </div>
+</div>

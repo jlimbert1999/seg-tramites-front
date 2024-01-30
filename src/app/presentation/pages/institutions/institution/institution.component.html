@@ -1,1 +1,30 @@
-<p>institution works!</p>,
+<h1 mat-dialog-title>Institucion</h1>
+<mat-dialog-content>
+  <form [formGroup]="FormInstitution">
+    <div class="row">
+      <div class="col-8">
+        <mat-form-field appearance="fill">
+          <mat-label>Nombre de la institucion</mat-label>
+          <input formControlName="nombre" matInput />
+        </mat-form-field>
+      </div>
+      <div class="col-4">
+        <mat-form-field appearance="fill">
+          <mat-label>Sigla</mat-label>
+          <input formControlName="sigla" matInput />
+        </mat-form-field>
+      </div>
+    </div>
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-flat-button color="warn" mat-dialog-close>Cancelar</button>
+  <button
+    mat-flat-button
+    color="primary"
+    [disabled]="FormInstitution.invalid"
+    (click)="save()"
+  >
+    Guardar
+  </button>
+</mat-dialog-actions>

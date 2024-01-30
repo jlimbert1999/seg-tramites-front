@@ -7,18 +7,12 @@
       #snav
       [mode]="mobileQuery.matches ? 'over' : 'side'"
       [fixedInViewport]="mobileQuery.matches"
-      [opened]="true"
+      [opened]="isToggle"
       fixedTopGap="56"
     >
       <navigation-list [menu]="menu" />
     </mat-sidenav>
     <mat-sidenav-content>
-      <mat-toolbar color="primary" class="example-toolbar">
-        <button mat-icon-button (click)="snav.toggle()">
-          <mat-icon>menu</mat-icon>
-        </button>
-        <h1 class="example-app-name">Responsive App</h1>
-      </mat-toolbar>  
       <router-outlet></router-outlet>
     </mat-sidenav-content>
   </mat-sidenav-container>

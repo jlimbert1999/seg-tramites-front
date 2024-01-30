@@ -1,0 +1,19 @@
+<mat-form-field>
+  @if(bankCtrl.value){
+    <button matPrefix mat-icon-button>
+      <mat-icon>close</mat-icon>
+    </button>
+  }
+ 
+  <mat-select [formControl]="bankCtrl" placeholder="Bank" #singleSelect>
+    <mat-option>
+      <ngx-mat-select-search
+        [formControl]="bankFilterCtrl"
+      ></ngx-mat-select-search>
+    </mat-option>
+
+    <mat-option *ngFor="let bank of filteredBanks | async" [value]="bank">
+      {{ bank.text }}
+    </mat-option>
+  </mat-select>
+</mat-form-field>

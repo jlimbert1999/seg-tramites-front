@@ -1,1 +1,8 @@
-<p>dependency works!</p>,
+<h1 mat-dialog-title>Dependencias</h1>
+<div mat-dialog-content>
+  <select-search [isServerFilter]="true" [data]="options()" (onSearch)="getInstitutions($event)" />
+</div>
+<div mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close>No</button>
+  <button mat-button mat-dialog-close cdkFocusInitial>Ok</button>
+</div>

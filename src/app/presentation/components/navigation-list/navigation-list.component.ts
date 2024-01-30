@@ -32,6 +32,7 @@ interface Menu {
     MatButtonModule,
     RouterModule,
     MatExpansionModule,
+    
   ],
   templateUrl: './navigation-list.component.html',
   styleUrl: './navigation-list.component.scss',
