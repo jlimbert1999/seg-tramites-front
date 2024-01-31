@@ -1,0 +1,79 @@
+<h1 mat-dialog-title>Funcionario</h1>
+<mat-dialog-content>
+  <form [formGroup]="FormOfficer">
+    <div class="row">
+      <div class="col-sm-4">
+        <mat-form-field appearance="fill">
+          <mat-label>Nombre</mat-label>
+          <input class="uppercase" formControlName="nombre" matInput />
+        </mat-form-field>
+      </div>
+      <div class="col-sm-4">
+        <mat-form-field appearance="fill">
+          <mat-label>Apellido paterno</mat-label>
+          <input class="uppercase" formControlName="paterno" matInput />
+        </mat-form-field>
+      </div>
+      <div class="col-sm-4">
+        <mat-form-field appearance="fill">
+          <mat-label>Apellido materno</mat-label>
+          <input class="uppercase" formControlName="materno" matInput />
+        </mat-form-field>
+      </div>
+      <div class="col-sm-4">
+        <mat-form-field appearance="fill">
+          <mat-label>Dni</mat-label>
+          <input formControlName="dni" matInput />
+        </mat-form-field>
+      </div>
+      <div class="col-sm-4">
+        <mat-form-field appearance="fill">
+          <mat-label>Telefono</mat-label>
+          <input formControlName="telefono" matInput />
+        </mat-form-field>
+      </div>
+      <div class="col-sm-4">
+        <mat-form-field appearance="fill">
+          <mat-label>Direccion</mat-label>
+          <input formControlName="direccion" matInput />
+        </mat-form-field>
+      </div>
+    </div>
+  </form>
+  <div class="row">
+    @if(!FormOfficer.get('cargo')?.value){
+    <div class="col-sm-12">
+      <select-search
+        [isServerFilter]="true"
+        [data]="jobs()"
+        (onSearch)="searchJob($event)"
+        (onSelect)="setJob($event)"
+      ></select-search>
+    </div>
+    } @else {
+    <mat-form-field>
+      <mat-label>Cargo asignado</mat-label>
+      <input matInput readonly [value]="currentJobName()" />
+      <button
+        matSuffix
+        mat-icon-button
+        aria-label="Clear"
+        (click)="removeJob()"
+      >
+        <mat-icon>close</mat-icon>
+      </button>
+    </mat-form-field>
+    }
+  </div>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-raised-button color="warn" (click)="close()">Cancelar</button>
+  <button
+    mat-raised-button
+    color="primary"
+    [disabled]="FormOfficer.invalid"
+    (click)="save()"
+  >
+    Guardar
+  </button>
+</mat-dialog-actions>

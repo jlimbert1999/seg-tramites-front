@@ -1,0 +1,78 @@
+<h1 mat-dialog-title>Rol</h1>
+<div mat-dialog-content>
+  <div class="row">
+    <div class="col-sm-6">
+      <mat-form-field>
+        <mat-label>Nombre del rol</mat-label>
+        <input
+          matInput
+          placeholder="Ingrese un nombre"
+          [formControl]="name"
+          required
+        />
+        @if (name.invalid) {
+        <mat-error>Ingres el nombre del rol</mat-error>
+        }
+      </mat-form-field>
+    </div>
+    <div class="col-sm-6">
+      <mat-form-field>
+        <button matPrefix mat-icon-button>
+          <mat-icon>search</mat-icon>
+        </button>
+        <mat-label>Buscar recurso</mat-label>
+        <input
+          matInput
+          placeholder="Ingrese el nombre del recurso"
+          [(ngModel)]="filterValue"
+        />
+      </mat-form-field>
+    </div>
+  </div>
+  <div class="row g-2">
+    @if (isLoading()) {
+    <p class="p-5 text-center">CARGANDO RECURSOS....</p>
+    } @for (resource of systemResources()|appFilterSystemResources:filterValue;
+    track $index) {
+    <div class="col-sm-3">
+      <section class="example-section">
+        <span class="example-list-section">
+          <mat-checkbox
+            class="example-margin"
+            [checked]="resource.isSelected"
+            [indeterminate]="someComplete(resource.value)"
+            (change)="setAllPermissions(resource.value, $event.checked)"
+          >
+            {{ resource.label }}
+          </mat-checkbox>
+        </span>
+        <span class="example-list-section">
+          <ul>
+            <li *ngFor="let action of resource.actions">
+              <mat-checkbox
+                [(ngModel)]="action.isSelected"
+                (ngModelChange)="updateAllComplete(resource.value)"
+              >
+                {{ action.label }}
+              </mat-checkbox>
+            </li>
+          </ul>
+        </span>
+      </section>
+    </div>
+    } @empty { @if (!isLoading()){
+    <p class="p-5 text-center">SIN RECURSOS PARA LA ASIGNACION</p>
+    } }
+  </div>
+</div>
+<div mat-dialog-actions align="end">
+  <button mat-raised-button color="warn" mat-dialog-close>Cancelar</button>
+  <button
+    mat-raised-button
+    color="primary"
+    [disabled]="name.invalid"
+    (click)="save()"
+  >
+    Aceptar
+  </button>
+</div>

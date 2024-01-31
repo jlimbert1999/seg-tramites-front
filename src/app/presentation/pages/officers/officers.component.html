@@ -1,1 +1,114 @@
-<p>officers works!</p>,
+<p>
+  <mat-toolbar color="primary">
+    <sidenav-button />
+    <span>Funcionarios</span>
+    <span class="toolbar-spacer"></span>
+    <button (click)="add()" mat-icon-button matTooltip="Crear cuenta">
+      <mat-icon>add</mat-icon>
+    </button>
+  </mat-toolbar>
+</p>
+<div class="container-fluid">
+  <mat-form-field>
+    <mat-label>Buscar funcionario</mat-label>
+    <input
+      matInput
+      [(ngModel)]="text"
+      (keydown.enter)="applyFilter()"
+      placeholder="Nombre / Paterno / Materno / DNI"
+      #input
+    />
+    <button
+      *ngIf="text"
+      matSuffix
+      mat-icon-button
+      aria-label="Clear"
+      (click)="cancelSearch()"
+    >
+      <mat-icon>close</mat-icon>
+    </button>
+  </mat-form-field>
+  <div class="example-container mat-elevation-z8">
+    <div class="example-table-container">
+      <table mat-table [dataSource]="dataSource()">
+        <ng-container matColumnDef="nombre">
+          <th mat-header-cell *matHeaderCellDef>Nombre</th>
+          <td mat-cell *matCellDef="let element">{{ element.fullname }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="dni">
+          <th mat-header-cell *matHeaderCellDef>DNI</th>
+          <td mat-cell *matCellDef="let element">{{ element.dni }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="cargo">
+          <th mat-header-cell *matHeaderCellDef>Cargo</th>
+          <td mat-cell *matCellDef="let element">
+            @if(element.cargo){
+            {{ element.cargo.nombre }}
+            }@else {
+            <span style="color: red">SIN CARGO</span>
+            }
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="telefono">
+          <th mat-header-cell *matHeaderCellDef>Telefono</th>
+          <td mat-cell *matCellDef="let element">{{ element.telefono }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="activo">
+          <th mat-header-cell *matHeaderCellDef>Situacion</th>
+          <td mat-cell *matCellDef="let element">
+            <span
+              [ngClass]="element.activo ? 'c-pill--success' : 'c-pill--danger'"
+              class="c-pill"
+              >{{ element.activo ? "HABILITADO" : "NO HABILITADO" }}
+            </span>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="options">
+          <th mat-header-cell *matHeaderCellDef></th>
+          <td mat-cell *matCellDef="let element">
+            <button mat-icon-button [matMenuTriggerFor]="menu">
+              <mat-icon>more_vert</mat-icon>
+            </button>
+            <mat-menu #menu="matMenu">
+              <button mat-menu-item (click)="edit(element)">
+                <mat-icon>edit</mat-icon>
+                <span>Editar funcionario</span>
+              </button>
+              <button mat-menu-item (click)="delete(element)">
+                <mat-icon>close</mat-icon>
+                <span
+                  >{{
+                    element.activo ? "Deshabilidat" : "Habilitar"
+                  }}
+                  funcionario</span
+                >
+              </button>
+              <button mat-menu-item (click)="viewWorkHistory(element)">
+                <mat-icon>format_list_bulleted</mat-icon>
+                <span>Historial de trabajo</span>
+              </button>
+            </mat-menu>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+        <tr class="mat-row" *matNoDataRow>
+          <td class="mat-cell p-3" colspan="4">No se encontraron resultados</td>
+        </tr>
+      </table>
+    </div>
+    <paginator
+      [length]="length()"
+      [limit]="limit()"
+      [length]="length()"
+      [pageSizeOptions]="[10, 20, 30, 50]"
+      (onPageChage)="onPageChage($event)"
+    />
+  </div>
+</div>

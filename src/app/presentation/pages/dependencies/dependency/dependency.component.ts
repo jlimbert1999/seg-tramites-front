@@ -6,7 +6,12 @@ import {
   inject,
   signal,
 } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import {
   MAT_DIALOG_DATA,
   MatDialogRef,
@@ -16,7 +21,13 @@ import { MatButtonModule } from '@angular/material/button';
 import { DependencyService } from '../services/dependency.service';
 import { dependencyResponse } from '../interfaces/dependency-response.interface';
 import { SelectSearchComponent } from '../../../components/select-search/select-search.component';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
 
+interface SelectOptions {
+  text: string;
+  value: string;
+}
 @Component({
   selector: 'app-dependency',
   standalone: true,
@@ -25,6 +36,8 @@ import { SelectSearchComponent } from '../../../components/select-search/select-
     ReactiveFormsModule,
     MatDialogModule,
     MatButtonModule,
+    MatFormFieldModule,
+    MatInputModule,
     SelectSearchComponent,
   ],
   templateUrl: './dependency.component.html',
@@ -37,61 +50,52 @@ export class DependencyComponent implements OnInit {
   private dependency?: dependencyResponse = inject(MAT_DIALOG_DATA);
 
   public institutions = signal<{ value: string; text: string }[]>([]);
-  public FormDependency = this.fb.group({
+  public FormDependency: FormGroup = this.fb.group({
     nombre: ['', Validators.required],
     codigo: ['', Validators.required],
     sigla: ['', [Validators.required, Validators.maxLength(10)]],
     institucion: ['', Validators.required],
   });
 
-  public options = signal<{ text: string; value: string }[]>([]);
-  public filteredOptons: { text: string; value: string }[] = [];
+  public options = signal<SelectOptions[]>([]);
+  public filteredOptions = signal<SelectOptions[]>([]);
 
   ngOnInit(): void {
     if (this.dependency) {
+      this.FormDependency.removeControl('institucion');
       const { institucion, ...values } = this.dependency;
-      // this.FormDependency.removeControl('institucion');
       this.FormDependency.patchValue(values);
     } else {
-      // this.getInstitutions();
+      this.getInstitutions();
     }
   }
 
-  getInstitutions(term: string | null) {
-    if (!term) return;
-
-    this.dependencyService.getInstitutions(term).subscribe((resp) => {
-      this.options.set(
-        resp.map((el) => ({
-          value: el._id,
-          text: el.nombre,
-        }))
-      );
-
-      // this.filteredOptons = this.options;
+  getInstitutions() {
+    this.dependencyService.getInstitutions().subscribe((resp) => {
+      this.options.set(resp.map((el) => ({ value: el._id, text: el.nombre })));
+      this.filteredOptions.set(this.options());
     });
   }
 
-  // filterInstitutions(term: string | null) {
-  //   if (!term) this.filteredOptons = this.options;
-  //   this.filteredOptons = this.options.filter(
-  //     (op) => op.text.toLowerCase().indexOf(term!) > -1
-  //   );
-  // }
-
-  save() {
-    // const subscription = this.dependency
-    //   ? this.dependenciasService.edit(
-    //       this.dependency._id,
-    //       this.FormDependency.value
-    //     )
-    //   : this.dependenciasService.add(this.FormDependency.value);
-    // subscription.subscribe((resp) => {
-    //   this.dialogRef.close(resp);
-    // });
+  filterInstitutions(term: string) {
+    this.filteredOptions.set(
+      this.options().filter((op) => op.text.toLowerCase().indexOf(term!) > -1)
+    );
   }
 
-  selectInstitution(id_institution: string) {
-    this.FormDependency.get('institucion')?.setValue(id_institution);
+  selectInstitution(id?: string) {
+    this.FormDependency.get('institucion')?.setValue(id ?? '');
+  }
+
+  save() {
+    const subscription = this.dependency
+      ? this.dependencyService.edit(
+          this.dependency._id,
+          this.FormDependency.value
+        )
+      : this.dependencyService.add(this.FormDependency.value);
+    subscription.subscribe((resp) => {
+      this.dialogRef.close(resp);
+    });
   }
 }

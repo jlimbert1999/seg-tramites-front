@@ -29,28 +29,28 @@ const hendleHttpErrors = (error: HttpErrorResponse) => {
   console.log(error);
   switch (error.status) {
     case 500:
-      Alert.showAlert({
+      Alert.Alert({
         icon: 'error',
         title: 'Error en el servidor',
         text: 'Se ha producido un error en el servidor',
       });
       break;
     case 400:
-      Alert.showAlert({
+      Alert.Alert({
         icon: 'warning',
         title: 'Solicitud incorrecta',
         text: error.error.message,
       });
       break;
     case 403:
-      Alert.showAlert({
+      Alert.Alert({
         icon: 'info',
         title: 'Accesso denegado',
         text: 'Esta cuenta no tiene los permisos requeridos',
       });
       break;
     case 404:
-      Alert.showAlert({
+      Alert.Alert({
         icon: 'warning',
         title: 'Recurso no econtrado',
         text: error.error.message,

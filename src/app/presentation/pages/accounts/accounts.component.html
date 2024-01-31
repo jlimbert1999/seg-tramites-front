@@ -1,0 +1,153 @@
+<p>
+  <mat-toolbar color="primary">
+    <sidenav-button />
+    <span>Cuentas</span>
+    <span class="toolbar-spacer"></span>
+    <button (click)="add()" mat-icon-button matTooltip="Crear cuenta">
+      <mat-icon>add</mat-icon>
+    </button>
+    <button (click)="assign()" mat-icon-button matTooltip="Asignar cuenta">
+      <mat-icon>contact_emergency</mat-icon>
+    </button>
+  </mat-toolbar>
+</p>
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-sm-3">
+      <select-search
+        [placeholder]="'Seleccione una institucion'"
+        [isServerFilter]="true"
+        [data]="institutions()"
+        (onSearch)="searchInstitutions($event)"
+        (onSelect)="searchDependencies($event)"
+      />
+    </div>
+    <div class="col-sm-5">
+      <select-search
+        [placeholder]="'Seleccione una dependencia'"
+        [data]="filteredDependencies()"
+        (onSearch)="filterDependencies($event)"
+        (onSelect)="applyFilterByDependency($event)"
+      />
+    </div>
+    <div class="col-sm-4">
+      <mat-form-field>
+        <mat-label>Buscar funcionario</mat-label>
+        <input
+          matInput
+          [(ngModel)]="text"
+          (keydown.enter)="appliFilterByText()"
+          placeholder="Nombre / Cargo / Dni"
+        />
+        <button
+          *ngIf="text"
+          matSuffix
+          mat-icon-button
+          aria-label="Clear"
+          (click)="cancelSearch()"
+        >
+          <mat-icon>close</mat-icon>
+        </button>
+      </mat-form-field>
+    </div>
+  </div>
+  <div class="example-container mat-elevation-z8">
+    <div class="example-table-container">
+      <table mat-table [dataSource]="accounts()">
+        <ng-container matColumnDef="login">
+          <th mat-header-cell *matHeaderCellDef>Login</th>
+          <td mat-cell *matCellDef="let element">
+            {{ element.login }}
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="nombre">
+          <th mat-header-cell *matHeaderCellDef>Funcionario</th>
+          <td mat-cell *matCellDef="let element">
+            @if(element.funcionario){
+            <div class="d-flex flex-column">
+              <span class="fw-bold">{{
+                element.funcionario.fullname | titlecase
+              }}</span>
+              <small>{{ element.funcionario.jobtitle }}</small>
+            </div>
+            } @else {
+            <span class="fw-bold" style="color: red">SIN ASIGNAR</span>
+            }
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="visibility">
+          <th mat-header-cell *matHeaderCellDef>Visibilidad</th>
+          <td mat-cell *matCellDef="let element">
+            <mat-slide-toggle
+              (toggleChange)="toggleVisibility(element)"
+              [checked]="element.isVisible"
+            >
+              {{ element.isVisible ? "Visible" : "Oculto" }}
+            </mat-slide-toggle>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="dependency">
+          <th mat-header-cell *matHeaderCellDef>Dependencia</th>
+          <td mat-cell *matCellDef="let element">
+            {{ element.dependencia.nombre }}
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="activo">
+          <th mat-header-cell *matHeaderCellDef>Situacion</th>
+          <td mat-cell *matCellDef="let element">
+            <ng-container [ngSwitch]="element.activo">
+              <span *ngSwitchCase="true" class="c-pill c-pill--success"
+                >Habilitado</span
+              >
+              <span *ngSwitchCase="false" class="c-pill c-pill--danger"
+                >Deshabilitado</span
+              >
+            </ng-container>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="options">
+          <th mat-header-cell *matHeaderCellDef></th>
+          <td mat-cell *matCellDef="let element">
+            <button
+              mat-icon-button
+              [matMenuTriggerFor]="menu"
+              aria-label="Example icon-button with a menu"
+            >
+              <mat-icon>more_vert</mat-icon>
+            </button>
+            <mat-menu #menu="matMenu">
+              <button (click)="edit(element)" mat-menu-item>
+                <mat-icon>edit</mat-icon>
+                <span>Editar cuenta</span>
+              </button>
+              <button (click)="disable(element)" mat-menu-item>
+                <mat-icon>delete</mat-icon>
+                <span>{{
+                  element.activo ? "Deshabilitar cuenta" : "Habilitar cuenta"
+                }}</span>
+              </button>
+            </mat-menu>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+        <tr class="mat-row" *matNoDataRow>
+          <td class="mat-cell p-3" colspan="5">No se encontraron resultados</td>
+        </tr>
+      </table>
+    </div>
+    <paginator
+      [length]="length()"
+      [limit]="limit()"
+      [length]="length()"
+      [pageSizeOptions]="[10, 20, 30, 50]"
+      (onPageChage)="onPageChage($event)"
+    />
+  </div>
+</div>

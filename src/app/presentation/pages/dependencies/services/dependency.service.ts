@@ -13,9 +13,9 @@ export class DependencyService {
   private readonly url = `${environment.base_url}/dependencies`;
   constructor(private http: HttpClient) {}
 
-  getInstitutions(term: string) {
+  getInstitutions() {
     return this.http
-      .get<institutionResponse[]>(`${this.url}/institutions?term=${term}`)
+      .get<institutionResponse[]>(`${this.url}/institutions`)
       .pipe(map((resp) => resp));
   }
 

@@ -6,12 +6,26 @@ interface AlertOptions {
   icon: 'success' | 'error' | 'warning' | 'info' | 'question';
 }
 export class Alert {
-  static showAlert({ icon = 'info', title, text }: AlertOptions) {
+  static Alert({ icon = 'info', title, text }: AlertOptions) {
     Swal.fire({
       icon,
       title,
       text,
       confirmButtonText: 'Aceptar',
+    });
+  }
+  static QuestionAlert(title: string, subtitle: string, callback: () => void) {
+    Swal.fire({
+      title,
+      text: subtitle,
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonText: 'Aceptar',
+      cancelButtonText: 'Cancelar',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        callback();
+      }
     });
   }
 }

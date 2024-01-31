@@ -39,7 +39,6 @@ interface PageProps {
     SidenavButtonComponent,
   ],
   templateUrl: './dependencies.component.html',
-  styleUrl: './dependencies.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DependenciesComponent {
@@ -121,6 +120,7 @@ export class DependenciesComponent {
     this.index.set(0);
     this.getData();
   }
+  
   onPageChage({ limit, index }: PageProps) {
     this.limit.set(limit);
     this.index.set(index);

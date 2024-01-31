@@ -14,7 +14,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
-import { ReplaySubject, Subject, debounceTime, takeUntil } from 'rxjs';
+import { ReplaySubject, Subject, debounceTime, filter, takeUntil } from 'rxjs';
 
 type MatSelectSearchData<T> = {
   text: string;
@@ -37,16 +37,19 @@ type MatSelectSearchData<T> = {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SelectSearchComponent<T> implements OnInit, OnDestroy {
+  @Input() set initialValue(value: T) {
+    this.bankCtrl.setValue(value);
+  }
+  @Input() placeholder = 'Buscar....';
   @Input() isServerFilter: boolean = false;
   @Input({ required: true }) set data(values: MatSelectSearchData<T>[]) {
     this.filteredBanks.next(values);
   }
-  @Output() onSearch: EventEmitter<string | null> = new EventEmitter();
+  @Output() onSearch: EventEmitter<string> = new EventEmitter();
+  @Output() onSelect: EventEmitter<T | undefined> = new EventEmitter();
 
-  public bankCtrl = new FormControl<MatSelectSearchData<T> | null>(null);
-
+  public bankCtrl = new FormControl<T | null>(null);
   public bankFilterCtrl = new FormControl<string>('');
-
   public filteredBanks: ReplaySubject<MatSelectSearchData<T>[]> =
     new ReplaySubject<MatSelectSearchData<T>[]>(1);
 
@@ -55,12 +58,18 @@ export class SelectSearchComponent<T> implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.bankFilterCtrl.valueChanges
       .pipe(
+        filter((search) => !!search),
         takeUntil(this._onDestroy),
         debounceTime(this.isServerFilter ? 350 : 0)
       )
       .subscribe((value) => {
-        this.onSearch.emit(value);
+        if (!value) console.log('mal');
+        this.onSearch.emit(value!);
       });
+  }
+
+  selectOption(value: T) {
+    this.onSelect.emit(value);
   }
 
   ngOnDestroy(): void {
