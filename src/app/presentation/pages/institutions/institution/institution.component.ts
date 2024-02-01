@@ -18,8 +18,8 @@ import {
 } from '@angular/material/dialog';
 import { MatInputModule } from '@angular/material/input';
 import { InstitutionService } from '../services/institution.service';
-import { institutionResponse } from '../interface/institution-response.interface';
 import { MatButtonModule } from '@angular/material/button';
+import { institutionResponse } from '../../../../infraestructure/interfaces';
 
 @Component({
   selector: 'app-institution',

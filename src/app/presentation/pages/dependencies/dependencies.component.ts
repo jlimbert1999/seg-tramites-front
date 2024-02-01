@@ -16,8 +16,8 @@ import { MatTableModule } from '@angular/material/table';
 import { PaginatorComponent } from '../../components/paginator/paginator.component';
 import { SidenavButtonComponent } from '../../components/sidenav-button/sidenav-button.component';
 import { DependencyService } from './services/dependency.service';
-import { dependencyResponse } from './interfaces/dependency-response.interface';
 import { DependencyComponent } from './dependency/dependency.component';
+import { dependencyResponse } from '../../../infraestructure/interfaces';
 
 interface PageProps {
   limit: number;
@@ -120,7 +120,7 @@ export class DependenciesComponent {
     this.index.set(0);
     this.getData();
   }
-  
+
   onPageChage({ limit, index }: PageProps) {
     this.limit.set(limit);
     this.index.set(index);

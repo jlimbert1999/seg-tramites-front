@@ -16,9 +16,9 @@ import { MatTableModule } from '@angular/material/table';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { PaginatorComponent } from '../../components/paginator/paginator.component';
 import { SidenavButtonComponent } from '../../components/sidenav-button/sidenav-button.component';
-import { jobResponse } from './interfaces/job-response.interface';
 import { JobService } from './services/job.service';
 import { JobComponent } from './job/job.component';
+import { jobResponse } from '../../../infraestructure/interfaces';
 
 interface PageProps {
   limit: number;

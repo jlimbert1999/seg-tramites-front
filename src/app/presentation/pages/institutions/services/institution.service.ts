@@ -2,8 +2,8 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { map } from 'rxjs';
 import { environment } from '../../../../../environments/environment';
-import { InstitutionDto } from '../dtos/institution.dto';
-import { institutionResponse } from '../interface/institution-response.interface';
+import { InstitutionDto } from '../../../../infraestructure/dtos';
+import { institutionResponse } from '../../../../infraestructure/interfaces';
 
 @Injectable({
   providedIn: 'root',

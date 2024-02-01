@@ -2,7 +2,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { map } from 'rxjs';
 import { environment } from '../../../../../environments/environment';
-import { jobResponse } from '../interfaces/job-response.interface';
+import { jobResponse } from '../../../../infraestructure/interfaces';
 
 @Injectable({
   providedIn: 'root',

@@ -15,12 +15,15 @@ import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { FormsModule } from '@angular/forms';
-import { Account } from './models/account.model';
+
 import { AccountService } from './services/account.service';
 import { AccountComponent } from './account/account.component';
-import { PaginatorComponent } from '../../components/paginator/paginator.component';
-import { SidenavButtonComponent } from '../../components/sidenav-button/sidenav-button.component';
-import { SelectSearchComponent } from '../../components/select-search/select-search.component';
+import { Account } from '../../../domain/models';
+import {
+  PaginatorComponent,
+  SidenavButtonComponent,
+  SelectSearchComponent,
+} from '../../components';
 
 interface PageProps {
   limit: number;
@@ -49,7 +52,6 @@ interface SelectOption {
     SelectSearchComponent,
   ],
   templateUrl: './accounts.component.html',
-  styleUrl: './accounts.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AccountsComponent {
@@ -65,10 +67,11 @@ export class AccountsComponent {
   ];
   public accounts = signal<Account[]>([]);
   public institutions = signal<SelectOption[]>([]);
+  public filteredInstitutions = signal<SelectOption[]>([]);
   public dependencies = signal<SelectOption[]>([]);
   public filteredDependencies = signal<SelectOption[]>([]);
-  public text: string = '';
   public id_dependencia?: string;
+  public text: string = '';
 
   public length = signal<number>(10);
   public limit = signal<number>(10);
@@ -76,16 +79,27 @@ export class AccountsComponent {
   public offset = computed<number>(() => this.limit() * this.index());
 
   ngOnInit(): void {
+    this.getInstitutions();
     this.getData();
   }
 
-  searchInstitutions(term: string | null) {
-    if (!term) return;
-    this.accountService.getInstitutions(term).subscribe((data) => {
-      this.institutions.set(
-        data.map((inst) => ({ text: inst.nombre, value: inst._id }))
-      );
+  getInstitutions() {
+    this.accountService.getInstitutions().subscribe((data) => {
+      const options = data.map((inst) => ({
+        text: inst.nombre,
+        value: inst._id,
+      }));
+      this.institutions.set(options);
+      this.filteredInstitutions.set(options);
     });
+  }
+
+  filterInstitutions(term: string) {
+    this.filteredInstitutions.set(
+      this.institutions().filter(
+        (op) => op.text.toLowerCase().indexOf(term) > -1
+      )
+    );
   }
 
   searchDependencies(id_institucion: string | undefined) {

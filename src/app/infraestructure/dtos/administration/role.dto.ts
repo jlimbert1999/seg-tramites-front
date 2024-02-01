@@ -1,4 +1,4 @@
-import { systemResource } from '../interfaces';
+import { systemResource } from '../../interfaces/auth/system-resources.interface';
 
 interface permission {
   resource: string;
@@ -8,10 +8,14 @@ interface permission {
 export class RoleDto {
   static toModel(name: string, systemResources: systemResource[]): RoleDto {
     const permissions: permission[] = systemResources
-      .filter((resource) => resource.actions.some((action) => action.isSelected))
+      .filter((resource) =>
+        resource.actions.some((action) => action.isSelected)
+      )
       .map((resource) => ({
         resource: resource.value,
-        actions: resource.actions.filter((actions) => actions.isSelected).map((action) => action.value),
+        actions: resource.actions
+          .filter((actions) => actions.isSelected)
+          .map((action) => action.value),
       }));
     return new RoleDto(name, permissions);
   }

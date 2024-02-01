@@ -2,10 +2,13 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, map } from 'rxjs';
 import { environment } from '../../../../../environments/environment';
-import { jobResponse } from '../../jobs/interfaces/job-response.interface';
-import { Officer } from '../models/officer.model';
-import { OfficerDto } from '../dtos/officer.dto';
-import { workHistoryResponse, officerResponse } from '../interfaces';
+import {
+  jobResponse,
+  officerResponse,
+  workHistoryResponse,
+} from '../../../../infraestructure/interfaces';
+import { Officer } from '../../../../domain/models';
+import { OfficerDto } from '../../../../infraestructure/dtos';
 
 @Injectable({
   providedIn: 'root',

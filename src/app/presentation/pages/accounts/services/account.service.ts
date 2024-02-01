@@ -2,16 +2,16 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { map } from 'rxjs';
 import { environment } from '../../../../../environments/environment';
-import { jobResponse } from '../../jobs/interfaces/job-response.interface';
-import { roleResponse } from '../../roles/interfaces';
-import { institutionResponse } from '../../institutions/interface/institution-response.interface';
-import { dependencyResponse } from '../../dependencies/interfaces/dependency-response.interface';
-import { officerResponse } from '../../officers/interfaces';
-import { accountResponse } from '../interfaces/account-response.interface';
-import { Officer } from '../../officers/models/officer.model';
-import { OfficerDto } from '../../officers/dtos/officer.dto';
-import { Account } from '../models/account.model';
-import { AccountDto } from '../dtos/account.dto';
+import {
+  accountResponse,
+  dependencyResponse,
+  institutionResponse,
+  jobResponse,
+  officerResponse,
+  roleResponse,
+} from '../../../../infraestructure/interfaces';
+import { Account, Officer } from '../../../../domain/models';
+import { AccountDto, OfficerDto } from '../../../../infraestructure/dtos';
 
 interface SearchAccountsParams {
   text: string;
@@ -34,13 +34,8 @@ export class AccountService {
   getRoles() {
     return this.http.get<roleResponse[]>(`${this.url}/roles`);
   }
-  getInstitutions(text?: string) {
-    const params = text
-      ? new HttpParams().set('text', text).set('limit', 5)
-      : undefined;
-    return this.http.get<institutionResponse[]>(`${this.url}/institutions`, {
-      params,
-    });
+  getInstitutions() {
+    return this.http.get<institutionResponse[]>(`${this.url}/institutions`);
   }
   getDependenciesOfInstitution(id_institution: string, text?: string) {
     return this.http.get<dependencyResponse[]>(

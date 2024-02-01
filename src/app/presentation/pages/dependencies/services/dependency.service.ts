@@ -2,9 +2,11 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { map } from 'rxjs';
 import { environment } from '../../../../../environments/environment';
-import { institutionResponse } from '../../institutions/interface/institution-response.interface';
-import { dependencyResponse } from '../interfaces/dependency-response.interface';
-import { DependencyDto } from '../models/dependency.model';
+import {
+  dependencyResponse,
+  institutionResponse,
+} from '../../../../infraestructure/interfaces';
+import { DependencyDto } from '../../../../domain/models';
 
 @Injectable({
   providedIn: 'root',

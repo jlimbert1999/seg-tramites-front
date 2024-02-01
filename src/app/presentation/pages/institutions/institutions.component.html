@@ -73,8 +73,8 @@
         </tr>
       </table>
       <paginator
-        [limit]="10"
-        [index]="0"
+        [limit]="limit()"
+        [index]="index()"
         [length]="length()"
         [pageSizeOptions]="[10, 20, 30, 50]"
         (onPageChage)="onPageChage($event)"

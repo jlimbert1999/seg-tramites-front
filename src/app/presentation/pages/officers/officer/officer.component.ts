@@ -21,10 +21,10 @@ import {
 } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { Officer } from '../models/officer.model';
 import { OfficerService } from '../services/officer.service';
 import { Alert } from '../../../../helpers';
 import { SelectSearchComponent } from '../../../components/select-search/select-search.component';
+import { Officer } from '../../../../domain/models';
 
 interface SelectOptions {
   text: string;

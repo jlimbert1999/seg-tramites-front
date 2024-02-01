@@ -1,4 +1,4 @@
-import { institutionResponse } from '../../institutions/interface/institution-response.interface';
+import { institutionResponse } from './institution-response.interface';
 
 export interface dependencyResponse {
   _id: string;

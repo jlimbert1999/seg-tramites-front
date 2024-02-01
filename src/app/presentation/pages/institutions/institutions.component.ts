@@ -15,9 +15,9 @@ import { MatIconModule } from '@angular/material/icon';
 import { FormsModule } from '@angular/forms';
 import { SidenavButtonComponent } from '../../components/sidenav-button/sidenav-button.component';
 import { InstitutionService } from './services/institution.service';
-import { institutionResponse } from './interface/institution-response.interface';
 import { InstitutionComponent } from './institution/institution.component';
 import { PaginatorComponent } from '../../components/paginator/paginator.component';
+import { institutionResponse } from '../../../infraestructure/interfaces';
 
 interface PageProps {
   limit: number;

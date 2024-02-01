@@ -1,5 +1,5 @@
-import { Officer } from '../../officers/models/officer.model';
-import { accountResponse } from '../interfaces/account-response.interface';
+import { accountResponse } from '../../../infraestructure/interfaces/administration/account-response.interface';
+import { Officer } from './officer.model';
 
 interface AccountProps {
   _id: string;
@@ -20,7 +20,7 @@ export class Account {
   login: string;
   rol: string;
   activo: boolean;
-  funcionario?: Officer;
+  funcionario?: any;
   isVisible: boolean;
   dependencia: dependency;
 

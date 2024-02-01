@@ -6,7 +6,6 @@ import {
   signal,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { roleResponse } from './interfaces/role-response.interface';
 import { RoleService } from './services/role.service';
 import { RoleComponent } from './role/role.component';
 import { MatTableModule } from '@angular/material/table';
@@ -15,7 +14,7 @@ import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { SidenavButtonComponent } from '../../components/sidenav-button/sidenav-button.component';
 import { MatButtonModule } from '@angular/material/button';
-import { FilterSystemResourcesPipe } from './pipes/filter-system-resources.pipe';
+import { roleResponse } from '../../../infraestructure/interfaces';
 
 @Component({
   selector: 'app-roles',
@@ -28,7 +27,6 @@ import { FilterSystemResourcesPipe } from './pipes/filter-system-resources.pipe'
     MatIconModule,
     MatButtonModule,
     SidenavButtonComponent,
-    // FilterSystemResourcesPipe,
   ],
   templateUrl: './roles.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,

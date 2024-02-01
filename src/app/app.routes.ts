@@ -1,7 +1,6 @@
 import { Routes } from '@angular/router';
 import { LoginComponent } from './presentation/layouts/login/login.component';
 import { HomeComponent } from './presentation/layouts/home/home.component';
-import { AuthGuard, isNotAuthenticatedGuard } from './guards';
 import { DependenciesComponent } from './presentation/pages/dependencies/dependencies.component';
 import { InstitutionsComponent } from './presentation/pages/institutions/institutions.component';
 import { TypesProceduresComponent } from './presentation/pages/types-procedures/types-procedures.component';
@@ -9,6 +8,7 @@ import { OfficersComponent } from './presentation/pages/officers/officers.compon
 import { JobsComponent } from './presentation/pages/jobs/jobs.component';
 import { RolesComponent } from './presentation/pages/roles/roles.component';
 import { AccountsComponent } from './presentation/pages/accounts/accounts.component';
+import { AuthGuard, isNotAuthenticatedGuard } from './presentation/guards';
 
 export const routes: Routes = [
   {

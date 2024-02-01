@@ -17,9 +17,8 @@
     <div class="col-sm-3">
       <select-search
         [placeholder]="'Seleccione una institucion'"
-        [isServerFilter]="true"
-        [data]="institutions()"
-        (onSearch)="searchInstitutions($event)"
+        [data]="filteredInstitutions()"
+        (onSearch)="filterInstitutions($event)"
         (onSelect)="searchDependencies($event)"
       />
     </div>
@@ -145,7 +144,7 @@
     <paginator
       [length]="length()"
       [limit]="limit()"
-      [length]="length()"
+      [index]="index()"
       [pageSizeOptions]="[10, 20, 30, 50]"
       (onPageChage)="onPageChage($event)"
     />

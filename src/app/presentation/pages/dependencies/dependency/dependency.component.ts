@@ -17,12 +17,12 @@ import {
   MatDialogRef,
   MatDialogModule,
 } from '@angular/material/dialog';
-import { MatButtonModule } from '@angular/material/button';
-import { DependencyService } from '../services/dependency.service';
-import { dependencyResponse } from '../interfaces/dependency-response.interface';
-import { SelectSearchComponent } from '../../../components/select-search/select-search.component';
-import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { MatButtonModule } from '@angular/material/button';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { DependencyService } from '../services/dependency.service';
+import { SelectSearchComponent } from '../../../components/select-search/select-search.component';
+import { dependencyResponse } from '../../../../infraestructure/interfaces';
 
 interface SelectOptions {
   text: string;

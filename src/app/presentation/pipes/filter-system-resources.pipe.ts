@@ -1,5 +1,5 @@
 import { Pipe, type PipeTransform } from '@angular/core';
-import { systemResource } from '../interfaces';
+import { systemResource } from '../../infraestructure/interfaces';
 
 @Pipe({
   name: 'appFilterSystemResources',

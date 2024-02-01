@@ -6,14 +6,14 @@ import {
   signal,
 } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
-import { workHistoryResponse } from '../interfaces';
 import { OfficerService } from '../services/officer.service';
-import { Officer } from '../models/officer.model';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { workHistoryResponse } from '../../../../infraestructure/interfaces';
+import { Officer } from '../../../../domain/models';
 @Component({
   selector: 'app-work-history',
   standalone: true,

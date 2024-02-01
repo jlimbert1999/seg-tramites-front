@@ -6,7 +6,6 @@ import {
   inject,
   signal,
 } from '@angular/core';
-import { Officer } from './models/officer.model';
 import { OfficerService } from './services/officer.service';
 import { MatDialog } from '@angular/material/dialog';
 import { OfficerComponent } from './officer/officer.component';
@@ -20,6 +19,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { PaginatorComponent } from '../../components/paginator/paginator.component';
 import { MatButtonModule } from '@angular/material/button';
+import { Officer } from '../../../domain/models';
 
 interface PageProps {
   limit: number;

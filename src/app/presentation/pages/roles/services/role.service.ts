@@ -1,9 +1,12 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { map } from 'rxjs';
 import { environment } from '../../../../../environments/environment';
-import { roleResponse, systemResource } from '../interfaces';
-import { RoleDto } from '../dtos/role.dto';
+import {
+  roleResponse,
+  systemResource,
+} from '../../../../infraestructure/interfaces';
+import { RoleDto } from '../../../../infraestructure/dtos';
 
 @Injectable({
   providedIn: 'root',

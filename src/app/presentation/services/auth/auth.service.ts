@@ -5,7 +5,7 @@ import { jwtDecode } from 'jwt-decode';
 import { Observable, of } from 'rxjs';
 
 import { environment } from '../../../../environments/environment';
-import { AuthStatus, JwtPayload } from '../../../interfaces';
+import { AuthStatus, JwtPayload } from '../../../infraestructure/interfaces';
 
 @Injectable({
   providedIn: 'root',

@@ -23,8 +23,11 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatButtonModule } from '@angular/material/button';
 import { RoleService } from '../services/role.service';
-import { roleResponse, systemResource } from '../interfaces';
-import { FilterSystemResourcesPipe } from '../pipes/filter-system-resources.pipe';
+import {
+  roleResponse,
+  systemResource,
+} from '../../../../infraestructure/interfaces';
+import { FilterSystemResourcesPipe } from '../../../pipes/filter-system-resources.pipe';
 
 @Component({
   selector: 'app-role',

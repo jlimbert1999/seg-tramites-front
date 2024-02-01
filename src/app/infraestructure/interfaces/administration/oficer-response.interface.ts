@@ -1,4 +1,4 @@
-import { jobResponse } from '../../jobs/interfaces/job-response.interface';
+import { jobResponse } from './job-response.interface';
 
 export interface officerResponse {
   _id: string;
