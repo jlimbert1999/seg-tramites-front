@@ -17,13 +17,14 @@ import { MatMenuModule } from '@angular/material/menu';
 import { FormsModule } from '@angular/forms';
 
 import { AccountService } from './services/account.service';
-import { AccountComponent } from './account/account.component';
+import { CreateAccountComponent } from './create-account/create-account.component';
 import { Account } from '../../../domain/models';
 import {
   PaginatorComponent,
   SidenavButtonComponent,
   SelectSearchComponent,
 } from '../../components';
+import { EditAccountComponent } from './edit-account/edit-account.component';
 
 interface PageProps {
   limit: number;
@@ -102,11 +103,13 @@ export class AccountsComponent {
     );
   }
 
-  searchDependencies(id_institucion: string | undefined) {
+  getDependenciesByInstitution(id_institucion: string | undefined) {
     if (!id_institucion) {
-      this.id_dependencia = undefined;
+      this.index.set(0);
       this.dependencies.set([]);
+      this.id_dependencia = undefined;
       this.filteredDependencies.set([]);
+      this.getData();
       return;
     }
     this.accountService
@@ -163,7 +166,7 @@ export class AccountsComponent {
   }
 
   add() {
-    const dialogRef = this.dialog.open(AccountComponent, {
+    const dialogRef = this.dialog.open(CreateAccountComponent, {
       width: '1000px',
     });
     dialogRef.afterClosed().subscribe((result: Account) => {
@@ -174,7 +177,7 @@ export class AccountsComponent {
   }
 
   edit(accont: Account) {
-    const dialogRef = this.dialog.open(AccountComponent, {
+    const dialogRef = this.dialog.open(EditAccountComponent, {
       width: '1200px',
       data: accont,
     });
@@ -189,7 +192,7 @@ export class AccountsComponent {
   }
 
   assign() {
-    const dialogRef = this.dialog.open(AccountComponent, {
+    const dialogRef = this.dialog.open(CreateAccountComponent, {
       width: '1000px',
     });
     dialogRef.afterClosed().subscribe((result: Account) => {

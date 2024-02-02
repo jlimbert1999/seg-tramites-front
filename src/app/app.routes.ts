@@ -9,6 +9,9 @@ import { JobsComponent } from './presentation/pages/jobs/jobs.component';
 import { RolesComponent } from './presentation/pages/roles/roles.component';
 import { AccountsComponent } from './presentation/pages/accounts/accounts.component';
 import { AuthGuard, isNotAuthenticatedGuard } from './presentation/guards';
+import { ExternalComponent } from './presentation/pages/procedures/pages/external/external.component';
+import { DetailComponent } from './presentation/pages/procedures/pages/detail/detail.component';
+import { InternalComponent } from './presentation/pages/procedures/pages/internal/internal.component';
 
 export const routes: Routes = [
   {
@@ -28,6 +31,9 @@ export const routes: Routes = [
       { path: 'jobs', component: JobsComponent },
       { path: 'roles', component: RolesComponent },
       { path: 'accounts', component: AccountsComponent },
+      { path: 'external', component: ExternalComponent },
+      { path: 'internal', component: InternalComponent },
+      { path: ':from/:group/:id', component: DetailComponent },
     ],
   },
   { path: '', redirectTo: '/home', pathMatch: 'full' },

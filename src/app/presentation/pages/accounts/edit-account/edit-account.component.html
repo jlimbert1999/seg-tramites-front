@@ -1,0 +1,131 @@
+<h2 mat-dialog-title>EDICION CUENTA</h2>
+<mat-dialog-content>
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-5">
+        <div class="card bg-transparent">
+          <div class="card-header">Detalles funcionario</div>
+          <div class="card-body">
+            <div class="account-settings">
+              <div class="user-profile">
+                <div class="user-avatar">
+                  <img src="../../../../assets/img/account.png" />
+                </div>
+                @if(currentOfficer()){
+                <p class="fw-bold">
+                  {{ currentOfficer()?.fullname | titlecase }} ({{
+                    currentOfficer()?.dni
+                  }})
+                  <br />
+                  <span *ngIf="currentOfficer()?.cargo; else noJobTemplate">
+                    {{ currentOfficer()?.cargo?.nombre }}
+                  </span>
+                  <ng-template #noJobTemplate>
+                    <span style="color: orange">--- SIN CARGO ---</span>
+                  </ng-template>
+                </p>
+                } @else {
+                <h2 style="color: red">SIN ASIGNAR</h2>
+                }
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="mt-2 text-center">
+          @if(currentOfficer()){
+          <button mat-fab extended color="warn" (click)="unlinkAccount()">
+            <mat-icon>person_off</mat-icon>
+            Desvincular
+          </button>
+          } @else {
+          <!-- <app-server-mat-select-search
+            placeholder="Buscar funcionario"
+            [options]="officers()"
+            (keyupEvent)="searchOfficer($event)"
+            (selectEvent)="selectOfficer($event)"
+          /> -->
+          }
+        </div>
+      </div>
+      <div class="col-md-7">
+        <mat-tab-group
+          mat-stretch-tabs="false"
+          mat-align-tabs="center"
+          dynamicHeight
+        >
+          <mat-tab label="Cuenta">
+            <form [formGroup]="FormAccount">
+              <div class="row">
+                <div class="col-12 mb-4">
+                  <label for="textDependency" class="form-label"
+                    >Dependencia</label
+                  >
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="textDependency"
+                    [value]="account.dependencia.nombre"
+                    readonly
+                  />
+                </div>
+                <div class="col-sm-6">
+                  <mat-form-field appearance="fill">
+                    <mat-label>Login</mat-label>
+                    <input formControlName="login" matInput />
+                  </mat-form-field>
+                </div>
+                <div class="col-sm-6">
+                  <mat-form-field appearance="fill">
+                    <mat-label>Permisos</mat-label>
+                    <mat-select formControlName="rol">
+                      <mat-option *ngFor="let rol of roles()" [value]="rol._id">
+                        {{ rol.name }}
+                      </mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                </div>
+                @if(this.FormAccount.get('password')){
+                <div class="col-sm-6">
+                  <mat-form-field appearance="fill">
+                    <mat-label>Password</mat-label>
+                    <input matInput formControlName="password" />
+                  </mat-form-field>
+                </div>
+                }
+                <div class="col-sm-6">
+                  <mat-checkbox
+                    [checked]="updatePassword"
+                    (change)="togglePassword($event.checked)"
+                  >
+                    Actualizar contraseña
+                  </mat-checkbox>
+                </div>
+              </div>
+            </form>
+          </mat-tab>
+          <mat-tab label="Actividad">
+            <dl class="row">
+              @for (detail of workDetails; track $index) {
+              <dt class="col-sm-3 text-truncate">{{ detail.label }}</dt>
+              <dd class="col-sm-9">{{ detail.value }}</dd>
+              } @empty {
+              <p class="p-4 fw-bold">SIN DETALLES</p>
+              }
+            </dl>
+          </mat-tab>
+        </mat-tab-group>
+      </div>
+    </div>
+  </div>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-raised-button color="warn" mat-dialog-close>Cancelar</button>
+  <button
+    mat-raised-button
+    color="primary"
+    [disabled]="FormAccount.invalid"
+    (click)="save()"
+  >
+    Guardar
+  </button>
+</mat-dialog-actions>

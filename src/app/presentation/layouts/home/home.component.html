@@ -13,7 +13,16 @@
       <navigation-list [menu]="menu" />
     </mat-sidenav>
     <mat-sidenav-content>
-      <router-outlet></router-outlet>
+      <div class="row">
+        <div class="col-8">
+          <router-outlet></router-outlet>
+        </div>
+        <div class="col-4">
+          <pre>Index {{ cacheService.pageIndex() }}</pre>
+          <pre>Limit {{ cacheService.pageSize() }}</pre>
+          <pre>Cache {{ cacheService.storage | json }}</pre>
+        </div>
+      </div>
     </mat-sidenav-content>
   </mat-sidenav-container>
 </div>

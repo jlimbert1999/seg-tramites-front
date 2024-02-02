@@ -19,7 +19,7 @@
         [placeholder]="'Seleccione una institucion'"
         [data]="filteredInstitutions()"
         (onSearch)="filterInstitutions($event)"
-        (onSelect)="searchDependencies($event)"
+        (onSelect)="getDependenciesByInstitution($event)"
       />
     </div>
     <div class="col-sm-5">

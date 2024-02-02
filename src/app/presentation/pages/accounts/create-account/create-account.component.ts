@@ -21,7 +21,6 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatStepperModule } from '@angular/material/stepper';
 import { MatInputModule } from '@angular/material/input';
 import { SelectSearchComponent } from '../../../components';
-import { Account } from '../../../../domain/models';
 import { AccountService } from '../services/account.service';
 import { roleResponse } from '../../../../infraestructure/interfaces';
 import { OfficerService } from '../../officers/services/officer.service';
@@ -31,7 +30,7 @@ interface SelectOption {
   text: string;
 }
 @Component({
-  selector: 'app-account',
+  selector: 'app-create-account',
   standalone: true,
   imports: [
     CommonModule,
@@ -45,14 +44,14 @@ interface SelectOption {
     ReactiveFormsModule,
     SelectSearchComponent,
   ],
-  templateUrl: './account.component.html',
+  templateUrl: './create-account.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AccountComponent {
+export class CreateAccountComponent {
   private fb = inject(FormBuilder);
   private accountService = inject(AccountService);
   private officerService = inject(OfficerService);
-  private dialogRef = inject(MatDialogRef<AccountComponent>);
+  private dialogRef = inject(MatDialogRef<CreateAccountComponent>);
 
   institutions = signal<SelectOption[]>([]);
   filteredInstitutions = signal<SelectOption[]>([]);
