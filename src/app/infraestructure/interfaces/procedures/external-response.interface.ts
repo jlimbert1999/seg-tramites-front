@@ -1,10 +1,10 @@
-import { groupProcedure } from '../group-procedure.interface';
-import { procedure } from './procedure.interface';
+import { GroupProcedure } from '../../../domain/models';
+import { procedure } from './procedure-response.interface';
 
 export type typeApplicant = 'NATURAL' | 'JURIDICO';
 
 export interface externalResponse extends procedure {
-  group: groupProcedure;
+  group: GroupProcedure.External;
   details: Details;
 }
 

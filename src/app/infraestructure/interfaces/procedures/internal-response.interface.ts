@@ -1,8 +1,8 @@
-import { groupProcedure } from '../group-procedure.interface';
-import { procedure } from './procedure.interface';
+import { GroupProcedure } from '../../../domain/models';
+import { procedure } from './procedure-response.interface';
 
 export interface internalResponse extends procedure {
-  group: groupProcedure.INTERNAL;
+  group: GroupProcedure.Internal;
   details: Details;
 }
 interface Details {

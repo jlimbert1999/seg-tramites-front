@@ -1,40 +1,50 @@
-import { groupProcedure, stateProcedure } from '../interfaces';
-
 export interface ProcedureProps {
   _id: string;
   code: string;
   cite: string;
+  type: string;
   amount: string;
   isSend: boolean;
   reference: string;
-  endDate?: string;
   startDate: string;
-  type: string;
+  endDate?: string;
   account: manager;
-  group: groupProcedure;
-  state: stateProcedure;
+  group: GroupProcedure;
+  state: StateProcedure;
+}
+
+export enum GroupProcedure {
+  External = 'ExternalDetail',
+  Internal = 'InternalDetail',
+}
+
+export enum StateProcedure {
+  Inscrito = 'INSCRITO',
+  Observado = 'OBSERVADO',
+  Revision = 'REVISION',
+  Concluido = 'CONCLUIDO',
+  Anulado = 'ANULADO',
+  Suspendido = 'SUSPENDIDO',
 }
 
 interface manager {
   _id: string;
   funcionario?: officer;
 }
-
 interface officer {
-  nombre: string;
-  materno: string;
-  paterno: string;
+  fullname: string;
+  jobtitle?: string;
 }
 
 export abstract class Procedure {
   public readonly _id: string;
   public readonly code: string;
   public readonly type: string;
-  public readonly group: groupProcedure;
+  public readonly group: GroupProcedure;
   public readonly startDate: Date;
   public readonly account: manager;
   public readonly endDate?: Date;
-  public state: stateProcedure;
+  public state: StateProcedure;
   public cite: string;
   public reference: string;
   public amount: string;
@@ -68,9 +78,11 @@ export abstract class Procedure {
     if (endDate) this.endDate = new Date(endDate);
   }
 
-  get fullNameManager(): string {
-    if (!this.account.funcionario) return 'Desvinculado';
-    return `${this.account.funcionario.nombre} ${this.account.funcionario.paterno} ${this.account.funcionario.materno}`;
+  get titleManager(): string {
+    if (!this.account.funcionario) return 'Funcionario desvinculado';
+    return `${this.account.funcionario.fullname} (${
+      this.account.funcionario.jobtitle ?? 'SIN CARGO'
+    })`;
   }
 
   get citeCode() {
@@ -79,12 +91,12 @@ export abstract class Procedure {
   }
 
   get isEditable(): boolean {
-    if (this.state !== stateProcedure.INSCRITO) return false;
+    if (this.state !== 'INSCRITO') return false;
     return true;
   }
 
   get canBeManaged() {
-    if (this.state !== stateProcedure.INSCRITO || this.isSend) return false;
+    if (this.state !== 'INSCRITO' || this.isSend) return false;
     return true;
   }
 

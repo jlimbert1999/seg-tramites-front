@@ -1,4 +1,4 @@
-// import { officerResponse } from "../interfaces";
+import { officerResponse } from '../../../infraestructure/interfaces';
 
 interface job {
   _id: string;
@@ -17,7 +17,7 @@ interface OfficerProps {
   cargo?: job;
 }
 export class Officer {
-  static officerFromJson(obj: any) {
+  static officerFromJson(obj: officerResponse) {
     if (typeof obj['cargo'] === 'string') delete obj['cargo'];
     return new Officer({
       _id: obj['_id'],

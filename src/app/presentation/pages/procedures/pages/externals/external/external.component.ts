@@ -19,19 +19,20 @@ import {
   MatDialogRef,
 } from '@angular/material/dialog';
 
-import { MatButtonModule } from '@angular/material/button';
-import { MatStepperModule } from '@angular/material/stepper';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { STEPPER_GLOBAL_OPTIONS } from '@angular/cdk/stepper';
+import { MatStepperModule } from '@angular/material/stepper';
+import { MatButtonModule } from '@angular/material/button';
 import { MatSelectModule } from '@angular/material/select';
 import { MatInputModule } from '@angular/material/input';
 import { MatRadioModule } from '@angular/material/radio';
 import { SimpleSelectSearchComponent } from '../../../../../components/simple-select-search/simple-select-search.component';
-
-import { typeApplicant } from '../../../interfaces';
-import { typeProcedureResponse } from '../../../../types-procedures/interfaces/type-procedure-response.interface';
-import { ExternalService } from '../../../services/external.service';
-import { ExternalProcedure } from '../../../models';
-import { STEPPER_GLOBAL_OPTIONS } from '@angular/cdk/stepper';
+import { ExternalProcedure } from '../../../../../../domain/models';
+import {
+  typeApplicant,
+  typeProcedureResponse,
+} from '../../../../../../infraestructure/interfaces';
+import { ExternalService } from '../../../../../services';
 
 interface SelectOption {
   text: string;
@@ -184,13 +185,13 @@ export class ExternalComponent {
     return this.fb.group({
       nombre: [
         '',
-        [Validators.required, Validators.pattern(/^[a-zA-ZñÑ\s]*$/)],
+        [Validators.required, Validators.pattern(/^[a-zA-ZñÑ\s.]*$/)],
       ],
       paterno: [
         '',
-        [Validators.required, Validators.pattern(/^[a-zA-ZñÑ\s]*$/)],
+        [Validators.required, Validators.pattern(/^[a-zA-ZñÑ\s.]*$/)],
       ],
-      materno: ['', Validators.pattern(/^[a-zA-ZñÑ\s]*$/)],
+      materno: ['', Validators.pattern(/^[a-zA-ZñÑ\s.]*$/)],
       documento: ['', Validators.required],
       dni: [
         '',
@@ -198,7 +199,7 @@ export class ExternalComponent {
           Validators.required,
           Validators.minLength(6),
           Validators.maxLength(10),
-          Validators.pattern('^[0-9]*$'),
+          Validators.pattern(/^[0-9]*$/),
         ],
       ],
       telefono: [
@@ -207,7 +208,7 @@ export class ExternalComponent {
           Validators.required,
           Validators.minLength(8),
           Validators.maxLength(10),
-          Validators.pattern('^[0-9]*$'),
+          Validators.pattern(/^[0-9]*$/),
         ],
       ],
     });
@@ -216,13 +217,13 @@ export class ExternalComponent {
     return this.fb.group({
       nombre: [
         '',
-        [Validators.required, Validators.pattern(/^[a-zA-ZñÑ\s]*$/)],
+        [Validators.required, Validators.pattern(/^[a-zA-ZñÑ\s.]*$/)],
       ],
       paterno: [
         '',
-        [Validators.required, Validators.pattern(/^[a-zA-ZñÑ\s]*$/)],
+        [Validators.required, Validators.pattern(/^[a-zA-ZñÑ\s.]*$/)],
       ],
-      materno: ['', Validators.pattern(/^[a-zA-ZñÑ\s]*$/)],
+      materno: ['', Validators.pattern(/^[a-zA-ZñÑ\s.]*$/)],
       documento: ['', Validators.required],
       dni: [
         '',

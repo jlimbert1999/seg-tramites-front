@@ -14,17 +14,15 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { RouterModule } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
-import { ExternalService } from '../../services/external.service';
-import { ExternalProcedure } from '../../models';
-import { CacheService } from '../../../../services/cache.service';
 import {
   PaginatorComponent,
   SidenavButtonComponent,
 } from '../../../../components';
 import { StateLabelPipe } from '../../pipes/state-label.pipe';
 import { SearchInputComponent } from '../../components/search-input/search-input.component';
-import { ExternalProcedureDto } from '../../dtos';
 import { ExternalComponent } from './external/external.component';
+import { ExternalProcedure } from '../../../../../domain/models';
+import { ExternalService, CacheService } from '../../../../services';
 
 interface PaginationOptions {
   limit: number;
@@ -192,7 +190,7 @@ export class ExternalsComponent {
   }
 
   private savePaginationData(): void {
-    this.cacheService.keepAliveData.set(false);
+    this.cacheService.resetPagination();
     this.cacheService.storage[this.constructor.name] = {
       datasource: this.datasource(),
       datasize: this.datasize(),

@@ -19,20 +19,20 @@ import {
   MatDialogModule,
   MatDialogRef,
 } from '@angular/material/dialog';
-import { MatIconModule } from '@angular/material/icon';
-import { MatInputModule } from '@angular/material/input';
-import { MatCheckboxModule } from '@angular/material/checkbox';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatSelectModule } from '@angular/material/select';
+import { MatInputModule } from '@angular/material/input';
+import { MatIconModule } from '@angular/material/icon';
 
 import { Observable, map, startWith } from 'rxjs';
 import { TypeProcedureService } from '../services/type-procedure.service';
 import {
   requirement,
   typeProcedureResponse,
-} from '../interfaces/type-procedure-response.interface';
-import { MatFormFieldModule } from '@angular/material/form-field';
+} from '../../../../infraestructure/interfaces';
 @Component({
   selector: 'app-type-procedure',
   standalone: true,

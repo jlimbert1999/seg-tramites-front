@@ -18,7 +18,7 @@ import { PaginatorComponent } from '../../components/paginator/paginator.compone
 import { SidenavButtonComponent } from '../../components/sidenav-button/sidenav-button.component';
 import { TypeProcedureComponent } from './type-procedure/type-procedure.component';
 import { TypeProcedureService } from './services/type-procedure.service';
-import { typeProcedureResponse } from './interfaces/type-procedure-response.interface';
+import { typeProcedureResponse } from '../../../infraestructure/interfaces';
 
 interface PageProps {
   limit: number;

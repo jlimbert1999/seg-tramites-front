@@ -10,7 +10,11 @@ export class CacheService<T> {
     () => this.pageIndex() * this.pageSize()
   );
   public keepAliveData = signal(false);
-
   public storage: Record<string, T> = {};
-  constructor() {}
+
+  resetPagination() {
+    this.pageSize.set(10);
+    this.pageIndex.set(0);
+    this.keepAliveData.set(false);
+  }
 }

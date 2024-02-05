@@ -1,4 +1,5 @@
-import { groupProcedure, internalResponse } from '../interfaces';
+import { internalResponse } from '../../../infraestructure/interfaces';
+import { Officer } from '../administration/officer.model';
 import { Procedure, ProcedureProps } from './procedure.model';
 
 interface InternalProps extends ProcedureProps {
@@ -16,15 +17,21 @@ interface worker {
 
 export class InternalProcedure extends Procedure {
   details: details;
-  static ResponseToModel({ send, type, ...values }: internalResponse) {
+  static ResponseToModel({ send, type, account, ...values }: internalResponse) {
     return new InternalProcedure({
       type: type.nombre,
       isSend: send,
+      account: {
+        _id: account._id,
+        funcionario: account.funcionario
+          ? Officer.officerFromJson(account.funcionario)
+          : undefined,
+      },
       ...values,
     });
   }
   constructor({ details, ...procedureProps }: InternalProps) {
-    super({ ...procedureProps, group: groupProcedure.INTERNAL });
+    super(procedureProps);
     this.details = details;
   }
 

@@ -1,12 +1,11 @@
-import {
-  statusMail,
-  workflowResponse,
-} from '../../../../infraestructure/interfaces';
+import { workflowResponse } from '../../../infraestructure/interfaces';
 
-interface EventLog {
-  manager: string;
-  description: string;
-  date: string;
+export enum StatusMail {
+  Received = 'received',
+  Completed = 'completed',
+  Rejected = 'rejected',
+  Pending = 'pending',
+  Archived = 'archived',
 }
 
 export interface WorkflowProps {
@@ -22,16 +21,23 @@ interface Detail {
   reference: string;
   attachmentQuantity: string;
   internalNumber: string;
-  status: statusMail;
+  status: StatusMail;
   inboundDate?: TimeDetail;
   eventLog?: EventLog;
 }
+interface EventLog {
+  manager: string;
+  description: string;
+  date: string;
+}
+
 interface TimeDetail {
   date: string;
   hour: string;
   fulldate: string;
 }
-export interface Participant {
+
+interface Participant {
   cuenta: string;
   fullname: string;
   jobtitle: string;
@@ -40,13 +46,14 @@ export interface Participant {
 
 export class Workflow {
   static fromResponse(workflow: workflowResponse) {
+    console.log(workflow);
     return new Workflow({
       emitter: {
         ...workflow.emitter,
-        jobtitle: workflow.emitter.jobtitle ?? 'Sin cargo',
+        jobtitle: 'Sin cargo',
       },
       outboundDate: {
-        fulldate: new Date(workflow.outboundDate).toISOString(),
+        fulldate: workflow.outboundDate,
         date: '',
         hour: '',
       },

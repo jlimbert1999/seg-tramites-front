@@ -1,4 +1,4 @@
-import { typeApplicant } from "../interfaces";
+import { typeApplicant } from '../../interfaces';
 
 interface externalProperties {
   formProcedure: any;
@@ -26,7 +26,12 @@ interface representative {
 }
 
 export class ExternalProcedureDto {
-  static fromForm({ requeriments, formProcedure, formApplicant, formRepresentative }: externalProperties) {
+  static fromForm({
+    requeriments,
+    formProcedure,
+    formApplicant,
+    formRepresentative,
+  }: externalProperties) {
     return new ExternalProcedureDto(
       {
         type: formProcedure['type'],
@@ -37,7 +42,9 @@ export class ExternalProcedureDto {
       },
       requeriments,
       formApplicant,
-      Object.keys(formRepresentative).length > 0 ? formRepresentative : undefined
+      Object.keys(formRepresentative).length > 0
+        ? formRepresentative
+        : undefined
     );
   }
   details: {

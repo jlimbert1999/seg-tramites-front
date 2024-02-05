@@ -1,5 +1,5 @@
 import { Pipe, type PipeTransform } from '@angular/core';
-import { stateProcedure } from '../interfaces';
+import { StateProcedure } from '../../../../domain/models';
 
 @Pipe({
   name: 'stateLabel',
@@ -7,14 +7,14 @@ import { stateProcedure } from '../interfaces';
 })
 export class StateLabelPipe implements PipeTransform {
   readonly validStatus = {
-    [stateProcedure.ANULADO]: 'text-bg-danger',
-    [stateProcedure.CONCLUIDO]: 'text-bg-dark',
-    [stateProcedure.INSCRITO]: 'text-bg-primary',
-    [stateProcedure.OBSERVADO]: 'text-bg-warning',
-    [stateProcedure.REVISION]: 'text-bg-secondary',
-    [stateProcedure.SUSPENDIDO]: 'text-bg-info',
+    [StateProcedure.Anulado]: 'text-bg-danger',
+    [StateProcedure.Concluido]: 'text-bg-dark',
+    [StateProcedure.Inscrito]: 'text-bg-primary',
+    [StateProcedure.Observado]: 'text-bg-warning',
+    [StateProcedure.Revision]: 'text-bg-secondary',
+    [StateProcedure.Suspendido]: 'text-bg-info',
   };
-  transform(value: stateProcedure): string {
+  transform(value: StateProcedure): string {
     return this.validStatus[value];
   }
 }

@@ -4,21 +4,21 @@ import {
   Component,
   OnInit,
   inject,
+  signal,
 } from '@angular/core';
 import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { ActivatedRoute } from '@angular/router';
 import { Location } from '@angular/common';
-import { groupProcedure } from '../../interfaces';
-import { MatButtonModule } from '@angular/material/button';
-import { CacheService } from '../../../../services/cache.service';
 import { MatTabsModule } from '@angular/material/tabs';
+import { CacheService, ProcedureService } from '../../../../services';
 import {
   ExternalDetailComponent,
+  GraphWorkflowComponent,
   InternalDetailComponent,
 } from '../../../../components';
-import { ProcedureService } from '../../../../services/procedures/procedure.service';
-import { ExternalProcedure } from '../../models';
+import { ExternalProcedure, Workflow } from '../../../../../domain/models';
 
 @Component({
   selector: 'app-detail',
@@ -31,6 +31,7 @@ import { ExternalProcedure } from '../../models';
     MatTabsModule,
     ExternalDetailComponent,
     InternalDetailComponent,
+    GraphWorkflowComponent,
   ],
   templateUrl: './detail.component.html',
   styleUrl: './detail.component.scss',
@@ -41,18 +42,16 @@ export class DetailComponent implements OnInit {
   private _location = inject(Location);
   private cacheService = inject(CacheService);
   private procedureService = inject(ProcedureService);
-  public procedure!: ExternalProcedure;
+  public procedure = signal<ExternalProcedure | undefined>(undefined);
+  public workflow = signal<Workflow[]>([]);
 
   ngOnInit(): void {
     this.route.params.subscribe(({ group, id }) => {
-      if (!Object.values(groupProcedure).includes(group) || !id) {
-        this._location.back();
-        return;
-      }
       this.procedureService
         .getProcedureDetail(id, group)
         .subscribe((detail) => {
-          this.procedure = detail.procedure;
+          this.procedure.set(detail.procedure);
+          this.workflow.set(detail.workflow);
         });
     });
   }

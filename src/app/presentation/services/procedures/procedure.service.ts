@@ -2,16 +2,17 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../../environments/environment';
 import {
-  workHistoryResponse,
+  externalResponse,
+  internalResponse,
   workflowResponse,
 } from '../../../infraestructure/interfaces';
-import {
-  externalResponse,
-  groupProcedure,
-  internalResponse,
-} from '../../pages/procedures/interfaces';
+
 import { map } from 'rxjs';
-import { ExternalProcedure } from '../../pages/procedures/models';
+import {
+  ExternalProcedure,
+  GroupProcedure,
+  Workflow,
+} from '../../../domain/models';
 
 interface ProcedureDetailResponse {
   procedure: internalResponse | externalResponse;
@@ -25,28 +26,31 @@ export class ProcedureService {
   private readonly url = `${environment.base_url}/procedure`;
   private readonly http = inject(HttpClient);
 
-  getProcedureDetail(id: string, group: groupProcedure) {
+  getProcedureDetail(id: string, group: GroupProcedure) {
     return this.http
       .get<ProcedureDetailResponse>(`${this.url}/${group}/${id}`)
       .pipe(
         map((resp) => {
+          console.log(resp.workflow);
           return {
             procedure: this.toModel(group, resp.procedure),
-            workflow: resp.workflow,
+            workflow: resp.workflow.map((state) =>
+              Workflow.fromResponse(state)
+            ),
             observations: resp.observations,
           };
         })
       );
   }
   private toModel(
-    group: groupProcedure,
+    group: GroupProcedure,
     response: internalResponse | externalResponse
   ) {
     const models = {
-      [groupProcedure.EXTERNAL]: ExternalProcedure.ResponseToModel(
+      [GroupProcedure.External]: ExternalProcedure.ResponseToModel(
         response as externalResponse
       ),
-      [groupProcedure.INTERNAL]: ExternalProcedure.ResponseToModel(
+      [GroupProcedure.Internal]: ExternalProcedure.ResponseToModel(
         response as externalResponse
       ),
     };

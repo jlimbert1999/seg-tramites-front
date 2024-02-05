@@ -1,11 +1,10 @@
-import { statusMail } from './status-mail.interface';
+import { StatusMail } from '../../../domain/models';
 
 export interface workflowResponse {
   emitter: Participant;
   outboundDate: string;
   detail: Detail[];
 }
-
 interface Detail {
   _id: string;
   receiver: Participant;
@@ -14,7 +13,7 @@ interface Detail {
   attachmentQuantity: string;
   internalNumber: string;
   inboundDate?: string;
-  status: statusMail;
+  status: StatusMail;
   eventLog: EventLog;
 }
 interface EventLog {

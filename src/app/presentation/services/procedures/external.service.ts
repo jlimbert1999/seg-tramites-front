@@ -1,11 +1,13 @@
-import { Injectable } from '@angular/core';
-import { environment } from '../../../../../environments/environment';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { typeProcedureResponse } from '../../types-procedures/interfaces/type-procedure-response.interface';
-import { ExternalProcedureDto } from '../dtos';
-import { externalResponse } from '../interfaces';
+import { Injectable } from '@angular/core';
 import { map } from 'rxjs';
-import { ExternalProcedure } from '../models';
+import { environment } from '../../../../environments/environment';
+import { ExternalProcedureDto } from '../../../infraestructure/dtos';
+import { ExternalProcedure } from '../../../domain/models';
+import {
+  externalResponse,
+  typeProcedureResponse,
+} from '../../../infraestructure/interfaces';
 
 interface CreateExternalForm {
   FormProcedure: Object;

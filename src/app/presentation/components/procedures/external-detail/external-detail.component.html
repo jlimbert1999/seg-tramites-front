@@ -1,19 +1,16 @@
 <div class="p-3">
   <div class="alert alert-danger text-center" role="alert">
-    <span class="fw-bold"> Duracion: </span>
+    <span class="fw-bold"> {{ duration() }} </span>
   </div>
   <div class="row g-2">
-    <div class="col-sm-12">
+    <div class="col-12">
       <div class="shadow rounded">
         <div class="card bg-transparent">
           <div class="card-body">
-            <h5 class="card-title">
-              {{ data.code }} /
-              <span class="badge" [ngClass]="data.state">{{ data.state }}</span>
-            </h5>
-            <h6 class="card-subtitle mb-2 text-muted">
-              Encargado: {{ data.fullNameManager }}
-            </h6>
+            <h1 class="card-title">{{ data.type | uppercase }}.</h1>
+            <span class="card-subtitle">
+              Encargado: {{ data.titleManager }}
+            </span>
             <hr />
             <form class="row g-3">
               <div class="col-12">
@@ -245,4 +242,3 @@
     </div>
   </div>
 </div>
-

@@ -1,5 +1,5 @@
-import { externalResponse, groupProcedure } from '../interfaces';
-import { Procedure, ProcedureProps } from './procedure.model';
+import { externalResponse } from '../../../infraestructure/interfaces';
+import { Procedure, ProcedureProps, GroupProcedure } from './procedure.model';
 
 interface ExternalProps extends ProcedureProps {
   details: details;
@@ -26,24 +26,37 @@ interface representative {
   nombre: string;
   telefono: string;
   paterno: string;
-  materno: string;
+  materno?: string;
   documento: string;
   dni: string;
 }
 
 export class ExternalProcedure extends Procedure {
   details: details;
-  static ResponseToModel({ send, account, type, ...values }: externalResponse) {
+  static ResponseToModel({
+    send,
+    account: { _id, funcionario },
+    type,
+    ...values
+  }: externalResponse) {
     return new ExternalProcedure({
       isSend: send,
       type: type.nombre,
-      account: { _id: account._id, funcionario: account.funcionario },
+      account: {
+        _id: _id,
+        funcionario: funcionario
+          ? {
+              fullname: `${funcionario.nombre} ${funcionario.paterno} ${funcionario.materno}`,
+              jobtitle: funcionario.cargo?.nombre,
+            }
+          : undefined,
+      },
       ...values,
     });
   }
 
   constructor({ details, ...procedureProps }: ExternalProps) {
-    super({ ...procedureProps, group: groupProcedure.EXTERNAL });
+    super(procedureProps);
     this.details = details;
   }
 
