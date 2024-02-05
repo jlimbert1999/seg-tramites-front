@@ -3,11 +3,9 @@ import {
   ChangeDetectionStrategy,
   Component,
   DestroyRef,
-  computed,
   inject,
   signal,
 } from '@angular/core';
-import { Observable } from 'rxjs';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
@@ -19,22 +17,26 @@ import { MatDialog } from '@angular/material/dialog';
 import { ExternalService } from '../../services/external.service';
 import { ExternalProcedure } from '../../models';
 import { CacheService } from '../../../../services/cache.service';
-import { PaginatorComponent } from '../../../../components';
+import {
+  PaginatorComponent,
+  SidenavButtonComponent,
+} from '../../../../components';
 import { StateLabelPipe } from '../../pipes/state-label.pipe';
 import { SearchInputComponent } from '../../components/search-input/search-input.component';
 import { ExternalProcedureDto } from '../../dtos';
+import { ExternalComponent } from './external/external.component';
 
 interface PaginationOptions {
   limit: number;
   index: number;
 }
 interface CacheData {
-  data: ExternalProcedure[];
+  datasource: ExternalProcedure[];
+  datasize: number;
   text: string;
-  length: number;
 }
 @Component({
-  selector: 'app-external',
+  selector: 'app-externals',
   standalone: true,
   imports: [
     CommonModule,
@@ -49,22 +51,24 @@ interface CacheData {
     MatButtonModule,
     StateLabelPipe,
     SearchInputComponent,
+    SidenavButtonComponent,
   ],
-  templateUrl: './external.component.html',
-  styleUrl: './external.component.scss',
+  templateUrl: './externals.component.html',
+  styleUrl: './externals.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ExternalComponent {
+export class ExternalsComponent {
   private dialog = inject(MatDialog);
   private externalService = inject(ExternalService);
   private cacheService: CacheService<CacheData> = inject(CacheService);
   private destroyref = inject(DestroyRef).onDestroy(() => {
     this.savePaginationData();
   });
-  public term: string = '';
 
-  datasource = signal<ExternalProcedure[]>([]);
-  displayedColumns: string[] = [
+  public term: string = '';
+  public datasource = signal<ExternalProcedure[]>([]);
+  public datasize = signal<number>(0);
+  public displayedColumns: string[] = [
     'code',
     'reference',
     'applicant',
@@ -79,13 +83,12 @@ export class ExternalComponent {
   }
 
   getData() {
-    console.log('GET DATA FROM SERVER');
     const subscription = this.term
       ? this.externalService.search(this.term, this.limit, this.offset)
       : this.externalService.findAll(this.limit, this.offset);
     subscription.subscribe((data) => {
       this.datasource.set(data.procedures);
-      this.cacheService.dataLength.set(data.length);
+      this.datasize.set(data.length);
     });
   }
 
@@ -96,46 +99,38 @@ export class ExternalComponent {
   }
 
   add() {
-    // const dialogRef = this.dialog.open<
-    //   RegisterExternalComponent,
-    //   undefined,
-    //   ExternalProcedure
-    // >(RegisterExternalComponent, {
-    //   width: '1000px',
-    //   disableClose: true,
-    // });
-    // dialogRef.afterClosed().subscribe((createdProcedure) => {
-    //   if (!createdProcedure) return;
-    //   this.paginatorService.length++;
-    //   this.dataSource.update((values) => {
-    //     if (this.dataSource.length === this.paginatorService.limit)
-    //       values.pop();
-    //     return [createdProcedure, ...values];
-    //   });
-    //   this.send(createdProcedure);
-    // });
+    const dialogRef = this.dialog.open(ExternalComponent, {
+      width: '1200px',
+      disableClose: true,
+    });
+    dialogRef.afterClosed().subscribe((createdProcedure) => {
+      if (!createdProcedure) return;
+      this.datasize.update((value) => value++);
+      this.datasource.update((values) => {
+        if (values.length === this.limit) values.pop();
+        return [createdProcedure, ...values];
+      });
+      this.send(createdProcedure);
+    });
   }
 
   edit(procedure: ExternalProcedure) {
-    // const dialogRef = this.dialog.open<
-    //   RegisterExternalComponent,
-    //   ExternalProcedure,
-    //   ExternalProcedure
-    // >(RegisterExternalComponent, {
-    //   width: '1000px',
-    //   data: procedure,
-    //   disableClose: true,
-    // });
-    // dialogRef.afterClosed().subscribe((updatedProcedure) => {
-    //   if (!updatedProcedure) return;
-    //   this.dataSource.update((values) => {
-    //     const indexFound = values.findIndex(
-    //       (element) => element._id === updatedProcedure._id
-    //     );
-    //     values[indexFound] = updatedProcedure;
-    //     return [...values];
-    //   });
-    // });
+    const dialogRef = this.dialog.open(ExternalComponent, {
+      width: '1200px',
+      data: procedure,
+      disableClose: true,
+    });
+    dialogRef.afterClosed().subscribe((updatedProcedure) => {
+      if (!updatedProcedure) return;
+      console.log(updatedProcedure);
+      this.datasource.update((values) => {
+        const indexFound = values.findIndex(
+          (element) => element._id === updatedProcedure._id
+        );
+        values[indexFound] = updatedProcedure;
+        return [...values];
+      });
+    });
   }
 
   send(procedure: ExternalProcedure) {
@@ -197,24 +192,23 @@ export class ExternalComponent {
   }
 
   private savePaginationData(): void {
-    this.cacheService.storage[this.constructor.name] = {
-      data: this.datasource(),
-      text: this.term,
-      length: this.cacheService.dataLength(),
-    };
     this.cacheService.keepAliveData.set(false);
+    this.cacheService.storage[this.constructor.name] = {
+      datasource: this.datasource(),
+      datasize: this.datasize(),
+      text: this.term,
+    };
   }
 
   private loadPaginationData(): void {
     const cacheData = this.cacheService.storage[this.constructor.name];
     if (!this.cacheService.keepAliveData() || !cacheData) {
-      console.log('si');
       this.getData();
       return;
     }
-    this.datasource.set(cacheData.data);
+    this.datasource.set(cacheData.datasource);
+    this.datasize.set(cacheData.datasize);
     this.term = cacheData.text;
-    this.cacheService.dataLength.set(cacheData.length);
   }
 
   changePage({ limit, index }: PaginationOptions) {
@@ -231,9 +225,6 @@ export class ExternalComponent {
   }
   get offset() {
     return this.cacheService.pageOffset();
-  }
-  get length() {
-    return this.cacheService.dataLength();
   }
 
   get PageParam(): { limit: number; index: number } {

@@ -1,0 +1,234 @@
+<h2 mat-dialog-title>TRAMITE EXTERNO</h2>
+<mat-dialog-content>
+  <mat-stepper headerPosition="bottom" #stepper>
+    <mat-step [stepControl]="FormProcedure" errorMessage="Campos incorrectos">
+      <form [formGroup]="FormProcedure">
+        <ng-template matStepLabel>Detalles tramite</ng-template>
+        @if (!external) {
+        <div class="row">
+          <div class="col-sm-3">
+            <simple-select-search
+              placeholder="Segmento"
+              [data]="segments()"
+              (onSelect)="getTypesProceduresBySegment($event)"
+            />
+          </div>
+          <div class="col-sm-9">
+            <simple-select-search
+              placeholder="Tipo de tramite"
+              [data]="typesProcedures()"
+              (onSelect)="selectTypeProcedure($event)"
+            />
+          </div>
+        </div>
+        }
+        <div class="row">
+          <div class="col-sm-6">
+            <mat-form-field class="example-full-width">
+              <mat-label>Referencia del tramite</mat-label>
+              <textarea matInput formControlName="reference"></textarea>
+              <mat-error *ngIf="FormProcedure.controls['reference'].invalid">
+                Ingrese la referencia
+              </mat-error>
+            </mat-form-field>
+          </div>
+          <div class="col-sm-3">
+            <mat-form-field class="example-full-width">
+              <mat-label>Cant. Hojas / Anexos</mat-label>
+              <input type="text" matInput formControlName="amount" />
+              <mat-error *ngIf="FormProcedure.controls['amount'].invalid"
+                >Ingrese la cantidad de hojas
+              </mat-error>
+            </mat-form-field>
+          </div>
+          <div class="col-sm-3">
+            <mat-form-field class="example-full-width">
+              <mat-label>CITE</mat-label>
+              <input type="text" matInput formControlName="cite" />
+            </mat-form-field>
+          </div>
+        </div>
+        @if(!external){
+        <div class="row mt-2">
+          @if (FormProcedure.get('type')?.value !== '') {
+          <h4>Requerimientos</h4>
+          <hr />
+          <ol class="list-group list-group-numbered bg-transparent">
+            @for (requirement of requirements; track $index) {
+            <li class="list-group-item">
+              {{ requirement }}
+            </li>
+            }@empty {
+            <div class="alert alert-primary" role="alert">
+              El tramite no tiene requerimientos
+            </div>
+            }
+          </ol>
+          }
+        </div>
+        }
+      </form>
+    </mat-step>
+    <mat-step [stepControl]="FormApplicant()" errorMessage="Campos incorrectos">
+      <ng-template matStepLabel>Detalles solicitante</ng-template>
+      @if(!external){
+      <mat-form-field>
+        <mat-label>Seleccione el tipo de solicitante</mat-label>
+        <mat-select
+          [ngModel]="applicantType()"
+          (selectionChange)="applicantType.set($event.value)"
+        >
+          <mat-option [value]="'NATURAL'">SOLICITANTE NATURAL</mat-option>
+          <mat-option [value]="'JURIDICO'">SOLICITANTE JURIDICO</mat-option>
+        </mat-select>
+      </mat-form-field>
+      }
+      <form [formGroup]="FormApplicant()">
+        <div class="row">
+          @if(applicantType()==='NATURAL'){
+          <div class="col-sm-4">
+            <mat-form-field class="example-full-width">
+              <mat-label>Nombres</mat-label>
+              <input matInput formControlName="nombre" class="uppercase" />
+            </mat-form-field>
+          </div>
+          <div class="col-sm-4">
+            <mat-form-field class="example-full-width">
+              <mat-label>Apellido paterno</mat-label>
+              <input matInput formControlName="paterno" class="uppercase" />
+            </mat-form-field>
+          </div>
+          <div class="col-sm-4">
+            <mat-form-field class="example-full-width">
+              <mat-label>Apellido materno</mat-label>
+              <input matInput formControlName="materno" class="uppercase" />
+            </mat-form-field>
+          </div>
+          <div class="col-sm-4">
+            <mat-form-field class="example-full-width" #TipoDoc>
+              <mat-label>Tipo documento</mat-label>
+              <mat-select formControlName="documento">
+                <mat-option
+                  *ngFor="let document of documents"
+                  [value]="document"
+                >
+                  {{ document | uppercase }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+          <div class="col-sm-4">
+            <mat-form-field class="example-full-width">
+              <mat-label>DNI</mat-label>
+              <input matInput formControlName="dni" />
+            </mat-form-field>
+          </div>
+          <div class="col-sm-4">
+            <mat-form-field class="example-full-width">
+              <mat-label>Telefono de referencia</mat-label>
+              <input matInput formControlName="telefono" />
+            </mat-form-field>
+          </div>
+          }@else {
+          <div class="col-sm-8">
+            <mat-form-field class="example-full-width">
+              <mat-label>Nombres</mat-label>
+              <input matInput formControlName="nombre" class="uppercase" />
+            </mat-form-field>
+          </div>
+          <div class="col-sm-4">
+            <mat-form-field class="example-full-width">
+              <mat-label>Telefono de referencia</mat-label>
+              <input matInput formControlName="telefono" />
+            </mat-form-field>
+          </div>
+          }
+        </div>
+      </form>
+      <div class="col-12" *ngIf="!external">
+        <section>
+          <label>Tipo de registro:</label>
+          <mat-radio-group
+            [ngModel]="hasRepresentative()"
+            (change)="hasRepresentative.set($event.value)"
+          >
+            <mat-radio-button [value]="false">
+              SIN REPRESENTANTE</mat-radio-button
+            >
+            <mat-radio-button [value]="true"
+              >CON REPRESENTANTE</mat-radio-button
+            >
+          </mat-radio-group>
+        </section>
+      </div>
+    </mat-step>
+    @if(hasRepresentative()){
+    <mat-step
+      [stepControl]="FormRepresentative()"
+      errorMessage="Campos incorrectos"
+    >
+      <form [formGroup]="FormRepresentative()">
+        <ng-template matStepLabel>Detalles representante</ng-template>
+        <div class="row">
+          <div class="col-sm-4">
+            <mat-form-field class="example-full-width">
+              <mat-label>Nombre</mat-label>
+              <input matInput formControlName="nombre" class="uppercase" />
+            </mat-form-field>
+          </div>
+          <div class="col-sm-4">
+            <mat-form-field class="example-full-width">
+              <mat-label>Apellido paterno</mat-label>
+              <input matInput formControlName="paterno" class="uppercase" />
+            </mat-form-field>
+          </div>
+          <div class="col-sm-4">
+            <mat-form-field class="example-full-width">
+              <mat-label>Apellido materno</mat-label>
+              <input matInput formControlName="materno" class="uppercase" />
+            </mat-form-field>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-sm-4">
+            <mat-form-field class="example-full-width" #TipoDoc>
+              <mat-label>Tipo documento</mat-label>
+              <mat-select formControlName="documento">
+                <mat-option
+                  *ngFor="let document of documents"
+                  [value]="document"
+                >
+                  {{ document | uppercase }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+          <div class="col-sm-4">
+            <mat-form-field class="example-full-width">
+              <mat-label>DNI</mat-label>
+              <input matInput formControlName="dni" />
+            </mat-form-field>
+          </div>
+          <div class="col-sm-4">
+            <mat-form-field class="example-full-width">
+              <mat-label>Telefono de referencia</mat-label>
+              <input matInput formControlName="telefono" />
+            </mat-form-field>
+          </div>
+        </div>
+      </form>
+    </mat-step>
+    }
+  </mat-stepper>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-raised-button mat-dialog-close color="warn">Cancelar</button>
+  <button
+    mat-raised-button
+    color="primary"
+    [disabled]="!validForms"
+    (click)="save()"
+  >
+    Guardar
+  </button>
+</mat-dialog-actions>

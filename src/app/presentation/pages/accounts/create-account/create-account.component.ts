@@ -20,7 +20,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatSelectModule } from '@angular/material/select';
 import { MatStepperModule } from '@angular/material/stepper';
 import { MatInputModule } from '@angular/material/input';
-import { SelectSearchComponent } from '../../../components';
+import { ServerSelectSearchComponent } from '../../../components';
 import { AccountService } from '../services/account.service';
 import { roleResponse } from '../../../../infraestructure/interfaces';
 import { OfficerService } from '../../officers/services/officer.service';
@@ -42,7 +42,7 @@ interface SelectOption {
     MatFormFieldModule,
     MatInputModule,
     ReactiveFormsModule,
-    SelectSearchComponent,
+    ServerSelectSearchComponent,
   ],
   templateUrl: './create-account.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,

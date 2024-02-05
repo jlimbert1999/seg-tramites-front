@@ -43,12 +43,11 @@
   <div class="row">
     @if(!FormOfficer.get('cargo')?.value){
     <div class="col-sm-12">
-      <select-search
-        [isServerFilter]="true"
+      <server-select-search
         [data]="jobs()"
         (onSearch)="searchJob($event)"
         (onSelect)="setJob($event)"
-      ></select-search>
+      ></server-select-search>
     </div>
     } @else {
     <mat-form-field>

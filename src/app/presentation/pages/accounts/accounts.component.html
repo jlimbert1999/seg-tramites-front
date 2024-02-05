@@ -15,7 +15,7 @@
 <div class="container-fluid">
   <div class="row">
     <div class="col-sm-3">
-      <select-search
+      <server-select-search
         [placeholder]="'Seleccione una institucion'"
         [data]="filteredInstitutions()"
         (onSearch)="filterInstitutions($event)"
@@ -23,7 +23,7 @@
       />
     </div>
     <div class="col-sm-5">
-      <select-search
+      <server-select-search
         [placeholder]="'Seleccione una dependencia'"
         [data]="filteredDependencies()"
         (onSearch)="filterDependencies($event)"

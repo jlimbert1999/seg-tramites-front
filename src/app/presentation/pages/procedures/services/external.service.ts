@@ -31,7 +31,7 @@ export class ExternalService {
   }
   getTypesProceduresBySegment(segment: string) {
     return this.http.get<typeProcedureResponse[]>(
-      `${this.base_url}/segments/${segment}`
+      `${this.base_url}/types-procedures/${segment}`
     );
   }
 

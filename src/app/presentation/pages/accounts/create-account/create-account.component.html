@@ -43,12 +43,11 @@
           </div>
           <div class="row">
             <div class="col-sm-12">
-              <select-search
+              <server-select-search
                 placeholder="Buscar cargo"
-                [isServerFilter]="true"
                 [data]="jobs()"
                 (onSearch)="searchJob($event)"
-              ></select-search>
+              ></server-select-search>
             </div>
           </div>
         </form>
@@ -58,20 +57,20 @@
           <ng-template matStepLabel>Datos cuenta</ng-template>
           <div class="row">
             <div class="col-12">
-              <!-- <select-search
+              <!-- <server-select-search
                 placeholder="Buscar institucion"
                 [data]="institutions()"
                 (onSearch)="searchInstitutions($event)"
                 (onSelect)="getDependencies($event)"
-              ></select-search> -->
+              ></server-select-search> -->
             </div>
             <div class="col-12">
-              <select-search
+              <server-select-search
                 placeholder="Buscar dependencia"
                 [data]="dependencies()"
                 (onSearch)="filterDependencies($event)"
                 (onSelect)="setDependency($event)"
-              ></select-search>
+              ></server-select-search>
             </div>
           </div>
           <div class="row">

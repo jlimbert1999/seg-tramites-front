@@ -22,7 +22,7 @@ type MatSelectSearchData<T> = {
 };
 
 @Component({
-  selector: 'select-search',
+  selector: 'server-select-search',
   standalone: true,
   imports: [
     CommonModule,
@@ -33,15 +33,14 @@ type MatSelectSearchData<T> = {
     MatIconModule,
     MatButtonModule,
   ],
-  templateUrl: './select-search.component.html',
+  templateUrl: './server-select-search.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SelectSearchComponent<T> implements OnInit, OnDestroy {
+export class ServerSelectSearchComponent<T> implements OnInit, OnDestroy {
   @Input() set initialValue(value: T) {
     this.bankCtrl.setValue(value);
   }
   @Input() placeholder = 'Buscar....';
-  @Input() isServerFilter: boolean = false;
   @Input({ required: true }) set data(values: MatSelectSearchData<T>[]) {
     this.filteredBanks.next(values);
   }
@@ -60,7 +59,7 @@ export class SelectSearchComponent<T> implements OnInit, OnDestroy {
       .pipe(
         filter((search) => !!search),
         takeUntil(this._onDestroy),
-        debounceTime(this.isServerFilter ? 350 : 0)
+        debounceTime(350)
       )
       .subscribe((value) => {
         if (!value) console.log('mal');

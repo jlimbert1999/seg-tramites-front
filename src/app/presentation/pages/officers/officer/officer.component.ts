@@ -23,7 +23,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { OfficerService } from '../services/officer.service';
 import { Alert } from '../../../../helpers';
-import { SelectSearchComponent } from '../../../components/select-search/select-search.component';
+import { ServerSelectSearchComponent } from '../../../components/server-select-search/server-select-search.component';
 import { Officer } from '../../../../domain/models';
 
 interface SelectOptions {
@@ -45,7 +45,7 @@ interface job {
     MatFormFieldModule,
     MatInputModule,
     MatIconModule,
-    SelectSearchComponent,
+    ServerSelectSearchComponent,
   ],
   templateUrl: './officer.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,

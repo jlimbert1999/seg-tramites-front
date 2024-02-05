@@ -21,7 +21,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { DependencyService } from '../services/dependency.service';
-import { SelectSearchComponent } from '../../../components/select-search/select-search.component';
+import { ServerSelectSearchComponent } from '../../../components/server-select-search/server-select-search.component';
 import { dependencyResponse } from '../../../../infraestructure/interfaces';
 
 interface SelectOptions {
@@ -38,7 +38,7 @@ interface SelectOptions {
     MatButtonModule,
     MatFormFieldModule,
     MatInputModule,
-    SelectSearchComponent,
+    ServerSelectSearchComponent,
   ],
   templateUrl: './dependency.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,

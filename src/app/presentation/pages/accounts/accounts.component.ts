@@ -22,7 +22,7 @@ import { Account } from '../../../domain/models';
 import {
   PaginatorComponent,
   SidenavButtonComponent,
-  SelectSearchComponent,
+  ServerSelectSearchComponent,
 } from '../../components';
 import { EditAccountComponent } from './edit-account/edit-account.component';
 
@@ -50,7 +50,7 @@ interface SelectOption {
     MatMenuModule,
     PaginatorComponent,
     SidenavButtonComponent,
-    SelectSearchComponent,
+    ServerSelectSearchComponent,
   ],
   templateUrl: './accounts.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,

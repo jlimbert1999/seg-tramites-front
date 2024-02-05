@@ -9,3 +9,8 @@ export * from './administration/job-response.interface';
 export * from './administration/oficer-response.interface';
 export * from './administration/work-history-response.interface';
 export * from './administration/role-response.interface';
+
+export * from './procedures/status-mail.interface';
+export * from './procedures/workflow-response.interface';
+
+

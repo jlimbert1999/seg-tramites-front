@@ -1,4 +1,6 @@
+@if (procedure) {
 <mat-toolbar color="primary">
+  <span>{{ procedure.code }}</span>
   <button (click)="backLocation()" mat-icon-button matTooltip="Regresar">
     <mat-icon>arrow_back</mat-icon>
   </button>
@@ -7,3 +9,16 @@
     <mat-icon>print</mat-icon>
   </button>
 </mat-toolbar>
+<mat-tab-group>
+  <mat-tab label="First">
+    @switch (procedure.group) { @case ('ExternalDetail') {
+    <external-detail [data]="procedure" />
+    } @default {
+    <p>Type procedure is note defined</p>
+    } }
+  </mat-tab>
+  <mat-tab label="Second"> Content 2 </mat-tab>
+  <mat-tab label="Third"> Content 3 </mat-tab>
+</mat-tab-group>
+
+}

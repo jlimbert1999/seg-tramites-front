@@ -3,7 +3,7 @@
   <form [formGroup]="FormDependency">
     <div class="row">
       @if(FormDependency.get('institucion')){
-      <select-search
+      <server-select-search
         [placeholder]="'Seleccione una institucion'"
         [data]="filteredOptions()"
         (onSearch)="filterInstitutions($event)"

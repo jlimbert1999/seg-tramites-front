@@ -1,0 +1,248 @@
+<div class="p-3">
+  <div class="alert alert-danger text-center" role="alert">
+    <span class="fw-bold"> Duracion: </span>
+  </div>
+  <div class="row g-2">
+    <div class="col-sm-12">
+      <div class="shadow rounded">
+        <div class="card bg-transparent">
+          <div class="card-body">
+            <h5 class="card-title">
+              {{ data.code }} /
+              <span class="badge" [ngClass]="data.state">{{ data.state }}</span>
+            </h5>
+            <h6 class="card-subtitle mb-2 text-muted">
+              Encargado: {{ data.fullNameManager }}
+            </h6>
+            <hr />
+            <form class="row g-3">
+              <div class="col-12">
+                <label for="txtType" class="form-label">Tipo de tramite</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="txtType"
+                  [value]="data.type"
+                  readonly
+                />
+              </div>
+              <div class="col-12">
+                <label for="txtDescription" class="form-label"
+                  >Descripcion</label
+                >
+                <textarea class="form-control" id="txtDescription" readonly>{{
+                  data.reference
+                }}</textarea>
+              </div>
+              <div class="col-md-4">
+                <label for="txtCantidad" class="form-label">Cantidad</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="txtCantidad"
+                  [value]="data.amount"
+                  readonly
+                />
+              </div>
+              <div class="col-md-4">
+                <label for="txtCite" class="form-label">Cite</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="txtCite"
+                  [value]="data.citeCode"
+                  readonly
+                />
+              </div>
+              <div class="col-md-4">
+                <label for="txtPin" class="form-label">Pin</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="txtPin"
+                  [value]="data.details.pin"
+                  readonly
+                />
+              </div>
+            </form>
+          </div>
+          <div class="card-footer">
+            <small class="text-body-secondary fs-6"
+              >FECHA REGISTRO: {{ data.startDate | date : "short" }}</small
+            >
+          </div>
+          <div *ngIf="data.endDate" class="card-footer">
+            <small class="text-body-secondary fs-6"
+              >FECHA CONCLUSION: {{ data.endDate | date : "short" }}</small
+            >
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-12">
+      <div class="shadow rounded">
+        <div class="card bg-transparent">
+          <div class="card-body">
+            <h5 class="card-title">
+              Solicitante: {{ data.details.solicitante.tipo }}
+            </h5>
+            <hr />
+            @if(data.details.solicitante.tipo === 'NATURAL'){
+            <form class="row g-3">
+              <div class="col-md-8">
+                <label for="txtFirstName" class="form-label">Nombre</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="txtFirstName"
+                  [value]="data.fullNameApplicant"
+                  readonly
+                />
+              </div>
+              <div class="col-md-4">
+                <label for="txtDni" class="form-label">Dni</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="txtDni"
+                  [value]="data.details.solicitante.dni"
+                  readonly
+                />
+              </div>
+              <div class="col-md-8">
+                <label for="txtDocument" class="form-label">Documento</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="txtDocument"
+                  [value]="data.details.solicitante.documento"
+                  readonly
+                />
+              </div>
+              <div class="col-md-4">
+                <label for="txtTelephone" class="form-label">Telfono</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="txtTelephone"
+                  [value]="data.details.solicitante.telefono"
+                  readonly
+                />
+              </div>
+            </form>
+            } @else {
+            <form class="row g-3">
+              <div class="col-md-9">
+                <label for="txtFirstName" class="form-label">Nombre</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="txtFirstName"
+                  [value]="data.fullNameApplicant"
+                  readonly
+                />
+              </div>
+              <div class="col-md-3">
+                <label for="txtTelephone" class="form-label">Telfono</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="txtTelephone"
+                  [value]="data.details.solicitante.telefono"
+                  readonly
+                />
+              </div>
+            </form>
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-12">
+      <div class="shadow rounded">
+        <div class="card bg-transparent">
+          <div class="card-body">
+            <h5 class="card-title">Representante</h5>
+            <hr />
+            @if(data.details.representante){
+            <form class="row g-3">
+              <div class="col-md-8">
+                <label for="txtFirstName" class="form-label">Nombre</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="txtFirstName"
+                  [value]="data.fullNameRepresentative"
+                  readonly
+                />
+              </div>
+              <div class="col-md-4">
+                <label for="txtDni" class="form-label">Dni</label>
+                <!-- <input
+                  type="text"
+                  class="form-control"
+                  id="txtDni"
+                  [value]="data()!.details.representante.dni"
+                  readonly
+                /> -->
+              </div>
+              <div class="col-md-8">
+                <label for="txtDocument" class="form-label">Documento</label>
+                <!-- <input
+                  type="text"
+                  class="form-control"
+                  id="txtDocument"
+                  [value]="data()!.details.representante.documento"
+                  readonly
+                /> -->
+              </div>
+              <div class="col-md-4">
+                <label for="txtTelephone" class="form-label">Telefono</label>
+                <!-- <input
+                  type="text"
+                  class="form-control"
+                  id="txtTelephone"
+                  [value]="data()!.details.representante.telefono"
+                  readonly
+                /> -->
+              </div>
+            </form>
+            } @else {
+            <p class="fw-bold text-center">Sin representante</p>
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-12">
+      <div class="shadow rounded">
+        <div class="card bg-transparent">
+          <div class="card-body">
+            <h5 class="card-title">Requerimientos</h5>
+            <hr />
+            <ol
+              *ngIf="
+                data!.details.requirements.length > 0;
+                else noRequirementsTemplate
+              "
+              class="list-group list-group-numbered"
+            >
+              <li
+                *ngFor="let requirement of data.details.requirements"
+                class="list-group-item"
+              >
+                {{ requirement }}
+              </li>
+            </ol>
+            <ng-template #noRequirementsTemplate>
+              <p class="fw-bold text-center">
+                No se presentaron requerimientos
+              </p>
+            </ng-template>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
