@@ -7,80 +7,71 @@ export enum StatusMail {
   Pending = 'pending',
   Archived = 'archived',
 }
-
-export interface WorkflowProps {
-  emitter: Participant;
-  outboundDate: TimeDetail;
-  detail: Detail[];
-}
-
-interface Detail {
+interface WorkflowProps {
   _id: string;
-  receiver: Participant;
+  date: Date;
+  emitter: Officer;
   procedure: string;
-  reference: string;
-  attachmentQuantity: string;
+  dispatches: Dispatch[];
   internalNumber: string;
-  status: StatusMail;
-  inboundDate?: TimeDetail;
-  eventLog?: EventLog;
 }
+
+interface Dispatch {
+  date?: Date;
+  receiver: Officer;
+  reference: string;
+  status: StatusMail;
+  eventLog?: EventLog;
+  attachmentQuantity: string;
+}
+
 interface EventLog {
+  date: string;
   manager: string;
   description: string;
-  date: string;
 }
 
-interface TimeDetail {
-  date: string;
-  hour: string;
-  fulldate: string;
-}
-
-interface Participant {
-  cuenta: string;
+interface Officer {
+  account: string;
   fullname: string;
-  jobtitle: string;
-  duration: string;
+  jobtitle?: string;
 }
 
 export class Workflow {
-  static fromResponse(workflow: workflowResponse) {
-    console.log(workflow);
+  public _id: string;
+  public date: Date;
+  public emitter: Officer;
+  public procedure: string;
+  public dispatches: Dispatch[];
+  public internalNumber: string;
+
+  static reponseToModel(response: workflowResponse) {
     return new Workflow({
-      emitter: {
-        ...workflow.emitter,
-        jobtitle: 'Sin cargo',
-      },
-      outboundDate: {
-        fulldate: workflow.outboundDate,
-        date: '',
-        hour: '',
-      },
-      detail: workflow.detail.map(({ inboundDate, receiver, ...values }) => {
-        return {
-          receiver: {
-            ...receiver,
-            jobtitle: receiver.jobtitle ?? 'Sin cargo',
-          },
-          ...values,
-          inboundDate: inboundDate
-            ? {
-                fulldate: '',
-                date: '',
-                hour: '',
-              }
-            : { fulldate: '', date: '', hour: '' },
-        };
-      }),
+      _id: response._id,
+      date: new Date(response.date),
+      emitter: response.emitter,
+      procedure: response.internalNumber,
+      dispatches: response.dispatches.map(({ date, ...values }) => ({
+        ...values,
+        date: new Date(date),
+      })),
+      internalNumber: response.internalNumber,
     });
   }
-  readonly emitter: Participant;
-  readonly outboundDate: TimeDetail;
-  readonly detail: Detail[];
-  constructor({ emitter, outboundDate, detail }: WorkflowProps) {
+
+  constructor({
+    _id,
+    date,
+    emitter,
+    procedure,
+    dispatches,
+    internalNumber,
+  }: WorkflowProps) {
+    this._id = _id;
+    this.date = date;
     this.emitter = emitter;
-    this.outboundDate = outboundDate;
-    this.detail = detail;
+    this.procedure = procedure;
+    this.dispatches = dispatches;
+    this.internalNumber = internalNumber;
   }
 }

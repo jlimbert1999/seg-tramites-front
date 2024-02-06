@@ -1,3 +1,59 @@
-:host {
-  display: block;
+// .example-header-image {
+//   background-image: url('../../../../../assets/img/account.png');
+//   background-size: cover;
+// }
+
+.example-tab-icon {
+  margin-right: 8px;
+}
+
+.example-card {
+  max-width: 500px;
+  height: 150px;
+  border: 1px solid black;
+}
+
+/* TODO(mdc-migration): The following rule targets internal classes of card that may no longer apply for the MDC version. */
+mat-card-title {
+  color: royalblue;
+}
+
+.line-success {
+  stroke: #55A630;
+}
+
+.circle-success {
+  fill: #55A630;
+}
+
+.line-reject {
+  stroke: #EF233C;
+  stroke-dasharray: 10 10;
+}
+
+.circle-reject {
+  fill: #EF233C;
+}
+
+.line-pending {
+  stroke: #FF8C42;
+}
+
+.circle-pending {
+  fill: #FF8C42;
+}
+
+::ng-deep .tooltip {
+  background-color: black;
+  font-size: 16px;
+}
+
+.cluster {
+  text-anchor: middle;
+  font-size: 20px;
+  stroke-width: 3px;
+}
+
+.dark {
+  height: 85vh;
 }

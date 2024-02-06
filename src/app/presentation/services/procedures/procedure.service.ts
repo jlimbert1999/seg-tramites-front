@@ -34,9 +34,7 @@ export class ProcedureService {
           console.log(resp.workflow);
           return {
             procedure: this.toModel(group, resp.procedure),
-            workflow: resp.workflow.map((state) =>
-              Workflow.fromResponse(state)
-            ),
+            workflow: resp.workflow.map((el) => Workflow.reponseToModel(el)),
             observations: resp.observations,
           };
         })

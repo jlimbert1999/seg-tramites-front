@@ -1,5 +1,13 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  ElementRef,
+  Input,
+  TemplateRef,
+  ViewChild,
+  ViewContainerRef,
+} from '@angular/core';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatCardModule } from '@angular/material/card';
 import {
@@ -9,40 +17,74 @@ import {
   MiniMapPosition,
   NgxGraphModule,
 } from '@swimlane/ngx-graph';
+import { Overlay, OverlayModule, OverlayRef } from '@angular/cdk/overlay';
 import * as shape from 'd3-shape';
 import { StatusMail, Workflow } from '../../../../domain/models';
+import { ComponentPortal, TemplatePortal } from '@angular/cdk/portal';
+import { PaginatorComponent } from '../../paginator/paginator.component';
 @Component({
   selector: 'graph-workflow',
   standalone: true,
-  imports: [CommonModule, NgxGraphModule, MatCardModule, MatTooltipModule],
+  imports: [
+    CommonModule,
+    NgxGraphModule,
+    MatCardModule,
+    MatTooltipModule,
+    OverlayModule,
+  ],
   templateUrl: './graph-workflow.component.html',
   styleUrl: './graph-workflow.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class GraphWorkflowComponent {
   @Input() data: Workflow[] = [];
-  nodes: Node[] = [];
-  links: Edge[] = [];
-  clusters: ClusterNode[] = [];
-  curve = shape.curveLinear;
-  minimapPosition: MiniMapPosition = MiniMapPosition.UpperRight;
+  public nodes: Node[] = [];
+  public links: Edge[] = [];
+  public curve = shape.curveLinear;
+  public clusters: ClusterNode[] = [];
+  public minimapPosition: MiniMapPosition = MiniMapPosition.UpperRight;
+  isOpen = false;
+  @ViewChild('myTemplate') myTemplateRef!: TemplateRef<any>;
+  @ViewChild('mybtn') btn!: ElementRef<any>;
+  private overlayRef?: OverlayRef;
 
-  constructor() {}
+  constructor(
+    private overlay: Overlay,
+    private _viewContainerRef: ViewContainerRef
+  ) {}
 
   ngOnInit(): void {
-    this.data.forEach((element, index) => {
-      this.addNode(element.emitter);
-      element.detail.forEach((send, subindex) => {
+    const listUsers: Record<string, Node> = {};
+    this.data.forEach((stage, index) => {
+      listUsers[stage.emitter.account] = {
+        id: stage.emitter.account,
+        label: 'ds',
+        data: {
+          fullname: stage.emitter.fullname,
+          jobtitle: stage.emitter.jobtitle ?? 'SIN CARGO',
+        },
+      };
+      stage.dispatches.forEach((dispatch) => {
+        listUsers[dispatch.receiver.account] = {
+          id: dispatch.receiver.account,
+          label: 'ds',
+          data: {
+            fullname: dispatch.receiver.fullname,
+            jobtitle: dispatch.receiver.jobtitle ?? 'SIN CARGO',
+          },
+        };
+      });
+      stage.dispatches.forEach((dispatch, subindex) => {
         const [status, classEdge, classLink] =
-          send.status === StatusMail.Rejected
+          dispatch.status === StatusMail.Rejected
             ? ['Rechazado', 'circle-reject', 'line-reject']
-            : send.status === StatusMail.Pending
+            : dispatch.status === StatusMail.Pending
             ? ['Pendiente', 'circle-pending', 'line-pending']
             : ['Recibido', 'circle-success', 'line-success'];
         this.links.push({
           id: `a${subindex}-${index}`,
-          source: element.emitter.cuenta,
-          target: send.receiver.cuenta,
+          source: stage.emitter.account,
+          target: dispatch.receiver.account,
           label: `${index + 1}`,
           data: {
             status,
@@ -50,11 +92,9 @@ export class GraphWorkflowComponent {
             classLink,
           },
         });
-        this.addNode(send.receiver);
-        // this.addClusterIfNotFount(send.emitter);
-        // this.addClusterIfNotFount(send.receiver);
       });
     });
+    this.nodes = Object.values(listUsers);
   }
 
   addNode(user: any): void {
@@ -86,5 +126,30 @@ export class GraphWorkflowComponent {
         participant.cuenta._id
       );
     }
+  }
+  ope(element: HTMLElement) {
+    if (this.overlayRef) this.overlayRef.dispose();
+    this.overlayRef = this.overlay.create({
+      positionStrategy: this.overlay
+        .position()
+        .flexibleConnectedTo(element)
+        .withPositions([
+          {
+            originX: 'start',
+            originY: 'bottom',
+            overlayX: 'center',
+            overlayY: 'top',
+          },
+        ]),
+    });
+    const portal = new TemplatePortal(
+      this.myTemplateRef,
+      this._viewContainerRef
+    );
+    this.overlayRef.attach(portal);
+    this.overlayRef.detachBackdrop();
+    this.overlayRef.outsidePointerEvents().subscribe(() => {
+      this.overlayRef?.dispose();
+    });
   }
 }
