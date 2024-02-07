@@ -6,3 +6,4 @@ export * from './procedures/external.model';
 export * from './procedures/internal.model';
 export * from './procedures/procedure.model';
 export * from './procedures/workflow.model';
+export * from './procedures/communication.model';

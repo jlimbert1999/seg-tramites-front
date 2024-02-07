@@ -6,15 +6,9 @@ import { environment } from '../../../environments/environment';
   providedIn: 'root',
 })
 export class SocketService {
-  private socket!: Socket;
-  constructor() {}
-
-  setupSocketConnection() {
-    const token = localStorage.getItem('token') ?? '';
-    this.socket = io(`${environment.base_url}`, { auth: { token } });
-    console.log(this.socket);
-  }
-
+  private readonly socket: Socket = io(environment.base_url, {
+    auth: { token: localStorage.getItem('token') ?? '' },
+  });
   disconnect() {
     // if (this.socket) {
     //   this.socket.removeListener();

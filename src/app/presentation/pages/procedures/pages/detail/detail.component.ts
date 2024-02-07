@@ -38,10 +38,11 @@ import { ExternalProcedure, Workflow } from '../../../../../domain/models';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DetailComponent implements OnInit {
-  private route = inject(ActivatedRoute);
   private _location = inject(Location);
+  private route = inject(ActivatedRoute);
   private cacheService = inject(CacheService);
   private procedureService = inject(ProcedureService);
+
   public procedure = signal<ExternalProcedure | undefined>(undefined);
   public workflow = signal<Workflow[]>([]);
 

@@ -1,0 +1,141 @@
+<p>
+  <mat-toolbar color="primary">
+    <sidenav-button />
+    <span>Bandeja de entrada</span>
+  </mat-toolbar>
+</p>
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-sm-9">
+      <search-input
+        placeholder="Alterno / Referencia / Solicitante"
+        (onSearch)="applyTextFilter($event)"
+      />
+    </div>
+    <div class="col-sm-3">
+      <mat-form-field>
+        <mat-label>Situacion</mat-label>
+        <mat-select
+          (selectionChange)="applyStatusFilter($event.value)"
+          [ngModel]="status"
+        >
+          <mat-option [value]="undefined"> --- </mat-option>
+          <mat-option [value]="'received'">RECIBIDOS </mat-option>
+          <mat-option [value]="'pending'"> PENDIENTES </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+  </div>
+
+  <div class="example-container mat-elevation-z8">
+    <div class="table-container">
+      <table mat-table [dataSource]="datasource()">
+        <ng-container matColumnDef="group">
+          <th mat-header-cell *matHeaderCellDef>Grupo</th>
+          <td mat-cell *matCellDef="let row">{{ row.groupLabel() }}</td>
+        </ng-container>
+        <ng-container matColumnDef="code">
+          <th mat-header-cell *matHeaderCellDef>Alterno</th>
+          <td mat-cell *matCellDef="let row">
+            <a
+              class="link"
+              [routerLink]="['/bandejas/entrada', row._id]"
+              [queryParams]="PageParams"
+            >
+              {{ row.procedure.code }}
+            </a>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="reference">
+          <th mat-header-cell *matHeaderCellDef>Referencia</th>
+          <td mat-cell *matCellDef="let row">{{ row.procedure.reference }}</td>
+        </ng-container>
+        <ng-container matColumnDef="state">
+          <th mat-header-cell *matHeaderCellDef>Estado</th>
+          <td mat-cell *matCellDef="let row">
+            <span class="badge" [ngClass]="row.procedure.state">
+              {{ row.procedure.state }}
+            </span>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="emitter">
+          <th mat-header-cell *matHeaderCellDef>Emisor</th>
+          <td mat-cell *matCellDef="let row">
+            <span class="fw-bold">{{ row.emitter.fullname }}</span>
+            <br />
+            <span class="fw-light">{{ row.emitter.jobtitle }}</span>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="outboundDate">
+          <th mat-header-cell *matHeaderCellDef>Ingreso</th>
+          <td mat-cell *matCellDef="let row">
+            {{ row.outboundDate | date : "short" }}
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="options">
+          <th mat-header-cell *matHeaderCellDef></th>
+          <td mat-cell *matCellDef="let row">
+            <!-- <button mat-icon-button [matMenuTriggerFor]="menu">
+              <mat-icon>more_vert</mat-icon>
+            </button>
+            <mat-menu #menu="matMenu">
+              @if(row.status === 'pending'){
+              <button (click)="acceptMail(row)" mat-menu-item>
+                <mat-icon>done</mat-icon>
+                <span>Aceptar tramite</span>
+              </button>
+              <button (click)="rejectMail(row)" mat-menu-item>
+                <mat-icon>block</mat-icon>
+                <span>Rechazar tramite</span>
+              </button>
+              } @else {
+              <button (click)="send(row)" mat-menu-item>
+                <mat-icon>send</mat-icon>
+                <span>Remitir tramite</span>
+              </button>
+              <button (click)="generateRouteMap(row)" mat-menu-item>
+                <mat-icon>description</mat-icon>
+                <span>Hoja de ruta</span>
+              </button>
+              <button mat-menu-item [matMenuTriggerFor]="endingOptions">
+                <mat-icon>task</mat-icon>
+                <span>Concluir tramite</span>
+              </button>
+              <mat-menu #endingOptions="matMenu">
+                <button mat-menu-item (click)="conclude(row, state.CONCLUIDO)">
+                  <mat-icon>domain_verification</mat-icon>
+                  Finalizar proceso
+                </button>
+                <button mat-menu-item (click)="conclude(row, state.SUSPENDIDO)">
+                  <mat-icon>snooze</mat-icon>
+                  Suspender proceso
+                </button>
+              </mat-menu>
+              }
+            </mat-menu> -->
+          </td>
+        </ng-container>
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr
+          mat-row
+          *matRowDef="let row; columns: displayedColumns"
+          [class.mail-pending]="row.status === 'pending'"
+        ></tr>
+        <tr class="mat-row" *matNoDataRow>
+          <td class="mat-cell p-3" colspan="5">No se econtraron resultados</td>
+        </tr>
+      </table>
+    </div>
+    <paginator
+      [pageSizeOptions]="[10, 20, 30, 50]"
+      [limit]="limit"
+      [index]="index"
+      [length]="datasize()"
+      (onPageChage)="changePage($event)"
+    />
+  </div>
+</div>

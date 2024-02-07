@@ -15,3 +15,4 @@ export * from './procedures/external-response.interface';
 export * from './procedures/internal-response.interface';
 export * from './procedures/procedure-response.interface';
 export * from './procedures/workflow-response.interface';
+export * from './procedures/communication-response.interface';

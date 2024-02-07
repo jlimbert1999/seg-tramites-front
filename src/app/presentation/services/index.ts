@@ -7,3 +7,5 @@ export * from './auth/auth.service';
 
 export * from './procedures/external.service';
 export * from './procedures/procedure.service';
+export * from './communications/inbox.service';
+export * from './communications/outbox.service';

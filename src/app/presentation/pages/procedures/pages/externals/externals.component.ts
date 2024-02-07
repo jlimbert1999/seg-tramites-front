@@ -17,9 +17,9 @@ import { MatDialog } from '@angular/material/dialog';
 import {
   PaginatorComponent,
   SidenavButtonComponent,
+  SearchInputComponent,
 } from '../../../../components';
 import { StateLabelPipe } from '../../pipes/state-label.pipe';
-import { SearchInputComponent } from '../../components/search-input/search-input.component';
 import { ExternalComponent } from './external/external.component';
 import { ExternalProcedure } from '../../../../../domain/models';
 import { ExternalService, CacheService } from '../../../../services';

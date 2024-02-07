@@ -12,6 +12,8 @@ import { AuthGuard, isNotAuthenticatedGuard } from './presentation/guards';
 import { ExternalsComponent } from './presentation/pages/procedures/pages/externals/externals.component';
 import { DetailComponent } from './presentation/pages/procedures/pages/detail/detail.component';
 import { InternalComponent } from './presentation/pages/procedures/pages/internal/internal.component';
+import { InboxComponent } from './presentation/pages/communications/inbox/inbox.component';
+import { OutboxComponent } from './presentation/pages/communications/outbox/outbox.component';
 
 export const routes: Routes = [
   {
@@ -34,6 +36,8 @@ export const routes: Routes = [
       { path: 'external', component: ExternalsComponent },
       { path: 'internal', component: InternalComponent },
       { path: ':from/:group/:id', component: DetailComponent },
+      { path: 'inbox', component: InboxComponent },
+      { path: 'outbox', component: OutboxComponent },
     ],
   },
   { path: '', redirectTo: '/home', pathMatch: 'full' },

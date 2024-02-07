@@ -1,12 +1,6 @@
 import { workflowResponse } from '../../../infraestructure/interfaces';
+import { StatusMail } from './communication.model';
 
-export enum StatusMail {
-  Received = 'received',
-  Completed = 'completed',
-  Rejected = 'rejected',
-  Pending = 'pending',
-  Archived = 'archived',
-}
 interface WorkflowProps {
   _id: string;
   date: Date;

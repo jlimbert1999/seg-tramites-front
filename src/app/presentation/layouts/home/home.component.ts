@@ -18,6 +18,7 @@ import { NavigationListComponent } from '../../components/navigation-list/naviga
 import { AppearanceService } from './services/appearance.service';
 import { SidenavButtonComponent } from '../../components/sidenav-button/sidenav-button.component';
 import { CacheService } from '../../services/cache.service';
+import { Socket } from 'socket.io-client';
 
 @Component({
   selector: 'app-home',
@@ -44,18 +45,15 @@ export class HomeComponent implements OnInit {
   private authService = inject(AuthService);
   private appearanceService = inject(AppearanceService);
   public cacheService = inject(CacheService);
+  private socketService = inject(SocketService);
 
-  constructor(
-    changeDetectorRef: ChangeDetectorRef,
-    media: MediaMatcher,
-    private socketService: SocketService
-  ) {
+  constructor(changeDetectorRef: ChangeDetectorRef, media: MediaMatcher) {
     this.mobileQuery = media.matchMedia('(max-width: 600px)');
     this._mobileQueryListener = () => changeDetectorRef.detectChanges();
     this.mobileQuery.addListener(this._mobileQueryListener);
   }
   ngOnInit(): void {
-    this.socketService.setupSocketConnection();
+    console.log('hola');
   }
 
   ngOnDestroy(): void {
