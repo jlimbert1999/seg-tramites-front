@@ -1,31 +1,32 @@
 import { StatusMail } from '../../../domain/models';
 
 export interface workflowResponse {
-  _id: string;
-  emitter: Officer;
-  procedure: string;
-  date: string;
-  internalNumber: string;
-  dispatches: Dispatch[];
+  emitter: participant;
+  outboundDate: string;
+  duration: string;
+  dispatches: dispatch[];
 }
 
-interface Dispatch {
-  receiver: Officer;
+interface dispatch {
+  _id: string;
+  receiver: participant;
+  duration: string;
   reference: string;
   attachmentQuantity: string;
-  date: string;
+  internalNumer: string;
   status: StatusMail;
-  eventLog?: EventLog;
+  inboundDate?: string;
+  eventLog?: eventLog;
 }
 
-interface EventLog {
+interface participant {
+  cuenta: string;
+  fullname: string;
+  jobtitle?: string;
+}
+
+interface eventLog {
   manager: string;
   description: string;
   date: string;
-}
-
-interface Officer {
-  account: string;
-  fullname: string;
-  jobtitle: string;
 }

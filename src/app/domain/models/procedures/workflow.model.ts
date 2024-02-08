@@ -1,71 +1,71 @@
-import { workflowResponse } from '../../../infraestructure/interfaces';
 import { StatusMail } from './communication.model';
+import { workflowResponse } from '../../../infraestructure/interfaces';
+import { TimeManager } from '../../../helpers';
 
 interface WorkflowProps {
+  emitter: participant;
+  time: time;
+  duration: string;
+  dispatches: dispatch[];
+}
+
+interface dispatch {
   _id: string;
-  date: Date;
-  emitter: Officer;
-  procedure: string;
-  dispatches: Dispatch[];
-  internalNumber: string;
-}
-
-interface Dispatch {
-  date?: Date;
-  receiver: Officer;
+  receiver: participant;
+  duration: string;
   reference: string;
-  status: StatusMail;
-  eventLog?: EventLog;
+  internalNumer: string;
   attachmentQuantity: string;
+  status: StatusMail;
+  time: time;
+  eventLog?: eventLog;
 }
-
-interface EventLog {
+interface time {
   date: string;
-  manager: string;
-  description: string;
+  hour: string;
 }
-
-interface Officer {
-  account: string;
+interface participant {
+  cuenta: string;
   fullname: string;
   jobtitle?: string;
 }
 
+interface eventLog {
+  manager: string;
+  description: string;
+  date: string;
+}
+
 export class Workflow {
-  public _id: string;
-  public date: Date;
-  public emitter: Officer;
-  public procedure: string;
-  public dispatches: Dispatch[];
-  public internalNumber: string;
+  public dispatches: dispatch[];
+  public duration: string;
+  public emitter: participant;
+  public time: time;
 
   static reponseToModel(response: workflowResponse) {
     return new Workflow({
-      _id: response._id,
-      date: new Date(response.date),
       emitter: response.emitter,
-      procedure: response.internalNumber,
-      dispatches: response.dispatches.map(({ date, ...values }) => ({
+      duration: response.duration,
+      time: {
+        date: TimeManager.formatDate(response.outboundDate, 'MM/D/YYYY'),
+        hour: TimeManager.formatDate(response.outboundDate, 'HH:mm'),
+      },
+      dispatches: response.dispatches.map(({ inboundDate, ...values }) => ({
         ...values,
-        date: new Date(date),
+        time: inboundDate
+          ? {
+              date: TimeManager.formatDate(inboundDate, 'MM/D/YYYY'),
+              hour: TimeManager.formatDate(inboundDate, 'HH:mm'),
+            }
+          : { fulldate: '', date: '', hour: '' },
       })),
-      internalNumber: response.internalNumber,
     });
   }
 
-  constructor({
-    _id,
-    date,
-    emitter,
-    procedure,
-    dispatches,
-    internalNumber,
-  }: WorkflowProps) {
-    this._id = _id;
-    this.date = date;
+  constructor({ emitter, duration, time, dispatches }: WorkflowProps) {
     this.emitter = emitter;
-    this.procedure = procedure;
+    this.time = time;
+    this.duration = duration;
     this.dispatches = dispatches;
-    this.internalNumber = internalNumber;
   }
 }

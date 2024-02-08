@@ -110,5 +110,8 @@ export abstract class Procedure {
     //   hour: TimeControl.formatDate(this.startDate, 'HH:mm'),
     // };
   }
-  abstract get applicantDetails(): { emiter: any; receiver: any };
+  abstract get applicantDetails(): {
+    emitter: { fullname: string; jobtitle: string };
+    receiver?: { fullname: string; jobtitle: string };
+  };
 }

@@ -22,7 +22,12 @@ import {
 import { StateLabelPipe } from '../../pipes/state-label.pipe';
 import { ExternalComponent } from './external/external.component';
 import { ExternalProcedure } from '../../../../../domain/models';
-import { ExternalService, CacheService } from '../../../../services';
+import {
+  ProcedureService,
+  ExternalService,
+  CacheService,
+  PdfService,
+} from '../../../../services';
 
 interface PaginationOptions {
   limit: number;
@@ -58,7 +63,9 @@ interface CacheData {
 export class ExternalsComponent {
   private dialog = inject(MatDialog);
   private externalService = inject(ExternalService);
+  private procedureService = inject(ProcedureService);
   private cacheService: CacheService<CacheData> = inject(CacheService);
+  private pdfService: PdfService = inject(PdfService);
   private destroyref = inject(DestroyRef).onDestroy(() => {
     this.savePaginationData();
   });
@@ -158,11 +165,11 @@ export class ExternalsComponent {
   }
 
   generateRouteMap(id_procedure: string, group: any) {
-    // this.procedureService
-    //   .getFullProcedure(id_procedure, group)
-    //   .subscribe((data) => {
-    //     this.pdf.generateRouteSheet(data.procedure, data.workflow);
-    //   });
+    this.procedureService
+      .getProcedureDetail(id_procedure, group)
+      .subscribe((data) => {
+        this.pdfService.generateRouteSheet(data.procedure, data.workflow);
+      });
   }
 
   generateTicket(tramite: ExternalProcedure) {}

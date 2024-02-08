@@ -85,11 +85,10 @@ export class ExternalProcedure extends Procedure {
 
   override get applicantDetails() {
     return {
-      emiter: {
-        nombre: this.fullNameApplicant,
-        cargo: `P. ${this.details.solicitante.tipo}`,
+      emitter: {
+        fullname: this.fullNameApplicant,
+        jobtitle: `P. ${this.details.solicitante.tipo}`,
       },
-      receiver: { nombre: '', cargo: '' },
     };
   }
 }

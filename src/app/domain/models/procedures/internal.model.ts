@@ -37,13 +37,13 @@ export class InternalProcedure extends Procedure {
 
   override get applicantDetails() {
     return {
-      emiter: {
-        nombre: this.details.remitente.nombre,
-        cargo: this.details.remitente.cargo,
+      emitter: {
+        fullname: this.details.remitente.nombre,
+        jobtitle: this.details.remitente.cargo,
       },
       receiver: {
-        nombre: this.details.destinatario.nombre,
-        cargo: this.details.destinatario.cargo,
+        fullname: this.details.destinatario.nombre,
+        jobtitle: this.details.destinatario.cargo,
       },
     };
   }

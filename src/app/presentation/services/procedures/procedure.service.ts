@@ -31,7 +31,6 @@ export class ProcedureService {
       .get<ProcedureDetailResponse>(`${this.url}/${group}/${id}`)
       .pipe(
         map((resp) => {
-          console.log(resp.workflow);
           return {
             procedure: this.toModel(group, resp.procedure),
             workflow: resp.workflow.map((el) => Workflow.reponseToModel(el)),
