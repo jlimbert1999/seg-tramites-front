@@ -5,7 +5,7 @@ import {
   inject,
   signal,
 } from '@angular/core';
-import { Account, Officer } from '../../../../domain/models';
+import { Account, Officer } from '../../../../../domain/models';
 import {
   FormBuilder,
   FormGroup,
@@ -18,8 +18,8 @@ import {
   MatDialogModule,
   MatDialogRef,
 } from '@angular/material/dialog';
-import { AlertService } from '../../../services';
-import { roleResponse } from '../../../../infraestructure/interfaces';
+import { AlertService } from '../../../../services';
+import { roleResponse } from '../../../../../infraestructure/interfaces';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatFormFieldModule } from '@angular/material/form-field';

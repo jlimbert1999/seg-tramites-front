@@ -21,7 +21,7 @@ export enum GroupProcedure {
 export enum StateProcedure {
   Inscrito = 'INSCRITO',
   Observado = 'OBSERVADO',
-  Revision = 'REVISION',
+  Revision = 'EN REVISION',
   Concluido = 'CONCLUIDO',
   Anulado = 'ANULADO',
   Suspendido = 'SUSPENDIDO',

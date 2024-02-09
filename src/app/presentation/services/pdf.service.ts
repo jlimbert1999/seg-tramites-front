@@ -2,23 +2,21 @@ import { Injectable } from '@angular/core';
 import { Procedure, StatusMail, Workflow } from '../../domain/models';
 
 import { TDocumentDefinitions } from 'pdfmake/interfaces';
-import { RouteMapPDF } from '../../helpers/pdf/route-map';
 
 import pdfMake from 'pdfmake/build/pdfmake';
 import pdfFonts from 'pdfmake/build/vfs_fonts';
+import { CreateRouteMap } from '../../helpers/pdf/route-map';
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
 @Injectable({
   providedIn: 'root',
 })
 export class PdfService {
-  constructor() {}
-
   async generateRouteSheet(procedure: Procedure, workflow: Workflow[]) {
     const docDefinition: TDocumentDefinitions = {
       pageSize: 'LETTER',
       pageMargins: [30, 30, 30, 30],
-      content: [RouteMapPDF.show(workflow)],
+      content: await CreateRouteMap(procedure, workflow),
       footer: {
         margin: [10, 0, 10, 0],
         fontSize: 7,

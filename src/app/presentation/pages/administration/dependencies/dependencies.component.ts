@@ -13,11 +13,14 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatTableModule } from '@angular/material/table';
-import { PaginatorComponent } from '../../components/paginator/paginator.component';
-import { SidenavButtonComponent } from '../../components/sidenav-button/sidenav-button.component';
-import { DependencyService } from './services/dependency.service';
+
 import { DependencyComponent } from './dependency/dependency.component';
-import { dependencyResponse } from '../../../infraestructure/interfaces';
+import {
+  PaginatorComponent,
+  SidenavButtonComponent,
+} from '../../../components';
+import { dependencyResponse } from '../../../../infraestructure/interfaces';
+import { DependencyService } from '../../../services';
 
 interface PageProps {
   limit: number;

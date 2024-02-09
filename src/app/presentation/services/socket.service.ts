@@ -9,10 +9,11 @@ export class SocketService {
   private readonly socket: Socket = io(environment.base_url, {
     auth: { token: localStorage.getItem('token') ?? '' },
   });
+
   disconnect() {
-    // if (this.socket) {
-    //   this.socket.removeListener();
-    //   this.socket.disconnect();
-    // }
+    if (this.socket) {
+      this.socket.removeAllListeners();
+      this.socket.disconnect();
+    }
   }
 }

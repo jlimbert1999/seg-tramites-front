@@ -1,0 +1,129 @@
+<h1 mat-dialog-title>Tramite interno</h1>
+<mat-dialog-content>
+  <form [formGroup]="FormProcedure">
+    @if(!procedure){
+    <simple-select-search
+      placeholder="Tipo de tramite"
+      [initialValue]="currentOption()"
+      [data]="typesProcedures()"
+      (onSelect)="setTypeProcedure($event!)"
+    />
+    }
+    <div class="row">
+      <div class="col-12">
+        <mat-form-field>
+          <mat-label>Referencia del tramite</mat-label>
+          <textarea formControlName="reference" matInput></textarea>
+          <mat-error
+            *ngIf="FormProcedure.get('reference')!.hasError('required')"
+          >
+            La referencia es <strong>requerida</strong>
+          </mat-error>
+        </mat-form-field>
+      </div>
+      <div class="col-sm-6">
+        <mat-form-field>
+          <mat-label>Nombre del remitente</mat-label>
+          <input
+            matInput
+            type="text"
+            formControlName="fullname_emitter"
+            [matAutocomplete]="auto"
+          />
+          <mat-autocomplete #auto="matAutocomplete">
+            <mat-option
+              *ngFor="let option of filteredEmitter | async"
+              [value]="option.fullname"
+              (onSelectionChange)="setJob(option.jobtitle, 'jobtitle_emitter')"
+            >
+              {{ option.fullname | titlecase }}
+            </mat-option>
+          </mat-autocomplete>
+          @if(FormProcedure.get('fullname_emitter')!.hasError('required')){
+          <mat-error>
+            El nombre del remitente es <strong>requerido</strong>
+          </mat-error>
+          }
+        </mat-form-field>
+      </div>
+      <div class="col-sm-6">
+        <mat-form-field>
+          <mat-label>Cargo del remitente</mat-label>
+          <input matInput type="text" formControlName="jobtitle_emitter" />
+          @if(FormProcedure.get('jobtitle_emitter')!.hasError('required')){
+          <mat-error>
+            El cargo del remitente es <strong>requerido</strong>
+          </mat-error>
+          }
+        </mat-form-field>
+      </div>
+      <div class="col-sm-6">
+        <mat-form-field>
+          <mat-label>Nombre del destinatario</mat-label>
+          <input
+            class="uppercase"
+            type="text"
+            matInput
+            formControlName="fullname_receiver"
+            [matAutocomplete]="auto1"
+          />
+          <mat-autocomplete matau #auto1="matAutocomplete">
+            <mat-option
+              *ngFor="let option of filteredReceiver | async"
+              [value]="option.fullname"
+              (onSelectionChange)="setJob(option.jobtitle, 'jobtitle_receiver')"
+            >
+              {{ option.fullname | titlecase }}
+            </mat-option>
+          </mat-autocomplete>
+          <mat-error
+            *ngIf="FormProcedure.get('fullname_receiver')!.hasError('required')"
+          >
+            El nombre del destinatario es <strong>requerido</strong>
+          </mat-error>
+        </mat-form-field>
+      </div>
+      <div class="col-sm-6">
+        <mat-form-field>
+          <mat-label>Cargo del destinatario</mat-label>
+          <input
+            class="uppercase"
+            formControlName="jobtitle_receiver"
+            matInput
+          />
+          <mat-error
+            *ngIf="FormProcedure.get('jobtitle_receiver')!.hasError('required')"
+          >
+            El cargo del destinatario es <strong>requerido</strong>
+          </mat-error>
+        </mat-form-field>
+      </div>
+      <div class="col-sm-6">
+        <mat-form-field>
+          <mat-label>CITE</mat-label>
+          <input formControlName="cite" matInput />
+        </mat-form-field>
+      </div>
+      <div class="col-sm-6">
+        <mat-form-field>
+          <mat-label>Cantidad: Hojas / Anexos</mat-label>
+          <input formControlName="amount" matInput />
+          <mat-error *ngIf="FormProcedure.get('amount')!.hasError('required')">
+            La cantidad es <strong>requerida</strong>
+          </mat-error>
+        </mat-form-field>
+      </div>
+    </div>
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-raised-button mat-dialog-close color="warn">Cancelar</button>
+  <button
+    mat-raised-button
+    color="primary"
+    [disabled]="FormProcedure.invalid"
+    (click)="save()"
+  >
+    Guardar
+  </button>
+</mat-dialog-actions>

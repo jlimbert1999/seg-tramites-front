@@ -1,41 +1,6 @@
-// import { Content, ContentTable, TableCell } from 'pdfmake/interfaces';
-import { Content, ContentTable, TableCell } from 'pdfmake/interfaces';
-import { convertImagenABase64 } from '../image_base64';
+import { Content, ContentTable } from 'pdfmake/interfaces';
+import { convertImagenABase64, TimeManager } from '../';
 import { Procedure, Workflow } from '../../domain/models';
-
-export class RouteMapPDF {
-  static async createHeader(): Promise<Content> {
-    return [
-      {
-        style: 'cabecera',
-        columns: [
-          {
-            image: await convertImagenABase64(
-              '../../../assets/img/gams/logo_alcaldia.jpeg'
-            ),
-            width: 150,
-            height: 60,
-          },
-          {
-            text: '\nHOJA DE RUTA DE CORRESPONDENCIA',
-            bold: true,
-            alignment: 'center',
-          },
-          {
-            image: await convertImagenABase64(
-              '../../../assets/img/gams/escudo_sacaba.jpeg'
-            ),
-            width: 70,
-            height: 70,
-          },
-        ],
-      },
-    ];
-  }
-  static show(workflow: Workflow[]) {
-    return [...createContainers(workflow)];
-  }
-}
 
 interface RouteMapProps {
   index: number;
@@ -45,13 +10,181 @@ interface RouteMapProps {
   inDetail: detail;
   outDetail: detail;
 }
+
 interface detail {
   date: string;
   hour: string;
   quantity: string;
 }
 
-function CreateContainer({
+interface First {
+  group: Array<string>;
+  code: string;
+  reference: string;
+  internalNumber: string;
+  cite: string;
+  emitter: participant;
+  receiver: participant;
+  inDetail: detail;
+  outDetail: detail;
+}
+
+interface participant {
+  fullname: string;
+  jobtitle: string;
+}
+export async function CreateRouteMap(
+  procedure: Procedure,
+  workflow: Workflow[]
+): Promise<Content[]> {
+  return [
+    await createHeader(),
+    firstSection(procedure, workflow[0]),
+    secondSection(workflow),
+    // thridSection(containers.length, getLastPageNumber(containers.length)),
+  ];
+}
+
+function getLastPageNumber(lengthData: number): number {
+  if (lengthData <= 8) return 8;
+  const firstTerm = 3;
+  const increment = 5;
+  const termsBefore = Math.ceil((lengthData - firstTerm) / increment);
+  const nextTerm = firstTerm + termsBefore * increment;
+  return nextTerm;
+}
+
+function secondSection(workflow: Workflow[]) {
+  const containers: ContentTable[] = [];
+  for (const [index, { dispatches }] of workflow.entries()) {
+    const officers = dispatches.map(
+      ({ receiver: { fullname, jobtitle } }) => `${fullname} ${jobtitle}`
+    );
+    if (dispatches.length > 1) {
+      const container = createStageContainer({
+        index: index,
+        reference: dispatches[0].reference,
+        officers: officers,
+        internalNumer: '',
+        inDetail: { date: '', hour: '', quantity: '' },
+        outDetail: { date: '', hour: '', quantity: '' },
+      });
+      containers.push(container);
+      break;
+    }
+    const nextStage = workflow
+      .slice(index, workflow.length)
+      .find(({ emitter }) => emitter.cuenta === dispatches[0].receiver.cuenta);
+
+    const container = createStageContainer({
+      index: index,
+      reference: dispatches[0].reference,
+      officers: officers,
+      internalNumer: dispatches[0].internalNumer,
+      inDetail: dispatches[0].date
+        ? {
+            date: TimeManager.formatDate(dispatches[0].date, 'MM/D/YYYY'),
+            hour: TimeManager.formatDate(dispatches[0].date, 'HH:mm'),
+            quantity: dispatches[0].attachmentQuantity,
+          }
+        : { date: '', hour: '', quantity: '' },
+      outDetail: nextStage
+        ? {
+            date: TimeManager.formatDate(nextStage.date, 'MM/D/YYYY'),
+            hour: TimeManager.formatDate(nextStage.date, 'HH:mm'),
+            quantity: nextStage.dispatches[0].attachmentQuantity,
+          }
+        : { date: '', hour: '', quantity: '' },
+    });
+    containers.push(container);
+  }
+  return containers;
+}
+
+function firstSection(procedure: Procedure, workflow?: Workflow) {
+  const receiver: participant = procedure.applicantDetails.receiver
+    ? {
+        fullname: procedure.applicantDetails.receiver.fullname,
+        jobtitle: procedure.applicantDetails.receiver.jobtitle,
+      }
+    : workflow
+    ? {
+        fullname: workflow.dispatches[0].receiver.fullname,
+        jobtitle: workflow.dispatches[0].receiver.jobtitle ?? 'Sin cargo',
+      }
+    : { fullname: '', jobtitle: '' };
+  return createDetailContainer({
+    code: procedure.code,
+    cite: procedure.cite,
+    reference: procedure.reference,
+    internalNumber: procedure.cite,
+    group: [],
+    emitter: {
+      fullname: procedure.applicantDetails.emitter.fullname,
+      jobtitle: procedure.applicantDetails.emitter.jobtitle,
+    },
+    receiver: receiver,
+    inDetail: {
+      date: TimeManager.formatDate(procedure.startDate, 'MM/D/YYYY'),
+      hour: TimeManager.formatDate(procedure.startDate, 'HH:mm'),
+      quantity: procedure.amount,
+    },
+    outDetail: workflow
+      ? {
+          date: TimeManager.formatDate(workflow.date, 'MM/D/YYYY'),
+          hour: TimeManager.formatDate(workflow.date, 'HH:mm'),
+          quantity: workflow.dispatches[0].attachmentQuantity,
+        }
+      : { date: '', hour: '', quantity: '' },
+  });
+}
+
+async function createHeader(): Promise<Content> {
+  return [
+    {
+      style: 'cabecera',
+      columns: [
+        {
+          image: await convertImagenABase64(
+            '../../../assets/img/gams/logo_alcaldia.jpeg'
+          ),
+          width: 150,
+          height: 60,
+        },
+        {
+          text: '\nHOJA DE RUTA DE CORRESPONDENCIA',
+          bold: true,
+          alignment: 'center',
+        },
+        {
+          image: await convertImagenABase64(
+            '../../../assets/img/gams/escudo_sacaba.jpeg'
+          ),
+          width: 70,
+          height: 70,
+        },
+      ],
+    },
+  ];
+}
+
+function thridSection(currentPage: number, lastPage: number) {
+  const containers: ContentTable[] = [];
+  for (let index = currentPage; currentPage < lastPage; index++) {
+    const container = createStageContainer({
+      index: index,
+      reference: '',
+      officers: [],
+      internalNumer: '',
+      inDetail: { date: '', hour: '', quantity: '' },
+      outDetail: { date: '', hour: '', quantity: '' },
+    });
+    containers.push(container);
+  }
+  return containers;
+}
+
+function createStageContainer({
   index,
   officers,
   reference,
@@ -221,7 +354,17 @@ function CreateContainer({
   };
 }
 
-function CreateFirstSection(procedure: Procedure, firstStage?: Workflow) {
+function createDetailContainer({
+  group,
+  code,
+  reference,
+  inDetail,
+  outDetail,
+  internalNumber,
+  cite,
+  emitter,
+  receiver,
+}: First) {
   return {
     fontSize: 7,
     table: {
@@ -245,7 +388,7 @@ function CreateFirstSection(procedure: Procedure, firstStage?: Workflow) {
                         border: [false, false, false, false],
                       },
                       {
-                        text: procedure.group === 'InternalDetail' ? 'X' : '',
+                        text: group[0],
                         style: 'header',
                       },
                     ],
@@ -263,7 +406,7 @@ function CreateFirstSection(procedure: Procedure, firstStage?: Workflow) {
                         border: [false, false, false, false],
                       },
                       {
-                        text: procedure.group === 'ExternalDetail' ? 'X' : '',
+                        text: group[1],
                         style: 'header',
                       },
                     ],
@@ -280,7 +423,7 @@ function CreateFirstSection(procedure: Procedure, firstStage?: Workflow) {
                         text: 'COPIA\n\n',
                         border: [false, false, false, false],
                       },
-                      { text: '', style: 'header' },
+                      { text: group[2], style: 'header' },
                     ],
                   ],
                 },
@@ -296,7 +439,7 @@ function CreateFirstSection(procedure: Procedure, firstStage?: Workflow) {
                         border: [false, false, false, false],
                       },
                       {
-                        text: `${procedure.code}`,
+                        text: `${code}`,
                         bold: true,
                         fontSize: 11,
                       },
@@ -329,17 +472,17 @@ function CreateFirstSection(procedure: Procedure, firstStage?: Workflow) {
                         fontSize: 7,
                       },
                       {
-                        text: `${procedure.StartDateDetail()}`,
+                        text: `${inDetail.date}`,
                         fontSize: 8,
                         border: [true, true, true, true],
                       },
                       {
-                        text: `${procedure.StartDateDetail()}`,
+                        text: `${inDetail.hour}`,
                         fontSize: 8,
                         border: [true, true, true, true],
                       },
                       {
-                        text: `${procedure.amount}`,
+                        text: `${inDetail.quantity}`,
                         fontSize: 6,
                         border: [true, true, true, true],
                       },
@@ -365,7 +508,7 @@ function CreateFirstSection(procedure: Procedure, firstStage?: Workflow) {
               body: [
                 [{ text: 'DATOS DE ORIGEN', bold: true }, ''],
                 [
-                  `CITE: ${procedure.cite}`,
+                  `CITE: ${cite}`,
                   {
                     table: {
                       widths: [85, 100, 40],
@@ -387,14 +530,14 @@ function CreateFirstSection(procedure: Procedure, firstStage?: Workflow) {
                   },
                 ],
                 [
-                  `REMITENTE: ${procedure.applicantDetails.emitter.fullname}`,
-                  `CARGO: ${procedure.applicantDetails.emitter.jobtitle}`,
+                  `REMITENTE: ${emitter.fullname}`,
+                  `CARGO: ${emitter.jobtitle}`,
                 ],
-                // [
-                //   `DESTINATARIO: ${firstSendDetails.receiver.fullname}`,
-                //   `CARGO: ${firstSendDetails.receiver.jobtitle}`,
-                // ],
-                [{ text: `REFERENCIA: ${procedure.reference}`, colSpan: 2 }],
+                [
+                  `DESTINATARIO: ${receiver.fullname}`,
+                  `CARGO: ${receiver.jobtitle}`,
+                ],
+                [{ text: `REFERENCIA: ${reference}`, colSpan: 2 }],
               ],
             },
             layout: 'noBorders',
@@ -421,21 +564,21 @@ function CreateFirstSection(procedure: Procedure, firstStage?: Workflow) {
                         border: [false, false, false, false],
                         fontSize: 7,
                       },
-                      // {
-                      //   text: `${firstSendDetails.date}`,
-                      //   border: [true, true, true, true],
-                      //   fontSize: 8,
-                      // },
-                      // {
-                      //   text: `${firstSendDetails.hour}`,
-                      //   border: [true, true, true, true],
-                      //   fontSize: 8,
-                      // },
-                      // {
-                      //   text: `${firstSendDetails.quantity}`,
-                      //   border: [true, true, true, true],
-                      //   fontSize: 6,
-                      // },
+                      {
+                        text: `${outDetail.date}`,
+                        border: [true, true, true, true],
+                        fontSize: 8,
+                      },
+                      {
+                        text: `${outDetail.hour}`,
+                        border: [true, true, true, true],
+                        fontSize: 8,
+                      },
+                      {
+                        text: `${outDetail.quantity}`,
+                        border: [true, true, true, true],
+                        fontSize: 6,
+                      },
                     ],
                   ],
                 },
@@ -453,70 +596,4 @@ function CreateFirstSection(procedure: Procedure, firstStage?: Workflow) {
       ],
     },
   };
-}
-
-function CreateSecodSection(workflow: Workflow[]) {
-  //   const lastNumberPage = getLastPageNumber(workflow.length);
-  //   if (workflow.length === 0)
-  //     return createWhiteContainers(workflow.length + 1, lastNumberPage);
-  //   return [
-  //     ...createContainers(workflow),
-  //     createWhiteContainers(
-  //       workflow.length + 1,
-  //       getLastPageNumber(workflow.length)
-  //     ),
-  //   ];
-}
-function getLastPageNumber(lengthData: number): number {
-  if (lengthData <= 8) return 8;
-  const firstTerm = 3;
-  const increment = 5;
-  const termsBefore = Math.ceil((lengthData - firstTerm) / increment);
-  const nextTerm = firstTerm + termsBefore * increment;
-  return nextTerm;
-}
-
-function createContainers(workflow: Workflow[]) {
-  const containers: ContentTable[] = [];
-  for (const [index, { dispatches }] of workflow.entries()) {
-    const officers = dispatches.map(
-      ({ receiver: { fullname, jobtitle } }) => `${fullname} ${jobtitle}`
-    );
-    if (dispatches.length > 1) {
-      const container = CreateContainer({
-        index: index,
-        reference: dispatches[0].reference,
-        officers: officers,
-        internalNumer: '',
-        inDetail: { date: '', hour: '', quantity: '' },
-        outDetail: { date: '', hour: '', quantity: '' },
-      });
-      containers.push(container);
-      break;
-    }
-    const nextStage = workflow
-      .slice(index, workflow.length)
-      .find(({ emitter }) => emitter.cuenta === dispatches[0].receiver.cuenta);
-
-    const container = CreateContainer({
-      index: index,
-      reference: dispatches[0].reference,
-      officers: officers,
-      internalNumer: dispatches[0].internalNumer,
-      inDetail: {
-        date: dispatches[0].time.date,
-        hour: dispatches[0].time.hour,
-        quantity: dispatches[0].attachmentQuantity,
-      },
-      outDetail: nextStage
-        ? {
-            date: nextStage.time.date,
-            hour: nextStage.time.hour,
-            quantity: nextStage.dispatches[0].attachmentQuantity,
-          }
-        : { date: '', hour: '', quantity: '' },
-    });
-    containers.push(container);
-  }
-  return containers;
 }

@@ -1,4 +1,4 @@
-<h2 mat-dialog-title>TRAMITE EXTERNO</h2>
+<h1 mat-dialog-title>Tramite externo</h1>
 <mat-dialog-content>
   <mat-stepper headerPosition="bottom" #stepper>
     <mat-step [stepControl]="FormProcedure" errorMessage="Campos incorrectos">
@@ -87,25 +87,25 @@
         <div class="row">
           @if(applicantType()==='NATURAL'){
           <div class="col-sm-4">
-            <mat-form-field class="example-full-width">
+            <mat-form-field>
               <mat-label>Nombres</mat-label>
               <input matInput formControlName="nombre" class="uppercase" />
             </mat-form-field>
           </div>
           <div class="col-sm-4">
-            <mat-form-field class="example-full-width">
+            <mat-form-field>
               <mat-label>Apellido paterno</mat-label>
               <input matInput formControlName="paterno" class="uppercase" />
             </mat-form-field>
           </div>
           <div class="col-sm-4">
-            <mat-form-field class="example-full-width">
+            <mat-form-field>
               <mat-label>Apellido materno</mat-label>
               <input matInput formControlName="materno" class="uppercase" />
             </mat-form-field>
           </div>
           <div class="col-sm-4">
-            <mat-form-field class="example-full-width" #TipoDoc>
+            <mat-form-field #TipoDoc>
               <mat-label>Tipo documento</mat-label>
               <mat-select formControlName="documento">
                 <mat-option

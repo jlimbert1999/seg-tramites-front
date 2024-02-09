@@ -19,7 +19,6 @@ import {
   SidenavButtonComponent,
   SearchInputComponent,
 } from '../../../../components';
-import { StateLabelPipe } from '../../pipes/state-label.pipe';
 import { ExternalComponent } from './external/external.component';
 import { ExternalProcedure } from '../../../../../domain/models';
 import {
@@ -28,6 +27,7 @@ import {
   CacheService,
   PdfService,
 } from '../../../../services';
+import { StateLabelPipe } from '../../../../pipes';
 
 interface PaginationOptions {
   limit: number;
@@ -52,9 +52,9 @@ interface CacheData {
     PaginatorComponent,
     MatMenuModule,
     MatButtonModule,
-    StateLabelPipe,
     SearchInputComponent,
     SidenavButtonComponent,
+    StateLabelPipe,
   ],
   templateUrl: './externals.component.html',
   styleUrl: './externals.component.scss',

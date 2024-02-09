@@ -1,10 +1,9 @@
 import { StatusMail } from './communication.model';
 import { workflowResponse } from '../../../infraestructure/interfaces';
-import { TimeManager } from '../../../helpers';
 
 interface WorkflowProps {
   emitter: participant;
-  time: time;
+  date: Date;
   duration: string;
   dispatches: dispatch[];
 }
@@ -17,13 +16,10 @@ interface dispatch {
   internalNumer: string;
   attachmentQuantity: string;
   status: StatusMail;
-  time: time;
+  date?: Date;
   eventLog?: eventLog;
 }
-interface time {
-  date: string;
-  hour: string;
-}
+
 interface participant {
   cuenta: string;
   fullname: string;
@@ -40,31 +36,23 @@ export class Workflow {
   public dispatches: dispatch[];
   public duration: string;
   public emitter: participant;
-  public time: time;
+  public date: Date;
 
   static reponseToModel(response: workflowResponse) {
     return new Workflow({
       emitter: response.emitter,
       duration: response.duration,
-      time: {
-        date: TimeManager.formatDate(response.outboundDate, 'MM/D/YYYY'),
-        hour: TimeManager.formatDate(response.outboundDate, 'HH:mm'),
-      },
+      date: new Date(response.outboundDate),
       dispatches: response.dispatches.map(({ inboundDate, ...values }) => ({
         ...values,
-        time: inboundDate
-          ? {
-              date: TimeManager.formatDate(inboundDate, 'MM/D/YYYY'),
-              hour: TimeManager.formatDate(inboundDate, 'HH:mm'),
-            }
-          : { fulldate: '', date: '', hour: '' },
+        date: inboundDate ? new Date(inboundDate) : undefined,
       })),
     });
   }
 
-  constructor({ emitter, duration, time, dispatches }: WorkflowProps) {
+  constructor({ emitter, duration, date, dispatches }: WorkflowProps) {
     this.emitter = emitter;
-    this.time = time;
+    this.date = date;
     this.duration = duration;
     this.dispatches = dispatches;
   }

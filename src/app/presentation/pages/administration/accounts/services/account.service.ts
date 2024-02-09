@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { map } from 'rxjs';
-import { environment } from '../../../../../environments/environment';
+import { environment } from '../../../../../../environments/environment';
 import {
   accountResponse,
   dependencyResponse,
@@ -9,9 +9,9 @@ import {
   jobResponse,
   officerResponse,
   roleResponse,
-} from '../../../../infraestructure/interfaces';
-import { Account, Officer } from '../../../../domain/models';
-import { AccountDto, OfficerDto } from '../../../../infraestructure/dtos';
+} from '../../../../../infraestructure/interfaces';
+import { Account, Officer } from '../../../../../domain/models';
+import { AccountDto, OfficerDto } from '../../../../../infraestructure/dtos';
 
 interface SearchAccountsParams {
   text: string;

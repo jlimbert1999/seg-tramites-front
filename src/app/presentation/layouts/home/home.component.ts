@@ -13,12 +13,16 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
 import { MatButtonModule } from '@angular/material/button';
 import { RouterModule } from '@angular/router';
-import { AuthService, SocketService } from '../../services';
-import { NavigationListComponent } from '../../components/navigation-list/navigation-list.component';
-import { AppearanceService } from './services/appearance.service';
-import { SidenavButtonComponent } from '../../components/sidenav-button/sidenav-button.component';
-import { CacheService } from '../../services/cache.service';
-import { Socket } from 'socket.io-client';
+import {
+  AuthService,
+  SocketService,
+  CacheService,
+  AppearanceService,
+} from '../../services';
+import {
+  SidenavButtonComponent,
+  NavigationListComponent,
+} from '../../components';
 
 @Component({
   selector: 'app-home',
@@ -52,9 +56,7 @@ export class HomeComponent implements OnInit {
     this._mobileQueryListener = () => changeDetectorRef.detectChanges();
     this.mobileQuery.addListener(this._mobileQueryListener);
   }
-  ngOnInit(): void {
-    console.log('hola');
-  }
+  ngOnInit(): void {}
 
   ngOnDestroy(): void {
     this.mobileQuery.removeListener(this._mobileQueryListener);

@@ -20,9 +20,9 @@ import {
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { DependencyService } from '../services/dependency.service';
-import { ServerSelectSearchComponent } from '../../../components/server-select-search/server-select-search.component';
-import { dependencyResponse } from '../../../../infraestructure/interfaces';
+import { ServerSelectSearchComponent } from '../../../../components';
+import { DependencyService } from '../../../../services';
+import { dependencyResponse } from '../../../../../infraestructure/interfaces';
 
 interface SelectOptions {
   text: string;

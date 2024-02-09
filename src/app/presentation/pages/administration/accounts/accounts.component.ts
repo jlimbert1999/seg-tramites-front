@@ -18,12 +18,12 @@ import { FormsModule } from '@angular/forms';
 
 import { AccountService } from './services/account.service';
 import { CreateAccountComponent } from './create-account/create-account.component';
-import { Account } from '../../../domain/models';
+import { Account } from '../../../../domain/models';
 import {
   PaginatorComponent,
   SidenavButtonComponent,
   ServerSelectSearchComponent,
-} from '../../components';
+} from '../../../components';
 import { EditAccountComponent } from './edit-account/edit-account.component';
 
 interface PageProps {

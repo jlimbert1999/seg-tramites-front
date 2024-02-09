@@ -1,5 +1,5 @@
 import { Pipe, type PipeTransform } from '@angular/core';
-import { StateProcedure } from '../../../../domain/models';
+import { StateProcedure } from '../../domain/models';
 
 @Pipe({
   name: 'stateLabel',

@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { AppearanceService } from '../../layouts/home/services/appearance.service';
+import { AppearanceService } from '../../services';
 
 @Component({
   selector: 'sidenav-button',
