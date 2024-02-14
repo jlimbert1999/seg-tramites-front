@@ -1,1 +1,140 @@
-<p>internal-detail works!</p>,
+<div class="p-3">
+  <div class="alert alert-danger text-center" role="alert">
+    <span class="fw-bold"> Duracion: {{ duration() }} </span>
+  </div>
+  <div class="row g-2">
+    <div class="col-sm-12">
+      <div class="shadow rounded">
+        <div class="card bg-transparent">
+          <div class="card-body">
+            <h1 class="card-title">
+              {{ data.type }} /
+              <span class="badge" [ngClass]="data.state | stateLabel">{{
+                data.state
+              }}</span>
+            </h1>
+            <h2 class="card-subtitle mb-2 text-muted">
+              Encargado: {{ data.account?.officer?.fullname }}
+            </h2>
+            <form class="row g-3">
+              <div class="col-12">
+                <label for="txtType" class="form-label">Tipo de tramite</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="txtType"
+                  [value]="data.type"
+                  readonly
+                />
+              </div>
+              <div class="col-12">
+                <label for="txtDescription" class="form-label"
+                  >Descripcion</label
+                >
+                <textarea class="form-control" id="txtDescription" readonly>{{
+                  data.reference
+                }}</textarea>
+              </div>
+              <div class="col-md-4">
+                <label for="txtCantidad" class="form-label">Cantidad</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="txtCantidad"
+                  [value]="data.amount"
+                  readonly
+                />
+              </div>
+              <div class="col-md-4">
+                <label for="txtCite" class="form-label">Cite</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="txtCite"
+                  [value]="data.citeCode"
+                  readonly
+                />
+              </div>
+            </form>
+          </div>
+          <div class="card-footer">
+            <small class="text-body-secondary fs-6"
+              >FECHA REGISTRO: {{ data.startDate | date : "short" }}</small
+            >
+          </div>
+          <div *ngIf="data.endDate" class="card-footer">
+            <small class="text-body-secondary fs-6"
+              >FECHA CONCLUSION: {{ data.endDate | date : "short" }}</small
+            >
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-6">
+      <div class="shadow rounded">
+        <div class="card bg-transparent">
+          <div class="card-body">
+            <h5 class="card-title">REMITENTE</h5>
+            <form class="row g-3">
+              <div class="col-12">
+                <label for="txtNameEmitter" class="form-label"
+                  >Funcionario</label
+                >
+                <input
+                  type="text"
+                  class="form-control"
+                  id="txtNameEmitter"
+                  [value]="data.details.remitente.nombre"
+                  readonly
+                />
+              </div>
+              <div class="col-12">
+                <label for="txtjobEmitter" class="form-label">Cargo</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="txtjobEmitter"
+                  [value]="data.details.remitente.cargo"
+                  readonly
+                />
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-6">
+      <div class="shadow rounded">
+        <div class="card bg-transparent">
+          <div class="card-body">
+            <h5 class="card-title">DESTINATARIO</h5>
+            <form class="row g-3">
+              <div class="col-12">
+                <label for="txtNameReceiver" class="form-label"
+                  >Funcionario</label
+                >
+                <input
+                  type="text"
+                  class="form-control"
+                  id="txtNameReceiver"
+                  [value]="data.details.destinatario.nombre"
+                  readonly
+                />
+              </div>
+              <div class="col-12">
+                <label for="txtjobReceiver" class="form-label">Cargo</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="txtjobReceiver"
+                  [value]="data.details.destinatario.cargo"
+                  readonly
+                />
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

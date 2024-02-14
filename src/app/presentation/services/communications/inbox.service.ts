@@ -1,9 +1,17 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { map } from 'rxjs';
+import { Observable, map } from 'rxjs';
 import { environment } from '../../../../environments/environment';
-import { communicationResponse } from '../../../infraestructure/interfaces';
-import { Communication, StatusMail } from '../../../domain/models';
+import {
+  transferDetails,
+  accountResponse,
+  communicationResponse,
+  dependencyResponse,
+  institutionResponse,
+  receiver,
+} from '../../../infraestructure/interfaces';
+import { Communication, Officer, StatusMail } from '../../../domain/models';
+import { CreateCommunicationDto } from '../../../infraestructure/dtos';
 
 interface SearchParams {
   text: string;
@@ -19,6 +27,37 @@ export class InboxService {
   private readonly url = `${environment.base_url}/communication`;
   private http = inject(HttpClient);
   constructor() {}
+
+  getInstitucions() {
+    return this.http.get<institutionResponse[]>(`${this.url}/institutions`);
+  }
+  getDependenciesInInstitution(id_institution: string) {
+    return this.http.get<dependencyResponse[]>(
+      `${this.url}/dependencies/${id_institution}`
+    );
+  }
+  getAccountsForSend(id_dependency: string): Observable<receiver[]> {
+    return this.http
+      .get<accountResponse[]>(`${this.url}/accounts/${id_dependency}`)
+      .pipe(
+        map((resp) =>
+          resp.map(({ _id, funcionario }) => ({
+            id_account: _id,
+            officer: Officer.officerFromJson(funcionario!),
+            online: false,
+          }))
+        )
+      );
+  }
+
+  create(FormSend: Object, details: transferDetails, receivers: receiver[]) {
+    const mail = CreateCommunicationDto.fromFormData(
+      FormSend,
+      details,
+      receivers
+    );
+    return this.http.post<{ message: string }>(`${this.url}`, mail);
+  }
 
   findAll(limit: number, offset: number, status?: StatusMail) {
     const params = new HttpParams({
@@ -56,5 +95,10 @@ export class InboxService {
           };
         })
       );
+  }
+  getMailDetails(id: string) {
+    return this.http
+      .get<communicationResponse>(`${this.url}/${id}`)
+      .pipe(map((resp) => Communication.fromResponse(resp)));
   }
 }

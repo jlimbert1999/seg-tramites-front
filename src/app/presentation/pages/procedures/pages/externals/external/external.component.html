@@ -24,25 +24,29 @@
         }
         <div class="row">
           <div class="col-sm-6">
-            <mat-form-field class="example-full-width">
+            <mat-form-field>
               <mat-label>Referencia del tramite</mat-label>
               <textarea matInput formControlName="reference"></textarea>
-              <mat-error *ngIf="FormProcedure.controls['reference'].invalid">
-                Ingrese la referencia
+              @if(FormProcedure.controls['reference'].invalid){
+              <mat-error>
+                {{ errorMessage(FormProcedure.controls["reference"]) }}
               </mat-error>
+              }
             </mat-form-field>
           </div>
           <div class="col-sm-3">
-            <mat-form-field class="example-full-width">
+            <mat-form-field>
               <mat-label>Cant. Hojas / Anexos</mat-label>
               <input type="text" matInput formControlName="amount" />
-              <mat-error *ngIf="FormProcedure.controls['amount'].invalid"
-                >Ingrese la cantidad de hojas
+              @if(FormProcedure.controls['amount'].invalid){
+              <mat-error>
+                {{ errorMessage(FormProcedure.controls["amount"]) }}
               </mat-error>
+              }
             </mat-form-field>
           </div>
           <div class="col-sm-3">
-            <mat-form-field class="example-full-width">
+            <mat-form-field>
               <mat-label>CITE</mat-label>
               <input type="text" matInput formControlName="cite" />
             </mat-form-field>
@@ -89,19 +93,34 @@
           <div class="col-sm-4">
             <mat-form-field>
               <mat-label>Nombres</mat-label>
-              <input matInput formControlName="nombre" class="uppercase" />
+              <input matInput formControlName="nombre" />
+              @if(FormApplicant().controls['nombre'].invalid){
+              <mat-error>
+                {{ errorMessage(FormApplicant().controls["nombre"]) }}
+              </mat-error>
+              }
             </mat-form-field>
           </div>
           <div class="col-sm-4">
             <mat-form-field>
               <mat-label>Apellido paterno</mat-label>
-              <input matInput formControlName="paterno" class="uppercase" />
+              <input matInput formControlName="paterno" />
+              @if(FormApplicant().controls['paterno'].invalid){
+              <mat-error>
+                {{ errorMessage(FormApplicant().controls["paterno"]) }}
+              </mat-error>
+              }
             </mat-form-field>
           </div>
           <div class="col-sm-4">
             <mat-form-field>
               <mat-label>Apellido materno</mat-label>
-              <input matInput formControlName="materno" class="uppercase" />
+              <input matInput formControlName="materno" />
+              @if(FormApplicant().controls['materno'].invalid){
+              <mat-error>
+                {{ errorMessage(FormApplicant().controls["materno"]) }}
+              </mat-error>
+              }
             </mat-form-field>
           </div>
           <div class="col-sm-4">
@@ -115,31 +134,56 @@
                   {{ document | uppercase }}
                 </mat-option>
               </mat-select>
+              @if(FormApplicant().controls['documento'].invalid){
+              <mat-error>
+                {{ errorMessage(FormApplicant().controls["documento"]) }}
+              </mat-error>
+              }
             </mat-form-field>
           </div>
           <div class="col-sm-4">
-            <mat-form-field class="example-full-width">
+            <mat-form-field>
               <mat-label>DNI</mat-label>
               <input matInput formControlName="dni" />
+              @if(FormApplicant().controls['dni'].invalid){
+              <mat-error>
+                {{ errorMessage(FormApplicant().controls["dni"]) }}
+              </mat-error>
+              }
             </mat-form-field>
           </div>
           <div class="col-sm-4">
-            <mat-form-field class="example-full-width">
+            <mat-form-field>
               <mat-label>Telefono de referencia</mat-label>
               <input matInput formControlName="telefono" />
+              @if(FormApplicant().controls['telefono'].invalid){
+              <mat-error>
+                {{ errorMessage(FormApplicant().controls["telefono"]) }}
+              </mat-error>
+              }
             </mat-form-field>
           </div>
           }@else {
           <div class="col-sm-8">
-            <mat-form-field class="example-full-width">
+            <mat-form-field>
               <mat-label>Nombres</mat-label>
-              <input matInput formControlName="nombre" class="uppercase" />
+              <input matInput formControlName="nombre" />
+              @if(FormApplicant().controls['nombre'].invalid){
+              <mat-error>
+                {{ errorMessage(FormApplicant().controls["nombre"]) }}
+              </mat-error>
+              }
             </mat-form-field>
           </div>
           <div class="col-sm-4">
-            <mat-form-field class="example-full-width">
+            <mat-form-field>
               <mat-label>Telefono de referencia</mat-label>
               <input matInput formControlName="telefono" />
+              @if(FormApplicant().controls['telefono'].invalid){
+              <mat-error>
+                {{ errorMessage(FormApplicant().controls["telefono"]) }}
+              </mat-error>
+              }
             </mat-form-field>
           </div>
           }
@@ -171,27 +215,27 @@
         <ng-template matStepLabel>Detalles representante</ng-template>
         <div class="row">
           <div class="col-sm-4">
-            <mat-form-field class="example-full-width">
+            <mat-form-field>
               <mat-label>Nombre</mat-label>
-              <input matInput formControlName="nombre" class="uppercase" />
+              <input matInput formControlName="nombre" />
             </mat-form-field>
           </div>
           <div class="col-sm-4">
-            <mat-form-field class="example-full-width">
+            <mat-form-field>
               <mat-label>Apellido paterno</mat-label>
-              <input matInput formControlName="paterno" class="uppercase" />
+              <input matInput formControlName="paterno" />
             </mat-form-field>
           </div>
           <div class="col-sm-4">
-            <mat-form-field class="example-full-width">
+            <mat-form-field>
               <mat-label>Apellido materno</mat-label>
-              <input matInput formControlName="materno" class="uppercase" />
+              <input matInput formControlName="materno" />
             </mat-form-field>
           </div>
         </div>
         <div class="row">
           <div class="col-sm-4">
-            <mat-form-field class="example-full-width" #TipoDoc>
+            <mat-form-field #TipoDoc>
               <mat-label>Tipo documento</mat-label>
               <mat-select formControlName="documento">
                 <mat-option
@@ -204,13 +248,13 @@
             </mat-form-field>
           </div>
           <div class="col-sm-4">
-            <mat-form-field class="example-full-width">
+            <mat-form-field>
               <mat-label>DNI</mat-label>
               <input matInput formControlName="dni" />
             </mat-form-field>
           </div>
           <div class="col-sm-4">
-            <mat-form-field class="example-full-width">
+            <mat-form-field>
               <mat-label>Telefono de referencia</mat-label>
               <input matInput formControlName="telefono" />
             </mat-form-field>

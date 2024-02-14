@@ -11,6 +11,7 @@ import {
   FormBuilder,
   FormGroup,
   Validators,
+  AbstractControl,
 } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import {
@@ -30,6 +31,7 @@ import { SimpleSelectSearchComponent } from '../../../../../components';
 import { AuthService, InternalService } from '../../../../../services';
 import { InternalProcedure, Officer } from '../../../../../../domain/models';
 import { typeProcedureResponse } from '../../../../../../infraestructure/interfaces';
+import { handleFormErrorMessages } from '../../../../../../helpers';
 
 interface SelectOption {
   value: typeProcedureResponse;
@@ -121,6 +123,10 @@ export class InternalComponent {
 
   setJob(value: string, path: string) {
     this.FormProcedure.get(path)?.setValue(value);
+  }
+
+  errorMessage(control: AbstractControl) {
+    return handleFormErrorMessages(control);
   }
 
   private loadFormData() {

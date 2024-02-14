@@ -2,24 +2,34 @@ import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
+  DestroyRef,
   OnInit,
   inject,
   signal,
 } from '@angular/core';
 import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatButtonModule } from '@angular/material/button';
 import { MatSelectModule } from '@angular/material/select';
 import { MatInputModule } from '@angular/material/input';
 import { MatTableModule } from '@angular/material/table';
+import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { RouterModule } from '@angular/router';
-import { CacheService, InboxService } from '../../../services';
+import { FormsModule } from '@angular/forms';
+import {
+  AlertService,
+  CacheService,
+  InboxService,
+  SocketService,
+} from '../../../services';
 import {
   PaginatorComponent,
   SearchInputComponent,
   SidenavButtonComponent,
 } from '../../../components';
 import { Communication, StatusMail } from '../../../../domain/models';
-import { FormsModule } from '@angular/forms';
+import { StateLabelPipe } from '../../../pipes';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 interface PaginationOptions {
   limit: number;
@@ -37,14 +47,17 @@ interface CacheData {
     FormsModule,
     CommonModule,
     RouterModule,
+    MatIconModule,
     MatMenuModule,
     MatTableModule,
     MatInputModule,
     MatSelectModule,
+    MatButtonModule,
     MatToolbarModule,
     SidenavButtonComponent,
     PaginatorComponent,
     SearchInputComponent,
+    StateLabelPipe,
   ],
   templateUrl: './inbox.component.html',
   styleUrl: './inbox.component.scss',
@@ -53,6 +66,10 @@ interface CacheData {
 export class InboxComponent implements OnInit {
   private inboxService = inject(InboxService);
   private cacheService = inject(CacheService);
+  private socketService = inject(SocketService);
+  private destroyRef = inject(DestroyRef);
+  private alertService = inject(AlertService);
+
   public displayedColumns: string[] = [
     'group',
     'code',
@@ -68,6 +85,8 @@ export class InboxComponent implements OnInit {
   public status?: StatusMail;
 
   ngOnInit(): void {
+    this.listenProcedureDispatches();
+    this.listenCacelDispatches();
     this.getData();
   }
 
@@ -117,5 +136,26 @@ export class InboxComponent implements OnInit {
 
   get PageParams(): { limit: number; index: number } {
     return { limit: this.limit, index: this.index };
+  }
+
+  private listenProcedureDispatches() {
+    this.socketService
+      .listenProceduresDispatches()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((communication) => {
+        this.datasource.update((values) => {
+          if (values.length === this.limit) values.pop();
+          return [communication, ...values];
+        });
+      });
+  }
+
+  private listenCacelDispatches() {
+    this.socketService
+      .listenCancelDispatches()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((id) => {
+        // TODO DELETE ITEM OF DATASOURCE
+      });
   }
 }

@@ -7,3 +7,5 @@ export * from './procedures/internal.model';
 export * from './procedures/procedure.model';
 export * from './procedures/workflow.model';
 export * from './procedures/communication.model';
+
+export * from './communications/grouped-communication.model';

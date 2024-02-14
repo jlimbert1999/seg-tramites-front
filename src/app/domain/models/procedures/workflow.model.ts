@@ -13,7 +13,7 @@ interface dispatch {
   receiver: participant;
   duration: string;
   reference: string;
-  internalNumer: string;
+  internalNumber: string;
   attachmentQuantity: string;
   status: StatusMail;
   date?: Date;
@@ -38,7 +38,7 @@ export class Workflow {
   public emitter: participant;
   public date: Date;
 
-  static reponseToModel(response: workflowResponse) {
+  static responseToModel(response: workflowResponse) {
     return new Workflow({
       emitter: response.emitter,
       duration: response.duration,

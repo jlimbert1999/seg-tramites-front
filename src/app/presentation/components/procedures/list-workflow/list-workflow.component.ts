@@ -1,8 +1,9 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import { Workflow } from '../../../../domain/models';
 
 @Component({
-  selector: 'app-list-workflow',
+  selector: 'list-workflow',
   standalone: true,
   imports: [
     CommonModule,
@@ -11,4 +12,6 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
   styleUrl: './list-workflow.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ListWorkflowComponent { }
+export class ListWorkflowComponent { 
+  @Input() data: Workflow[] = [];
+}

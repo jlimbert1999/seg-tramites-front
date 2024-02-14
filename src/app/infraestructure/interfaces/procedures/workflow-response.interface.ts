@@ -13,7 +13,7 @@ interface dispatch {
   duration: string;
   reference: string;
   attachmentQuantity: string;
-  internalNumer: string;
+  internalNumber: string;
   status: StatusMail;
   inboundDate?: string;
   eventLog?: eventLog;

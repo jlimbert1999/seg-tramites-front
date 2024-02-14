@@ -28,6 +28,8 @@ import {
   PdfService,
 } from '../../../../services';
 import { StateLabelPipe } from '../../../../pipes';
+import { ProcedureDispatcherComponent } from '../../../communications/inbox/procedure-dispatcher/procedure-dispatcher.component';
+import { transferDetails } from '../../../../../infraestructure/interfaces';
 
 interface PaginationOptions {
   limit: number;
@@ -66,9 +68,6 @@ export class ExternalsComponent {
   private procedureService = inject(ProcedureService);
   private cacheService: CacheService<CacheData> = inject(CacheService);
   private pdfService: PdfService = inject(PdfService);
-  private destroyref = inject(DestroyRef).onDestroy(() => {
-    this.savePaginationData();
-  });
 
   public term: string = '';
   public datasource = signal<ExternalProcedure[]>([]);
@@ -82,6 +81,12 @@ export class ExternalsComponent {
     'send',
     'menu-options',
   ];
+
+  constructor() {
+    inject(DestroyRef).onDestroy(() => {
+      this.savePaginationData();
+    });
+  }
 
   ngOnInit(): void {
     this.loadPaginationData();
@@ -110,7 +115,7 @@ export class ExternalsComponent {
     });
     dialogRef.afterClosed().subscribe((createdProcedure) => {
       if (!createdProcedure) return;
-      this.datasize.update((value) => value++);
+      this.datasize.update((value) => (value += 1));
       this.datasource.update((values) => {
         if (values.length === this.limit) values.pop();
         return [createdProcedure, ...values];
@@ -127,7 +132,6 @@ export class ExternalsComponent {
     });
     dialogRef.afterClosed().subscribe((updatedProcedure) => {
       if (!updatedProcedure) return;
-      console.log(updatedProcedure);
       this.datasource.update((values) => {
         const indexFound = values.findIndex(
           (element) => element._id === updatedProcedure._id
@@ -139,29 +143,26 @@ export class ExternalsComponent {
   }
 
   send(procedure: ExternalProcedure) {
-    // const dialogRef = this.dialog.open<
-    //   SendDialogComponent,
-    //   TransferDetails,
-    //   string
-    // >(SendDialogComponent, {
-    //   width: '1200px',
-    //   data: {
-    //     id_procedure: procedure._id,
-    //     attachmentQuantity: procedure.amount,
-    //     code: procedure.code,
-    //   },
-    //   disableClose: true,
-    // });
-    // dialogRef.afterClosed().subscribe((message) => {
-    //   if (!message) return;
-    //   this.dataSource.update((values) => {
-    //     const indexFound = values.findIndex(
-    //       (element) => element._id === procedure._id
-    //     );
-    //     values[indexFound].isSend = true;
-    //     return [...values];
-    //   });
-    // });
+    const transfer: transferDetails = {
+      id_procedure: procedure._id,
+      code: procedure.code,
+      attachmentQuantity: procedure.amount,
+    };
+    const dialogRef = this.dialog.open(ProcedureDispatcherComponent, {
+      width: '1200px',
+      data: transfer,
+      disableClose: true,
+    });
+    dialogRef.afterClosed().subscribe((message) => {
+      if (!message) return;
+      this.datasource.update((values) => {
+        const indexFound = values.findIndex(
+          (element) => element._id === procedure._id
+        );
+        values[indexFound].isSend = true;
+        return [...values];
+      });
+    });
   }
 
   generateRouteMap(id_procedure: string, group: any) {

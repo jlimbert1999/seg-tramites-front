@@ -11,6 +11,7 @@ import { map } from 'rxjs';
 import {
   ExternalProcedure,
   GroupProcedure,
+  InternalProcedure,
   Workflow,
 } from '../../../domain/models';
 
@@ -33,7 +34,7 @@ export class ProcedureService {
         map((resp) => {
           return {
             procedure: this.toModel(group, resp.procedure),
-            workflow: resp.workflow.map((el) => Workflow.reponseToModel(el)),
+            workflow: resp.workflow.map((el) => Workflow.responseToModel(el)),
             observations: resp.observations,
           };
         })
@@ -47,8 +48,8 @@ export class ProcedureService {
       [GroupProcedure.External]: ExternalProcedure.ResponseToModel(
         response as externalResponse
       ),
-      [GroupProcedure.Internal]: ExternalProcedure.ResponseToModel(
-        response as externalResponse
+      [GroupProcedure.Internal]: InternalProcedure.ResponseToModel(
+        response as internalResponse
       ),
     };
     return models[group];

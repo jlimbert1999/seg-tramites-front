@@ -15,6 +15,7 @@ import { InboxComponent } from './presentation/pages/communications/inbox/inbox.
 import { OutboxComponent } from './presentation/pages/communications/outbox/outbox.component';
 import { DependenciesComponent } from './presentation/pages/administration/dependencies/dependencies.component';
 import { PostsComponent } from './presentation/pages/groupware/posts/posts.component';
+import { MailComponent } from './presentation/pages/communications/inbox/mail/mail.component';
 
 export const routes: Routes = [
   {
@@ -38,6 +39,7 @@ export const routes: Routes = [
       { path: 'internal', component: InternalsComponent },
       { path: ':from/:group/:id', component: DetailComponent },
       { path: 'inbox', component: InboxComponent },
+      { path: 'inbox/:id', component: MailComponent },
       { path: 'outbox', component: OutboxComponent },
       { path: 'posts', component: PostsComponent },
     ],

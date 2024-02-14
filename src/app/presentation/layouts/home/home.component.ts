@@ -3,6 +3,7 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
+  DestroyRef,
   OnInit,
   inject,
 } from '@angular/core';
@@ -18,11 +19,13 @@ import {
   SocketService,
   CacheService,
   AppearanceService,
+  AlertService,
 } from '../../services';
 import {
   SidenavButtonComponent,
   NavigationListComponent,
 } from '../../components';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-home',
@@ -50,13 +53,26 @@ export class HomeComponent implements OnInit {
   private appearanceService = inject(AppearanceService);
   public cacheService = inject(CacheService);
   private socketService = inject(SocketService);
+  private alertservice = inject(AlertService);
+  private detroyref = inject(DestroyRef);
 
   constructor(changeDetectorRef: ChangeDetectorRef, media: MediaMatcher) {
     this.mobileQuery = media.matchMedia('(max-width: 600px)');
     this._mobileQueryListener = () => changeDetectorRef.detectChanges();
     this.mobileQuery.addListener(this._mobileQueryListener);
   }
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.socketService.listenUserConnection();
+    this.socketService
+      .listenProceduresDispatches()
+      .pipe(takeUntilDestroyed(this.detroyref))
+      .subscribe((data) =>
+        this.alertservice.Toast({
+          title: `${data.emitter.fullname} ha enviado un tramite`,
+          message: data.reference,
+        })
+      );
+  }
 
   ngOnDestroy(): void {
     this.mobileQuery.removeListener(this._mobileQueryListener);

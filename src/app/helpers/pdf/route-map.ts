@@ -1,12 +1,12 @@
 import { Content, ContentTable } from 'pdfmake/interfaces';
-import { convertImagenABase64, TimeManager } from '../';
-import { Procedure, Workflow } from '../../domain/models';
+import { convertImageABase64, TimeManager, toOrdinal } from '../';
+import { GroupProcedure, Procedure, Workflow } from '../../domain/models';
 
 interface RouteMapProps {
   index: number;
   officers: string[];
   reference: string;
-  internalNumer: string;
+  internalNumber: string;
   inDetail: detail;
   outDetail: detail;
 }
@@ -17,16 +17,16 @@ interface detail {
   quantity: string;
 }
 
-interface First {
-  group: Array<string>;
+interface originDetails {
   code: string;
+  group: GroupProcedure;
   reference: string;
-  internalNumber: string;
   cite: string;
   emitter: participant;
-  receiver: participant;
   inDetail: detail;
   outDetail: detail;
+  receiver: participant;
+  internalNumber: string;
 }
 
 interface participant {
@@ -38,34 +38,25 @@ export async function CreateRouteMap(
   workflow: Workflow[]
 ): Promise<Content[]> {
   return [
-    await createHeader(),
+    await createHeaderContainer(),
     firstSection(procedure, workflow[0]),
     secondSection(workflow),
-    // thridSection(containers.length, getLastPageNumber(containers.length)),
   ];
-}
-
-function getLastPageNumber(lengthData: number): number {
-  if (lengthData <= 8) return 8;
-  const firstTerm = 3;
-  const increment = 5;
-  const termsBefore = Math.ceil((lengthData - firstTerm) / increment);
-  const nextTerm = firstTerm + termsBefore * increment;
-  return nextTerm;
 }
 
 function secondSection(workflow: Workflow[]) {
   const containers: ContentTable[] = [];
+  console.log(workflow);
   for (const [index, { dispatches }] of workflow.entries()) {
     const officers = dispatches.map(
-      ({ receiver: { fullname, jobtitle } }) => `${fullname} ${jobtitle}`
+      ({ receiver: { fullname, jobtitle } }) => `${fullname} (${jobtitle})`
     );
     if (dispatches.length > 1) {
       const container = createStageContainer({
         index: index,
         reference: dispatches[0].reference,
         officers: officers,
-        internalNumer: '',
+        internalNumber: '',
         inDetail: { date: '', hour: '', quantity: '' },
         outDetail: { date: '', hour: '', quantity: '' },
       });
@@ -80,7 +71,7 @@ function secondSection(workflow: Workflow[]) {
       index: index,
       reference: dispatches[0].reference,
       officers: officers,
-      internalNumer: dispatches[0].internalNumer,
+      internalNumber: dispatches[0].internalNumber,
       inDetail: dispatches[0].date
         ? {
             date: TimeManager.formatDate(dispatches[0].date, 'MM/D/YYYY'),
@@ -98,54 +89,62 @@ function secondSection(workflow: Workflow[]) {
     });
     containers.push(container);
   }
+  const length = containers.length;
+
+  for (let index = length; index < getLastPageNumber(length); index++) {
+    const container = createStageContainer({
+      index: index,
+      officers: [],
+      outDetail: { hour: '', date: '', quantity: '' },
+      inDetail: { hour: '', date: '', quantity: '' },
+      reference: '',
+      internalNumber: '',
+    });
+    containers.push(container);
+  }
   return containers;
 }
 
+function getLastPageNumber(lengthData: number): number {
+  if (lengthData <= 8) return 8;
+  const firstTerm = 3;
+  const increment = 5;
+  const termsBefore = Math.ceil((lengthData - firstTerm) / increment);
+  const nextTerm = firstTerm + termsBefore * increment;
+  return nextTerm;
+}
+
 function firstSection(procedure: Procedure, workflow?: Workflow) {
-  const receiver: participant = procedure.applicantDetails.receiver
-    ? {
-        fullname: procedure.applicantDetails.receiver.fullname,
-        jobtitle: procedure.applicantDetails.receiver.jobtitle,
-      }
-    : workflow
-    ? {
-        fullname: workflow.dispatches[0].receiver.fullname,
-        jobtitle: workflow.dispatches[0].receiver.jobtitle ?? 'Sin cargo',
-      }
-    : { fullname: '', jobtitle: '' };
+  const { emitter, receiver } = procedure.routeMapProps();
+  const stage = workflow?.dispatches[0];
+
   return createDetailContainer({
     code: procedure.code,
     cite: procedure.cite,
     reference: procedure.reference,
-    internalNumber: procedure.cite,
-    group: [],
+    group: procedure.group,
     emitter: {
-      fullname: procedure.applicantDetails.emitter.fullname,
-      jobtitle: procedure.applicantDetails.emitter.jobtitle,
+      fullname: emitter.fullname,
+      jobtitle: emitter.jobtitle ?? 'Sin cargo',
     },
-    receiver: receiver,
     inDetail: {
       date: TimeManager.formatDate(procedure.startDate, 'MM/D/YYYY'),
       hour: TimeManager.formatDate(procedure.startDate, 'HH:mm'),
       quantity: procedure.amount,
     },
-    outDetail: workflow
-      ? {
-          date: TimeManager.formatDate(workflow.date, 'MM/D/YYYY'),
-          hour: TimeManager.formatDate(workflow.date, 'HH:mm'),
-          quantity: workflow.dispatches[0].attachmentQuantity,
-        }
-      : { date: '', hour: '', quantity: '' },
+    internalNumber: workflow?.dispatches[0].internalNumber ?? '',
+    receiver: { jobtitle: '', fullname: '' },
+    outDetail: { date: '', hour: '', quantity: '' },
   });
 }
 
-async function createHeader(): Promise<Content> {
+async function createHeaderContainer(): Promise<Content> {
   return [
     {
       style: 'cabecera',
       columns: [
         {
-          image: await convertImagenABase64(
+          image: await convertImageABase64(
             '../../../assets/img/gams/logo_alcaldia.jpeg'
           ),
           width: 150,
@@ -157,7 +156,7 @@ async function createHeader(): Promise<Content> {
           alignment: 'center',
         },
         {
-          image: await convertImagenABase64(
+          image: await convertImageABase64(
             '../../../assets/img/gams/escudo_sacaba.jpeg'
           ),
           width: 70,
@@ -167,204 +166,17 @@ async function createHeader(): Promise<Content> {
     },
   ];
 }
-
-function thridSection(currentPage: number, lastPage: number) {
-  const containers: ContentTable[] = [];
-  for (let index = currentPage; currentPage < lastPage; index++) {
-    const container = createStageContainer({
-      index: index,
-      reference: '',
-      officers: [],
-      internalNumer: '',
-      inDetail: { date: '', hour: '', quantity: '' },
-      outDetail: { date: '', hour: '', quantity: '' },
-    });
-    containers.push(container);
-  }
-  return containers;
-}
-
-function createStageContainer({
-  index,
-  officers,
-  reference,
-  internalNumer,
-  inDetail,
-  outDetail,
-}: RouteMapProps): ContentTable {
-  return {
-    fontSize: 7,
-    unbreakable: true,
-    table: {
-      dontBreakRows: true,
-      widths: [360, '*'],
-      body: [
-        [
-          {
-            margin: [0, 10, 0, 0],
-            text: `DESTINATARIO ${index} (NOMBRE Y CARGO): ${officers.join(
-              ' // '
-            )}`,
-            colSpan: 2,
-            alignment: 'left',
-            border: [true, false, true, false],
-          },
-          '',
-        ],
-        [
-          {
-            border: [true, false, false, false],
-            table: {
-              widths: [80, 300],
-              body: [
-                [
-                  {
-                    table: {
-                      heights: 70,
-                      widths: [70],
-                      body: [
-                        [
-                          {
-                            text: 'SELLO DE RECEPCION',
-                            fontSize: 4,
-                            alignment: 'center',
-                          },
-                        ],
-                      ],
-                    },
-                  },
-                  [
-                    { text: 'INSTRUCCION / PROVEIDO' },
-                    {
-                      text: `\n\n${reference}`,
-                      bold: true,
-                      alignment: 'center',
-                    },
-                  ],
-                ],
-              ],
-            },
-            layout: {
-              defaultBorder: false,
-            },
-          },
-          {
-            rowSpan: 1,
-            border: [false, false, true, false],
-            table: {
-              widths: [100, 40],
-              body: [
-                [
-                  {
-                    text: 'NRO. REGISTRO INTERNO (Correlativo)',
-                    border: [false, false, false, false],
-                  },
-                  { text: internalNumer },
-                ],
-                [
-                  {
-                    text: '\n\n\n\n-----------------------------------------',
-                    colSpan: 2,
-                    border: [false, false, false, false],
-                    alignment: 'right',
-                  },
-                ],
-                [
-                  {
-                    text: 'FIRMA Y SELLO',
-                    colSpan: 2,
-                    border: [false, false, false, false],
-                    alignment: 'right',
-                  },
-                ],
-              ],
-            },
-          },
-        ],
-        [
-          {
-            colSpan: 2,
-            border: [true, false, true, true],
-            alignment: 'center',
-            fontSize: 5,
-            table: {
-              widths: [30, 45, 35, '*', 30, 45, 35, '*'],
-              body: [
-                [
-                  '',
-                  'FECHA',
-                  'HORA',
-                  'CANTIDAD DE HOJAS / ANEXOS',
-                  '',
-                  'FECHA',
-                  'HORA',
-                  'CANTIDAD DE HOJAS / ANEXOS',
-                ],
-                [
-                  {
-                    text: 'INGRESO',
-                    border: [false, false, false, false],
-                    fontSize: 7,
-                  },
-                  {
-                    text: `${inDetail.date}`,
-                    fontSize: 8,
-                    border: [true, true, true, true],
-                  },
-                  {
-                    text: `${inDetail.hour}`,
-                    fontSize: 8,
-                    border: [true, true, true, true],
-                  },
-                  {
-                    text: `${inDetail.quantity}`,
-                    fontSize: 6,
-                    border: [true, true, true, true],
-                  },
-                  {
-                    text: 'SALIDA',
-                    border: [false, false, false, false],
-                    fontSize: 7,
-                  },
-                  {
-                    text: `${outDetail.date}`,
-                    border: [true, true, true, true],
-                    fontSize: 8,
-                  },
-                  {
-                    text: `${outDetail.hour}`,
-                    border: [true, true, true, true],
-                    fontSize: 8,
-                  },
-                  {
-                    text: `${outDetail.quantity}`,
-                    border: [true, true, true, true],
-                    fontSize: 6,
-                  },
-                ],
-              ],
-            },
-            layout: {
-              defaultBorder: false,
-            },
-          },
-        ],
-      ],
-    },
-  };
-}
-
 function createDetailContainer({
   group,
   code,
   reference,
   inDetail,
-  outDetail,
-  internalNumber,
   cite,
   emitter,
   receiver,
-}: First) {
+  outDetail,
+  internalNumber,
+}: originDetails) {
   return {
     fontSize: 7,
     table: {
@@ -520,7 +332,7 @@ function createDetailContainer({
                             border: [false, false, false, false],
                           },
                           {
-                            text: ``,
+                            text: `${internalNumber}`,
                             fontSize: 9,
                             alignment: 'center',
                           },
@@ -591,6 +403,175 @@ function createDetailContainer({
                 text: '',
               },
             ],
+          },
+        ],
+      ],
+    },
+  };
+}
+function createStageContainer({
+  index,
+  officers,
+  reference,
+  internalNumber,
+  inDetail,
+  outDetail,
+}: RouteMapProps): ContentTable {
+  return {
+    fontSize: 7,
+    unbreakable: true,
+    table: {
+      dontBreakRows: true,
+      widths: [360, '*'],
+      body: [
+        [
+          {
+            margin: [0, 10, 0, 0],
+            text: `DESTINATARIO ${toOrdinal(
+              index + 1
+            )} (NOMBRE Y CARGO): ${officers.join(' // ')}`,
+            colSpan: 2,
+            alignment: 'left',
+            border: [true, false, true, false],
+          },
+          '',
+        ],
+        [
+          {
+            border: [true, false, false, false],
+            table: {
+              widths: [80, 300],
+              body: [
+                [
+                  {
+                    table: {
+                      heights: 70,
+                      widths: [70],
+                      body: [
+                        [
+                          {
+                            text: 'SELLO DE RECEPCION',
+                            fontSize: 4,
+                            alignment: 'center',
+                          },
+                        ],
+                      ],
+                    },
+                  },
+                  [
+                    { text: 'INSTRUCCION / PROVEIDO' },
+                    {
+                      text: `\n\n${reference}`,
+                      bold: true,
+                      alignment: 'center',
+                    },
+                  ],
+                ],
+              ],
+            },
+            layout: {
+              defaultBorder: false,
+            },
+          },
+          {
+            rowSpan: 1,
+            border: [false, false, true, false],
+            table: {
+              widths: [100, 40],
+              body: [
+                [
+                  {
+                    text: 'NRO. REGISTRO INTERNO (Correlativo)',
+                    border: [false, false, false, false],
+                  },
+                  { text: internalNumber },
+                ],
+                [
+                  {
+                    text: '\n\n\n\n-----------------------------------------',
+                    colSpan: 2,
+                    border: [false, false, false, false],
+                    alignment: 'right',
+                  },
+                ],
+                [
+                  {
+                    text: 'FIRMA Y SELLO',
+                    colSpan: 2,
+                    border: [false, false, false, false],
+                    alignment: 'right',
+                  },
+                ],
+              ],
+            },
+          },
+        ],
+        [
+          {
+            colSpan: 2,
+            border: [true, false, true, true],
+            alignment: 'center',
+            fontSize: 5,
+            table: {
+              widths: [30, 45, 35, '*', 30, 45, 35, '*'],
+              body: [
+                [
+                  '',
+                  'FECHA',
+                  'HORA',
+                  'CANTIDAD DE HOJAS / ANEXOS',
+                  '',
+                  'FECHA',
+                  'HORA',
+                  'CANTIDAD DE HOJAS / ANEXOS',
+                ],
+                [
+                  {
+                    text: 'INGRESO',
+                    border: [false, false, false, false],
+                    fontSize: 7,
+                  },
+                  {
+                    text: `${inDetail.date}`,
+                    fontSize: 8,
+                    border: [true, true, true, true],
+                  },
+                  {
+                    text: `${inDetail.hour}`,
+                    fontSize: 8,
+                    border: [true, true, true, true],
+                  },
+                  {
+                    text: `${inDetail.quantity}`,
+                    fontSize: 6,
+                    border: [true, true, true, true],
+                  },
+                  {
+                    text: 'SALIDA',
+                    border: [false, false, false, false],
+                    fontSize: 7,
+                  },
+                  {
+                    text: `${outDetail.date}`,
+                    border: [true, true, true, true],
+                    fontSize: 8,
+                  },
+                  {
+                    text: `${outDetail.hour}`,
+                    border: [true, true, true, true],
+                    fontSize: 8,
+                  },
+                  {
+                    text: `${outDetail.quantity}`,
+                    border: [true, true, true, true],
+                    fontSize: 6,
+                  },
+                ],
+              ],
+            },
+            layout: {
+              defaultBorder: false,
+            },
           },
         ],
       ],

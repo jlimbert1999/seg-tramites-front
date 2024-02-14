@@ -1,5 +1,5 @@
 import { externalResponse } from '../../../infraestructure/interfaces';
-import { Procedure, ProcedureProps, GroupProcedure } from './procedure.model';
+import { Procedure, ProcedureProps } from './procedure.model';
 
 interface ExternalProps extends ProcedureProps {
   details: details;
@@ -33,24 +33,24 @@ interface representative {
 
 export class ExternalProcedure extends Procedure {
   details: details;
-  static ResponseToModel({
-    send,
-    account: { _id, funcionario },
-    type,
-    ...values
-  }: externalResponse) {
+
+  static ResponseToModel({ send, account, type, ...values }: externalResponse) {
     return new ExternalProcedure({
       isSend: send,
-      type: type.nombre,
-      account: {
-        _id: _id,
-        funcionario: funcionario
-          ? {
-              fullname: `${funcionario.nombre} ${funcionario.paterno} ${funcionario.materno}`,
-              jobtitle: funcionario.cargo?.nombre,
-            }
-          : undefined,
-      },
+      type: typeof type === 'string' ? type : type.nombre,
+      account:
+        typeof account === 'string'
+          ? { id: account }
+          : {
+              id: account._id,
+              officer: account.funcionario
+                ? {
+                    fullname: `${account.funcionario.nombre} ${account.funcionario.paterno} ${account.funcionario.materno}`,
+                    jobtitle: account.funcionario.cargo?.nombre,
+                  }
+                : undefined,
+            },
+
       ...values,
     });
   }
@@ -83,7 +83,7 @@ export class ExternalProcedure extends Procedure {
       .join(' ');
   }
 
-  override get applicantDetails() {
+  override routeMapProps() {
     return {
       emitter: {
         fullname: this.fullNameApplicant,

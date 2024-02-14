@@ -1,4 +1,5 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
+import { ToastrService } from 'ngx-toastr';
 import Swal from 'sweetalert2';
 
 interface AlertOptions {
@@ -10,15 +11,21 @@ interface AlertOptions {
 interface QuestionAlertOptions {
   title: string;
   text?: string;
-  icon: 'success' | 'error' | 'warning' | 'info' | 'question';
   callback: () => void;
+}
+
+interface ToastOptions {
+  seconds?: number;
+  title: string;
+  message?: string;
+  onActionRouteNavigate?: string;
 }
 
 @Injectable({
   providedIn: 'root',
 })
 export class AlertService {
-  constructor() {}
+  private toast = inject(ToastrService);
   Alert({ icon = 'info', title, text }: AlertOptions) {
     Swal.fire({
       icon,
@@ -27,7 +34,7 @@ export class AlertService {
       confirmButtonText: 'Aceptar',
     });
   }
-  QuestionAlert({ title, text, icon, callback }: QuestionAlertOptions) {
+  QuestionAlert({ title, text, callback }: QuestionAlertOptions) {
     Swal.fire({
       title: title,
       text: text,
@@ -39,6 +46,27 @@ export class AlertService {
       if (result.isConfirmed) {
         callback();
       }
+    });
+  }
+
+  LoadingAlert(title: string, subtitle: string): void {
+    Swal.fire({
+      title:title,
+      text: subtitle,
+      allowOutsideClick: false,
+    });
+    Swal.showLoading();
+  }
+
+  CloseLoadingAlert(): void {
+    Swal.close();
+  }
+
+  Toast({ seconds = 5000, title, message }: ToastOptions) {
+    this.toast.info(message, title, {
+      positionClass: 'toast-bottom-right',
+      closeButton: true,
+      timeOut: seconds,
     });
   }
 }

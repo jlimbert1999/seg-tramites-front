@@ -11,7 +11,7 @@ export interface procedure {
   send: boolean;
   startDate: string;
   endDate?: string;
-  type: typeProcedureResponse;
-  account: accountResponse;
+  type: typeProcedureResponse | string;
+  account: accountResponse | string;
   state: StateProcedure;
 }

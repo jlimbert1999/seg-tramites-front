@@ -28,8 +28,8 @@ export enum StateProcedure {
 }
 
 interface manager {
-  _id: string;
-  funcionario?: officer;
+  id: string;
+  officer?: officer;
 }
 interface officer {
   fullname: string;
@@ -42,7 +42,7 @@ export abstract class Procedure {
   public readonly type: string;
   public readonly group: GroupProcedure;
   public readonly startDate: Date;
-  public readonly account: manager;
+  public readonly account?: manager;
   public readonly endDate?: Date;
   public state: StateProcedure;
   public cite: string;
@@ -79,9 +79,9 @@ export abstract class Procedure {
   }
 
   get titleManager(): string {
-    if (!this.account.funcionario) return 'Funcionario desvinculado';
-    return `${this.account.funcionario.fullname} (${
-      this.account.funcionario.jobtitle ?? 'SIN CARGO'
+    if (!this.account?.officer) return 'Funcionario desvinculado';
+    return `${this.account.officer.fullname} (${
+      this.account.officer.jobtitle ?? 'SIN CARGO'
     })`;
   }
 
@@ -100,18 +100,8 @@ export abstract class Procedure {
     return true;
   }
 
-  getDuration() {
-    // return TimeControl.duration(this.startDate, this.endDate ?? new Date());
-  }
-
-  StartDateDetail() {
-    // return {
-    //   date: TimeControl.formatDate(this.startDate, 'DD/MM/YY'),
-    //   hour: TimeControl.formatDate(this.startDate, 'HH:mm'),
-    // };
-  }
-  abstract get applicantDetails(): {
-    emitter: { fullname: string; jobtitle: string };
-    receiver?: { fullname: string; jobtitle: string };
+  abstract routeMapProps(): {
+    emitter: officer;
+    receiver?: officer;
   };
 }

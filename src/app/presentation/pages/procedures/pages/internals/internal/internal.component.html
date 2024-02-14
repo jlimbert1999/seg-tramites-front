@@ -14,11 +14,11 @@
         <mat-form-field>
           <mat-label>Referencia del tramite</mat-label>
           <textarea formControlName="reference" matInput></textarea>
-          <mat-error
-            *ngIf="FormProcedure.get('reference')!.hasError('required')"
-          >
-            La referencia es <strong>requerida</strong>
+          @if(FormProcedure.controls['reference'].invalid){
+          <mat-error>
+            {{ errorMessage(FormProcedure.controls["reference"]) }}
           </mat-error>
+          }
         </mat-form-field>
       </div>
       <div class="col-sm-6">
@@ -39,9 +39,9 @@
               {{ option.fullname | titlecase }}
             </mat-option>
           </mat-autocomplete>
-          @if(FormProcedure.get('fullname_emitter')!.hasError('required')){
+          @if(FormProcedure.controls['fullname_emitter'].invalid){
           <mat-error>
-            El nombre del remitente es <strong>requerido</strong>
+            {{ errorMessage(FormProcedure.controls["fullname_emitter"]) }}
           </mat-error>
           }
         </mat-form-field>
@@ -50,9 +50,9 @@
         <mat-form-field>
           <mat-label>Cargo del remitente</mat-label>
           <input matInput type="text" formControlName="jobtitle_emitter" />
-          @if(FormProcedure.get('jobtitle_emitter')!.hasError('required')){
+          @if(FormProcedure.controls['jobtitle_emitter'].invalid){
           <mat-error>
-            El cargo del remitente es <strong>requerido</strong>
+            {{ errorMessage(FormProcedure.controls["jobtitle_emitter"]) }}
           </mat-error>
           }
         </mat-form-field>
@@ -76,11 +76,11 @@
               {{ option.fullname | titlecase }}
             </mat-option>
           </mat-autocomplete>
-          <mat-error
-            *ngIf="FormProcedure.get('fullname_receiver')!.hasError('required')"
-          >
-            El nombre del destinatario es <strong>requerido</strong>
+          @if(FormProcedure.controls['fullname_receiver'].invalid){
+          <mat-error>
+            {{ errorMessage(FormProcedure.controls["fullname_receiver"]) }}
           </mat-error>
+          }
         </mat-form-field>
       </div>
       <div class="col-sm-6">
@@ -91,11 +91,11 @@
             formControlName="jobtitle_receiver"
             matInput
           />
-          <mat-error
-            *ngIf="FormProcedure.get('jobtitle_receiver')!.hasError('required')"
-          >
-            El cargo del destinatario es <strong>requerido</strong>
+          @if(FormProcedure.controls['jobtitle_receiver'].invalid){
+          <mat-error>
+            {{ errorMessage(FormProcedure.controls["jobtitle_receiver"]) }}
           </mat-error>
+          }
         </mat-form-field>
       </div>
       <div class="col-sm-6">
@@ -108,9 +108,11 @@
         <mat-form-field>
           <mat-label>Cantidad: Hojas / Anexos</mat-label>
           <input formControlName="amount" matInput />
-          <mat-error *ngIf="FormProcedure.get('amount')!.hasError('required')">
-            La cantidad es <strong>requerida</strong>
+          @if(FormProcedure.controls['amount'].invalid){
+          <mat-error>
+            {{ errorMessage(FormProcedure.controls["amount"]) }}
           </mat-error>
+          }
         </mat-form-field>
       </div>
     </div>

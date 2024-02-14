@@ -23,6 +23,8 @@ import { InternalProcedure } from '../../../../../domain/models';
 import { CacheService, InternalService } from '../../../../services';
 import { StateLabelPipe } from '../../../../pipes';
 import { InternalComponent } from './internal/internal.component';
+import { transferDetails } from '../../../../../infraestructure/interfaces';
+import { ProcedureDispatcherComponent } from '../../../communications/inbox/procedure-dispatcher/procedure-dispatcher.component';
 
 interface PaginationOptions {
   limit: number;
@@ -102,14 +104,13 @@ export class InternalsComponent {
       disableClose: true,
     });
     dialogRef.afterClosed().subscribe((procedure) => {
-      if (procedure) {
-        this.datasize.update((value) => value++);
-        this.datasource.update((values) => {
-          if (this.datasource.length === this.limit) values.pop();
-          return [procedure, ...values];
-        });
-        this.send(procedure);
-      }
+      if (!procedure) return;
+      this.datasize.update((value) => (value += 1));
+      this.datasource.update((values) => {
+        if (values.length === this.limit) values.pop();
+        return [procedure, ...values];
+      });
+      this.send(procedure);
     });
   }
 
@@ -129,7 +130,29 @@ export class InternalsComponent {
       });
     });
   }
-  send(procedure: InternalProcedure) {}
+  
+  send(procedure: InternalProcedure) {
+    const transfer: transferDetails = {
+      id_procedure: procedure._id,
+      code: procedure.code,
+      attachmentQuantity: procedure.amount,
+    };
+    const dialogRef = this.dialog.open(ProcedureDispatcherComponent, {
+      width: '1200px',
+      data: transfer,
+      disableClose: true,
+    });
+    dialogRef.afterClosed().subscribe((message) => {
+      if (!message) return;
+      this.datasource.update((values) => {
+        const indexFound = values.findIndex(
+          (element) => element._id === procedure._id
+        );
+        values[indexFound].isSend = true;
+        return [...values];
+      });
+    });
+  }
 
   generateRouteMap(id_tramite: string) {}
 

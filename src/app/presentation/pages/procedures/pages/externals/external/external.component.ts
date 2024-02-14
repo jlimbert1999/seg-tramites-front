@@ -7,6 +7,7 @@ import {
   signal,
 } from '@angular/core';
 import {
+  AbstractControl,
   FormBuilder,
   FormGroup,
   FormsModule,
@@ -33,6 +34,7 @@ import {
   typeProcedureResponse,
 } from '../../../../../../infraestructure/interfaces';
 import { ExternalService } from '../../../../../services';
+import { handleFormErrorMessages } from '../../../../../../helpers';
 
 interface SelectOption {
   text: string;
@@ -151,7 +153,7 @@ export class ExternalComponent {
     if (this.external) {
       this.externalService
         .edit({
-          id_procedure: this.external._id,
+          id: this.external._id,
           FormProcedure: this.FormProcedure.value,
           FormApplicant: this.FormApplicant().value,
           FormRepresentative: this.FormRepresentative().value,
@@ -260,5 +262,9 @@ export class ExternalComponent {
       ],
       tipo: ['JURIDICO'],
     });
+  }
+
+  errorMessage(control: AbstractControl) {
+    return handleFormErrorMessages(control);
   }
 }

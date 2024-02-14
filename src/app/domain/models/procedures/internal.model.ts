@@ -1,5 +1,4 @@
 import { internalResponse } from '../../../infraestructure/interfaces';
-import { Officer } from '../administration/officer.model';
 import { Procedure, ProcedureProps } from './procedure.model';
 
 interface InternalProps extends ProcedureProps {
@@ -19,14 +18,20 @@ export class InternalProcedure extends Procedure {
   details: details;
   static ResponseToModel({ send, type, account, ...values }: internalResponse) {
     return new InternalProcedure({
-      type: type.nombre,
+      type: typeof type === 'string' ? type : type.nombre,
+      account:
+        typeof account === 'string'
+          ? { id: account }
+          : {
+              id: account._id,
+              officer: account.funcionario
+                ? {
+                    fullname: `${account.funcionario.nombre} ${account.funcionario.paterno} ${account.funcionario.materno}`,
+                    jobtitle: account.funcionario.cargo?.nombre,
+                  }
+                : undefined,
+            },
       isSend: send,
-      account: {
-        _id: account._id,
-        funcionario: account.funcionario
-          ? Officer.officerFromJson(account.funcionario)
-          : undefined,
-      },
       ...values,
     });
   }
@@ -35,15 +40,16 @@ export class InternalProcedure extends Procedure {
     this.details = details;
   }
 
-  override get applicantDetails() {
+  override routeMapProps() {
+    const { remitente, destinatario } = this.details;
     return {
       emitter: {
-        fullname: this.details.remitente.nombre,
-        jobtitle: this.details.remitente.cargo,
+        fullname: remitente.nombre,
+        jobtitle: remitente.cargo,
       },
       receiver: {
-        fullname: this.details.destinatario.nombre,
-        jobtitle: this.details.destinatario.cargo,
+        fullname: destinatario.nombre,
+        jobtitle: destinatario.cargo,
       },
     };
   }

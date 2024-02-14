@@ -16,7 +16,7 @@ interface CreateExternalForm {
   Requeriments: string[];
 }
 interface UpdateExternalForm {
-  id_procedure: string;
+  id: string;
   FormProcedure: Object;
   FormApplicant: Object;
   FormRepresentative: Object;
@@ -55,10 +55,10 @@ export class ExternalService {
   }
 
   edit({
+    id,
     FormProcedure,
     FormRepresentative,
     FormApplicant,
-    id_procedure,
   }: UpdateExternalForm) {
     const updateProcedure = {
       procedure: FormProcedure,
@@ -70,10 +70,7 @@ export class ExternalService {
       },
     };
     return this.http
-      .put<externalResponse>(
-        `${this.base_url}/${id_procedure}`,
-        updateProcedure
-      )
+      .put<externalResponse>(`${this.base_url}/${id}`, updateProcedure)
       .pipe(map((response) => ExternalProcedure.ResponseToModel(response)));
   }
 
