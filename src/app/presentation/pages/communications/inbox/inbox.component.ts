@@ -65,7 +65,7 @@ interface CacheData {
 })
 export class InboxComponent implements OnInit {
   private inboxService = inject(InboxService);
-  private cacheService = inject(CacheService);
+  private cacheService: CacheService<CacheData> = inject(CacheService);
   private socketService = inject(SocketService);
   private destroyRef = inject(DestroyRef);
   private alertService = inject(AlertService);
@@ -84,10 +84,15 @@ export class InboxComponent implements OnInit {
   public term: string = '';
   public status?: StatusMail;
 
+  constructor() {
+    this.destroyRef.onDestroy(() => {
+      this.savePaginationData();
+    });
+  }
   ngOnInit(): void {
     this.listenProcedureDispatches();
     this.listenCacelDispatches();
-    this.getData();
+    this.loadPaginationData();
   }
 
   getData(): void {
@@ -136,6 +141,26 @@ export class InboxComponent implements OnInit {
 
   get PageParams(): { limit: number; index: number } {
     return { limit: this.limit, index: this.index };
+  }
+
+  private savePaginationData(): void {
+    this.cacheService.resetPagination();
+    this.cacheService.storage[this.constructor.name] = {
+      datasource: this.datasource(),
+      datasize: this.datasize(),
+      text: this.term,
+    };
+  }
+
+  private loadPaginationData(): void {
+    const cacheData = this.cacheService.storage[this.constructor.name];
+    if (!this.cacheService.keepAliveData() || !cacheData) {
+      this.getData();
+      return;
+    }
+    this.datasource.set(cacheData.datasource);
+    this.datasize.set(cacheData.datasize);
+    this.term = cacheData.text;
   }
 
   private listenProcedureDispatches() {

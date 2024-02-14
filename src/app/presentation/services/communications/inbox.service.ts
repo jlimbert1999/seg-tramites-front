@@ -10,7 +10,12 @@ import {
   institutionResponse,
   receiver,
 } from '../../../infraestructure/interfaces';
-import { Communication, Officer, StatusMail } from '../../../domain/models';
+import {
+  Communication,
+  Officer,
+  StateProcedure,
+  StatusMail,
+} from '../../../domain/models';
 import { CreateCommunicationDto } from '../../../infraestructure/dtos';
 
 interface SearchParams {
@@ -100,5 +105,17 @@ export class InboxService {
     return this.http
       .get<communicationResponse>(`${this.url}/${id}`)
       .pipe(map((resp) => Communication.fromResponse(resp)));
+  }
+
+  accept(id_mail: string) {
+    return this.http.put<{ state: StateProcedure; message: string }>(
+      `${this.url}/accept/${id_mail}`,
+      undefined
+    );
+  }
+  reject(id_mail: string, rejectionReason: string) {
+    return this.http.put<{ message: string }>(`${this.url}/reject/${id_mail}`, {
+      rejectionReason,
+    });
   }
 }

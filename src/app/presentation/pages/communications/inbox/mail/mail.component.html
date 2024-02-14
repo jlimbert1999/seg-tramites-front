@@ -1,50 +1,47 @@
-@if(mail()){
 <div class="animate__animated animate__fadeInLeft animate__faster">
   <p>
     <mat-toolbar color="primary">
       <button mat-icon-button (click)="backLocation()">
         <mat-icon>arrow_back</mat-icon>
       </button>
-      <span>{{ mail()!.procedure.code }}</span>
+      <span>{{ mail ? mail.procedure.code : "" }}</span>
       <span class="toolbar-spacer"></span>
     </mat-toolbar>
   </p>
   <div class="container-fluid">
-    @if(mail()){
+    @if(mail){
     <mat-card>
       <div class="d-sm-flex">
         <div class="me-auto">
           <mat-card-header>
             <div mat-card-avatar class="header-card-image"></div>
             <mat-card-title>
-              {{ mail()!.emitter.fullname | titlecase }}
+              {{ mail!.emitter.fullname | titlecase }}
             </mat-card-title>
             <mat-card-subtitle>
-              {{ mail()!.emitter.jobtitle }}
+              {{ mail!.emitter.jobtitle }}
             </mat-card-subtitle>
           </mat-card-header>
         </div>
-        <span class="fs-6 p-3"
-          >{{ mail()!.outboundDate | date : "short" }}
-        </span>
+        <span class="fs-6 p-3">{{ mail!.outboundDate | date : "short" }} </span>
       </div>
       <mat-card-content>
         <dl class="row">
           <dt class="col-sm-2">Instruccion / Proveido:</dt>
-          <dd class="col-sm-9">{{ mail()!.reference }}</dd>
+          <dd class="col-sm-9">{{ mail!.reference }}</dd>
           <dt class="col-sm-2">Cantidad</dt>
           <dd class="col-sm-9">
-            {{ mail()!.attachmentQuantity }}
+            {{ mail!.attachmentQuantity }}
           </dd>
           <dt class="col-sm-2">Status</dt>
           <dd class="col-sm-9">
-            <span [style.color]="mail()!.statusLabel().color">
-              {{ mail()!.statusLabel().label }}</span
+            <span [style.color]="mail!.statusLabel().color">
+              {{ mail!.statusLabel().label }}</span
             >
           </dd>
         </dl>
       </mat-card-content>
-      @if(mail()!.status==='pending'){
+      @if(mail!.status==='pending'){
       <mat-card-actions class="action-row-buttons" align="end">
         <button mat-raised-button color="warn" (click)="reject()">
           Rechazar
@@ -56,10 +53,9 @@
       }
     </mat-card>
     }
-
     <mat-tab-group mat-align-tabs="center">
       <mat-tab label="Detalle">
-        @if(procedure()){ @switch (procedure()!.group) { @case
+        @if(procedure()){ @switch (procedure()?.group) { @case
         ('ExternalDetail') {
         <external-detail [data]="external" />
         } @case ('InternalDetail') {
@@ -74,4 +70,3 @@
     </mat-tab-group>
   </div>
 </div>
-}

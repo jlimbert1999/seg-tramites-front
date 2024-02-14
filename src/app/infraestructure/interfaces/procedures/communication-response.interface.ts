@@ -1,4 +1,8 @@
-import { GroupProcedure, StatusMail } from '../../../domain/models';
+import {
+  GroupProcedure,
+  StateProcedure,
+  StatusMail,
+} from '../../../domain/models';
 
 export interface communicationResponse {
   _id: string;
@@ -25,6 +29,7 @@ interface procedure {
   code: string;
   reference: string;
   group: GroupProcedure;
+  state: StateProcedure;
 }
 interface eventLog {
   manager: string;

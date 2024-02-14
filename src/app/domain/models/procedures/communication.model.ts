@@ -1,5 +1,5 @@
 import { communicationResponse } from '../../../infraestructure/interfaces';
-import { GroupProcedure } from './procedure.model';
+import { GroupProcedure, StateProcedure } from './procedure.model';
 
 interface CommunicationProps {
   readonly _id: string;
@@ -25,6 +25,7 @@ interface procedure {
   code: string;
   reference: string;
   group: GroupProcedure;
+  state: StateProcedure;
 }
 interface eventLog {
   manager: string;

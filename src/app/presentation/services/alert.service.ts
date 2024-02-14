@@ -14,6 +14,12 @@ interface QuestionAlertOptions {
   callback: () => void;
 }
 
+interface ConfirmAlertOptions {
+  title: string;
+  text?: string;
+  callback: (result: string) => void;
+}
+
 interface ToastOptions {
   seconds?: number;
   title: string;
@@ -48,10 +54,36 @@ export class AlertService {
       }
     });
   }
+  ConfirmAlert({ title, text, callback }: ConfirmAlertOptions) {
+    Swal.fire({
+      icon: 'question',
+      title: title,
+      text: text,
+      input: 'textarea',
+      inputPlaceholder: 'Ingrese una descripcion',
+      showCancelButton: true,
+      confirmButtonText: 'Aceptar',
+      cancelButtonText: 'Cancelar',
+      customClass: {
+        validationMessage: 'my-validation-message',
+      },
+      preConfirm: (value) => {
+        if (!value) {
+          Swal.showValidationMessage(
+            '<i class="fa fa-info-circle"></i> La descripcion es obligatoria'
+          );
+        }
+      },
+    }).then((result) => {
+      if (result.isConfirmed) {
+        callback(result.value);
+      }
+    });
+  }
 
   LoadingAlert(title: string, subtitle: string): void {
     Swal.fire({
-      title:title,
+      title: title,
       text: subtitle,
       allowOutsideClick: false,
     });
