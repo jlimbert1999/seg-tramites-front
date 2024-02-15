@@ -2,11 +2,16 @@ import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
+  DestroyRef,
   Input,
+  OnChanges,
   OnInit,
+  SimpleChanges,
+  inject,
+  signal,
 } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
-import { Subject, map, timer } from 'rxjs';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { timer } from 'rxjs';
 import { ExternalProcedure } from '../../../../domain/models';
 import { TimeManager } from '../../../../helpers';
 
@@ -15,20 +20,27 @@ import { TimeManager } from '../../../../helpers';
   standalone: true,
   imports: [CommonModule],
   templateUrl: './external-detail.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+  // changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ExternalDetailComponent {
-  @Input({ required: true }) data!: ExternalProcedure;
-  $stopTimer = new Subject<void>();
+export class ExternalDetailComponent implements OnInit {
+  @Input() data!: ExternalProcedure;
+  private destroyRef = inject(DestroyRef);
+  public duration = signal<string>('');
 
-  duration = toSignal<string>(
-    timer(0, 1000).pipe(
-      map(() => {
-        return TimeManager.duration(
-          this.data.startDate,
-          this.data.endDate ?? new Date()
-        );
-      })
-    )
-  );
+  ngOnInit(): void {
+    if (this.data.endDate) {
+      const time = TimeManager.duration(
+        this.data.startDate,
+        this.data.endDate!
+      );
+      this.duration.set(time);
+      return;
+    }
+    timer(0, 1000)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => {
+        const time = TimeManager.duration(this.data.startDate, new Date());
+        this.duration.set(time);
+      });
+  }
 }

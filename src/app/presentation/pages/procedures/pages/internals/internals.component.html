@@ -22,7 +22,6 @@
           <th mat-header-cell *matHeaderCellDef>Alterno</th>
           <td mat-cell *matCellDef="let element" [id]="element._id">
             <a
-              class="link-primary"
               [routerLink]="['/home/external', element.group, element._id]"
               [queryParams]="PageParam"
             >

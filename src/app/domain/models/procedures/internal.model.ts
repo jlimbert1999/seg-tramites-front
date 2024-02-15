@@ -4,6 +4,7 @@ import { Procedure, ProcedureProps } from './procedure.model';
 interface InternalProps extends ProcedureProps {
   details: details;
 }
+
 interface details {
   remitente: worker;
   destinatario: worker;

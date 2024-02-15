@@ -104,4 +104,5 @@ export abstract class Procedure {
     emitter: officer;
     receiver?: officer;
   };
+
 }

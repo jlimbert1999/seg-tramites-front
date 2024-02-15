@@ -12,14 +12,16 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
 import { MatTabsModule } from '@angular/material/tabs';
 import { ActivatedRoute } from '@angular/router';
-import { switchMap } from 'rxjs';
+import { forkJoin, switchMap, tap } from 'rxjs';
 import {
   ExternalDetailComponent,
+  GraphWorkflowComponent,
   InternalDetailComponent,
 } from '../../../../components';
 import {
   Communication,
   ExternalProcedure,
+  GroupProcedure,
   InternalProcedure,
   StateProcedure,
   StatusMail,
@@ -51,6 +53,7 @@ interface CacheData {
     MatTabsModule,
     ExternalDetailComponent,
     InternalDetailComponent,
+    GraphWorkflowComponent,
   ],
   templateUrl: './mail.component.html',
   styleUrl: './mail.component.scss',
@@ -58,14 +61,14 @@ interface CacheData {
 })
 export class MailComponent implements OnInit {
   private _location = inject(Location);
+  private activateRoute = inject(ActivatedRoute);
   private inboxService = inject(InboxService);
   private cacheService: CacheService<CacheData> = inject(CacheService);
-  private activateRoute = inject(ActivatedRoute);
-  private procedureService = inject(ProcedureService);
   private alertService = inject(AlertService);
+  private procedureService = inject(ProcedureService);
 
-  public mail!: Communication;
-  public procedure = signal<Procedure | undefined>(undefined);
+  public mail = signal<Communication | null>(null);
+  public procedure = signal<Procedure | null>(null);
   public workflow = signal<Workflow[]>([]);
 
   ngOnInit(): void {
@@ -73,55 +76,56 @@ export class MailComponent implements OnInit {
       this.inboxService
         .getMailDetails(id)
         .pipe(
-          switchMap((data) => {
-            this.mail = data;
-            return this.procedureService.getProcedureDetail(
-              data.procedure._id,
-              data.procedure.group
-            );
-          })
+          tap((detail) => this.mail.set(detail)),
+          switchMap(({ procedure }) =>
+            this.getDetail(procedure._id, procedure.group)
+          )
         )
         .subscribe((data) => {
-          this.procedure.set(data.procedure);
-          this.workflow.set(data.workflow);
+          this.procedure.set(data[0]);
+          this.workflow.set(data[1]);
         });
     });
   }
 
+  getDetail(id_procedure: string, group: GroupProcedure) {
+    return forkJoin([
+      this.procedureService.getDetail(id_procedure, group),
+      this.procedureService.getWorkflow(id_procedure),
+    ]);
+  }
+
   accept() {
-    // this.procedure.update((values) => {
-    //   return { ...values, reference: 'ss' };
-    // });
-    // this.alertService.QuestionAlert({
-    //   title: `¿Aceptar tramite ${this.mail.procedure.code}?`,
-    //   text: 'Solo debe aceptar tramites que haya recibido en fisico',
-    //   callback: () => {
-    //     this.inboxService.accept(this.mail._id).subscribe((resp) => {
-    //       this.procedure.update((val) => {
-    //         val!.state = resp.state;
-    //         return val;
-    //       });
-    //       this.mail.status = StatusMail.Received;
-    //       console.log(this.mail.status);
-    //       this.updateElementCache(resp.state);
-    //     });
-    //   },
-    // });
+    this.alertService.QuestionAlert({
+      title: `¿Aceptar tramite ${this.procedure()!.code}?`,
+      text: 'Solo debe aceptar tramites que haya recibido en fisico',
+      callback: () => {
+        this.mail.update((values) => {
+          values!.status = StatusMail.Received;
+          return values;
+        });
+        this.updateElementCache(StateProcedure.Revision);
+        // this.inboxService.accept(this.mail()!._id).subscribe((resp) => {
+        //   this.updateElementCache(resp.state);
+
+        // });
+      },
+    });
   }
 
   reject() {
-    // this.alertService.ConfirmAlert({
-    //   title: `¿Rechazar tramite ${this.mail()!.procedure.code}?`,
-    //   text: 'El tramite sera devuelto al funcionario emisor',
-    //   callback: (descripion) => {
-    //     this.inboxService
-    //       .reject(this.mail()!._id, descripion)
-    //       .subscribe((resp) => {
-    //         this.removeElementCache();
-    //         this.backLocation();
-    //       });
-    //   },
-    // });
+    this.alertService.ConfirmAlert({
+      title: `¿Rechazar tramite ${this.mail()!.procedure.code}?`,
+      text: 'El tramite sera devuelto al funcionario emisor',
+      callback: (descripion) => {
+        this.inboxService
+          .reject(this.mail()!._id, descripion)
+          .subscribe((resp) => {
+            this.removeElementCache();
+            this.backLocation();
+          });
+      },
+    });
   }
 
   backLocation() {
@@ -129,6 +133,7 @@ export class MailComponent implements OnInit {
       this.cacheService.pageSize.set(data['limit'] ?? 10);
       this.cacheService.pageIndex.set(data['index'] ?? 0);
       this.cacheService.keepAliveData.set(true);
+
       this._location.back();
     });
   }
@@ -141,6 +146,10 @@ export class MailComponent implements OnInit {
     return this.procedure() as InternalProcedure;
   }
 
+  get detail() {
+    return this.mail()!;
+  }
+
   private removeElementCache() {
     // const { datasource } = this.cacheService.storage['_InboxComponent'] ?? {};
     // if (!datasource) return;
@@ -150,11 +159,11 @@ export class MailComponent implements OnInit {
   }
 
   private updateElementCache(state: StateProcedure) {
-    // const { datasource } = this.cacheService.storage['_InboxComponent'] ?? {};
-    // if (!datasource) return;
-    // const index = datasource.findIndex((el) => el._id === this.mail()!._id);
-    // datasource[index].status = StatusMail.Received;
-    // datasource[index].procedure.state = state;
-    // this.cacheService.storage['_InboxComponent'].datasource = datasource;
+    const { datasource } = this.cacheService.storage['_InboxComponent'] ?? {};
+    if (!datasource) return;
+    const index = datasource.findIndex((el) => el._id === this.detail._id);
+    datasource[index].status = StatusMail.Received;
+    datasource[index].procedure.state = state;
+    this.cacheService.storage['_InboxComponent'].datasource = datasource;
   }
 }

@@ -7,25 +7,41 @@ import {
   workflowResponse,
 } from '../../../infraestructure/interfaces';
 
-import { map } from 'rxjs';
+import { Observable, map } from 'rxjs';
 import {
   ExternalProcedure,
   GroupProcedure,
   InternalProcedure,
+  Procedure,
   Workflow,
 } from '../../../domain/models';
 
+type procedureResponse = internalResponse | externalResponse;
 interface ProcedureDetailResponse {
-  procedure: internalResponse | externalResponse;
+  procedure: procedureResponse;
   workflow: workflowResponse[];
   observations: any[];
 }
+type valid = InternalProcedure | ExternalProcedure;
+
 @Injectable({
   providedIn: 'root',
 })
 export class ProcedureService {
   private readonly url = `${environment.base_url}/procedure`;
   private readonly http = inject(HttpClient);
+
+  getWorkflow(id_procedure: string) {
+    return this.http
+      .get<workflowResponse[]>(`${this.url}/workflow/${id_procedure}`)
+      .pipe(map((resp) => resp.map((el) => Workflow.responseToModel(el))));
+  }
+
+  getDetail(id_procedure: string, group: GroupProcedure) {
+    return this.http
+      .get<procedureResponse>(`${this.url}/detail/${group}/${id_procedure}`)
+      .pipe(map((resp) => this.toModel(group, resp)));
+  }
 
   getProcedureDetail(id: string, group: GroupProcedure) {
     return this.http

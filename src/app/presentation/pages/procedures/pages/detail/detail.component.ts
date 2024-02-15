@@ -7,11 +7,14 @@ import {
   inject,
 } from '@angular/core';
 import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatButtonModule } from '@angular/material/button';
+import { MatTabsModule } from '@angular/material/tabs';
 import { MatIconModule } from '@angular/material/icon';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute } from '@angular/router';
 import { Location } from '@angular/common';
-import { MatTabsModule } from '@angular/material/tabs';
+import { switchMap } from 'rxjs';
 import { CacheService, ProcedureService } from '../../../../services';
 import {
   ExternalDetailComponent,
@@ -23,9 +26,6 @@ import type {
   ExternalProcedure,
   InternalProcedure,
 } from '../../../../../domain/models';
-import { toSignal } from '@angular/core/rxjs-interop';
-import { switchMap } from 'rxjs';
-import { MatTooltipModule } from '@angular/material/tooltip';
 
 @Component({
   selector: 'app-detail',
@@ -60,8 +60,13 @@ export class DetailComponent implements OnInit {
   );
   public procedure = computed(() => this.data()?.procedure);
   public workflow = computed(() => this.data()?.workflow);
+  public id_procedure?: string;
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.route.params.subscribe(({ id }) => {
+      this.id_procedure = id;
+    });
+  }
 
   backLocation() {
     this.route.queryParams.subscribe((data) => {
