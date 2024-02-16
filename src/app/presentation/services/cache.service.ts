@@ -1,5 +1,9 @@
 import { Injectable, computed, signal } from '@angular/core';
 
+interface PersistStorageProps<T> {
+  key: string;
+  data: T;
+}
 @Injectable({
   providedIn: 'root',
 })
@@ -16,5 +20,15 @@ export class CacheService<T> {
     this.pageSize.set(10);
     this.pageIndex.set(0);
     this.keepAliveData.set(false);
+  }
+
+  setPersistStorage(key: string, data: T) {
+    sessionStorage.setItem(key, JSON.stringify(data));
+  }
+
+  getPersistStorage(key: string) {
+    const data = sessionStorage.getItem(key);
+    if (!data) return null;
+    return JSON.parse(data);
   }
 }

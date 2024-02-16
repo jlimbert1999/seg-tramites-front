@@ -52,7 +52,7 @@
               <mat-card-header>
                 <div mat-card-avatar class="example-header-image"></div>
                 <mat-card-title>
-                  {{ node.data.fullname }}
+                  {{ node.data.fullname | titlecase }}
                 </mat-card-title>
                 <mat-card-subtitle>
                   {{ node.data.jobtitle ? node.data.jobtitle : "Sin cargo" }}

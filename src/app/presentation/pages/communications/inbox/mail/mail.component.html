@@ -8,6 +8,7 @@
       <span class="toolbar-spacer"></span>
     </mat-toolbar>
   </p>
+
   <div class="container-fluid">
     @if(detail){
     <mat-card>
@@ -43,16 +44,34 @@
           </dd>
         </dl>
       </mat-card-content>
-      @if(detail.status==='pending'){
       <mat-card-actions class="action-row-buttons" align="end">
+        @if(detail!.status==='pending'){
         <button mat-raised-button color="warn" (click)="reject()">
           Rechazar
         </button>
         <button mat-raised-button color="primary" (click)="accept()">
           Aceptar
         </button>
+        } @else {
+        <div class="example-flex-container">
+          <button mat-icon-button>
+            <mat-icon>more_vert</mat-icon>
+          </button>
+          <button mat-icon-button color="primary">
+            <mat-icon>home</mat-icon>
+          </button>
+          <button mat-icon-button color="accent">
+            <mat-icon>menu</mat-icon>
+          </button>
+          <button mat-icon-button color="warn">
+            <mat-icon>favorite</mat-icon>
+          </button>
+          <button mat-icon-button (click)="send()">
+            <mat-icon>send</mat-icon>
+          </button>
+        </div>
+        }
       </mat-card-actions>
-      }
     </mat-card>
     }
     <mat-tab-group mat-align-tabs="center">
@@ -66,11 +85,14 @@
         <p>Type procedure is note defined</p>
         } } }
       </mat-tab>
-      @if(workflow().length>0){
+
+      @if(workflow().length > 0){
       <mat-tab label="Flujo de trabajo">
+        <list-workflow [data]="workflow()" />
+      </mat-tab>
+      <mat-tab label="Flujo de trabajo grafico">
         <graph-workflow [data]="workflow()" />
       </mat-tab>
-      <mat-tab label="Flujo de trabajo grafico"> </mat-tab>
       }
     </mat-tab-group>
   </div>

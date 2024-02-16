@@ -162,11 +162,11 @@ export class OutboxComponent {
       const filteredDispatches = values[index].dispatches.filter(
         (mail) => !ids.includes(mail._id)
       );
-      if (filteredDispatches.length === 0) {
-        values.splice(index, 1);
-        return [...values];
-      }
       values[index].dispatches = filteredDispatches;
+      if (filteredDispatches.length === 0) {
+        this.datasize.update((length) => (length -= 1));
+        values.splice(index, 1);
+      }
       return [...values];
     });
   }
@@ -205,9 +205,5 @@ export class OutboxComponent {
   }
   get offset() {
     return this.cacheService.pageOffset();
-  }
-
-  get PageParams(): { limit: number; index: number } {
-    return { limit: this.limit, index: this.index };
   }
 }

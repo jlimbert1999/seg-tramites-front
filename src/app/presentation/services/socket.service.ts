@@ -23,6 +23,7 @@ export class SocketService {
       auth: { token: localStorage.getItem('token') ?? '' },
     });
   }
+  
   listenUserConnection() {
     this.socket.on('listar', (data: UserSocket[]) => {
       this.onlineUsersSubject.next(data);
@@ -36,6 +37,7 @@ export class SocketService {
       });
     });
   }
+
   listenCancelDispatches(): Observable<string> {
     return new Observable((observable) => {
       this.socket.on('cancel-mail', (id_mail: string) => {

@@ -10,6 +10,7 @@
     <div class="col-sm-9">
       <search-input
         placeholder="Alterno / Referencia / Solicitante"
+        [initialValue]="term"
         (onSearch)="applyTextFilter($event)"
       />
     </div>
@@ -18,7 +19,7 @@
         <mat-label>Situacion</mat-label>
         <mat-select
           (selectionChange)="applyStatusFilter($event.value)"
-          [ngModel]="status"
+          [(ngModel)]="status"
         >
           <mat-option [value]="undefined"> --- </mat-option>
           <mat-option [value]="'received'">RECIBIDOS </mat-option>
@@ -40,7 +41,7 @@
           <td mat-cell *matCellDef="let row">
             <a
               [routerLink]="['/home/inbox', row._id]"
-              [queryParams]="PageParams"
+              [queryParams]="{limit, index}"
             >
               {{ row.procedure.code }}
             </a>
@@ -82,12 +83,12 @@
               <mat-icon>more_vert</mat-icon>
             </button>
             <mat-menu #menu="matMenu">
-              <!-- @if(row.status === 'pending'){
-              <button (click)="acceptMail(row)" mat-menu-item>
+              @if(row.status === 'pending'){
+              <button (click)="accept(row)" mat-menu-item>
                 <mat-icon>done</mat-icon>
                 <span>Aceptar tramite</span>
               </button>
-              <button (click)="rejectMail(row)" mat-menu-item>
+              <button (click)="reject(row)" mat-menu-item>
                 <mat-icon>block</mat-icon>
                 <span>Rechazar tramite</span>
               </button>
@@ -96,7 +97,7 @@
                 <mat-icon>send</mat-icon>
                 <span>Remitir tramite</span>
               </button>
-              <button (click)="generateRouteMap(row)" mat-menu-item>
+              <!-- <button (click)="generateRouteMap(row)" mat-menu-item>
                 <mat-icon>description</mat-icon>
                 <span>Hoja de ruta</span>
               </button>
@@ -113,8 +114,8 @@
                   <mat-icon>snooze</mat-icon>
                   Suspender proceso
                 </button>
-              </mat-menu>
-              } -->
+              </mat-menu> -->
+              }
             </mat-menu>
           </td>
         </ng-container>

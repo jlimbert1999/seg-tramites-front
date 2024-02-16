@@ -13,6 +13,12 @@ export interface ProcedureProps {
   state: StateProcedure;
 }
 
+export interface OriginDetails {
+  emitter: officer;
+  receiver?: officer;
+  phone?: string;
+}
+
 export enum GroupProcedure {
   External = 'ExternalDetail',
   Internal = 'InternalDetail',
@@ -100,9 +106,5 @@ export abstract class Procedure {
     return true;
   }
 
-  abstract routeMapProps(): {
-    emitter: officer;
-    receiver?: officer;
-  };
-
+  abstract originDetails(): OriginDetails;
 }

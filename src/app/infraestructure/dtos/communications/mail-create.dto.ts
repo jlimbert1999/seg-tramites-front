@@ -36,7 +36,7 @@ export class CreateCommunicationDto {
     return new CreateCommunicationDto({
       id_mail: details.id_mail,
       id_procedure: details.id_procedure,
-      attachmentQuantity: details.attachmentQuantity,
+      attachmentQuantity: FormSend['cantidad'],
       reference: FormSend['motivo'],
       internalNumber: FormSend['numero_interno'],
       receivers: participants,

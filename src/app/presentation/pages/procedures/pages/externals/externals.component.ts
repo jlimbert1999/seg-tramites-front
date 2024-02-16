@@ -65,9 +65,9 @@ interface CacheData {
 export class ExternalsComponent {
   private dialog = inject(MatDialog);
   private externalService = inject(ExternalService);
-  private procedureService = inject(ProcedureService);
   private cacheService: CacheService<CacheData> = inject(CacheService);
-  private pdfService: PdfService = inject(PdfService);
+  private procedureService = inject(ProcedureService);
+  private pdfService = inject(PdfService);
 
   public term: string = '';
   public datasource = signal<ExternalProcedure[]>([]);
@@ -165,12 +165,10 @@ export class ExternalsComponent {
     });
   }
 
-  generateRouteMap(id_procedure: string, group: any) {
-    this.procedureService
-      .getProcedureDetail(id_procedure, group)
-      .subscribe((data) => {
-        this.pdfService.generateRouteSheet(data.procedure, data.workflow);
-      });
+  generateRouteMap(procedure: ExternalProcedure) {
+    this.procedureService.getWorkflow(procedure._id).subscribe((workflow) => {
+      this.pdfService.generateRouteSheet(procedure, workflow);
+    });
   }
 
   generateTicket(tramite: ExternalProcedure) {}

@@ -1,5 +1,5 @@
 import { externalResponse } from '../../../infraestructure/interfaces';
-import { Procedure, ProcedureProps } from './procedure.model';
+import { OriginDetails, Procedure, ProcedureProps } from './procedure.model';
 
 interface ExternalProps extends ProcedureProps {
   details: details;
@@ -83,12 +83,13 @@ export class ExternalProcedure extends Procedure {
       .join(' ');
   }
 
-  override routeMapProps() {
+  override originDetails(): OriginDetails {
     return {
       emitter: {
         fullname: this.fullNameApplicant,
         jobtitle: `P. ${this.details.solicitante.tipo}`,
       },
+      phone: this.details.solicitante.telefono,
     };
   }
 }

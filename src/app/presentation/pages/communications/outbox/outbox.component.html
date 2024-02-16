@@ -23,7 +23,7 @@
                 row.procedure.group,
                 row.procedure._id
               ]"
-              [queryParams]="PageParams"
+              [queryParams]="{limit, index}"
             >
               {{ row.procedure.code }}
             </a>

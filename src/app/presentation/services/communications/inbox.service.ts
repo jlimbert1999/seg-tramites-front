@@ -101,7 +101,7 @@ export class InboxService {
         })
       );
   }
-  getMailDetails(id: string) {
+  getMail(id: string) {
     return this.http
       .get<communicationResponse>(`${this.url}/${id}`)
       .pipe(map((resp) => Communication.fromResponse(resp)));

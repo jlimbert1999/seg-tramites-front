@@ -27,6 +27,7 @@ interface originDetails {
   outDetail: detail;
   receiver: participant;
   internalNumber: string;
+  phone: string | undefined;
 }
 
 interface participant {
@@ -46,7 +47,6 @@ export async function CreateRouteMap(
 
 function secondSection(workflow: Workflow[]) {
   const containers: ContentTable[] = [];
-  console.log(workflow);
   for (const [index, { dispatches }] of workflow.entries()) {
     const officers = dispatches.map(
       ({ receiver: { fullname, jobtitle } }) => `${fullname} (${jobtitle})`
@@ -71,17 +71,17 @@ function secondSection(workflow: Workflow[]) {
       index: index,
       reference: dispatches[0].reference,
       officers: officers,
-      internalNumber: dispatches[0].internalNumber,
+      internalNumber: nextStage?.dispatches[0].internalNumber ?? '',
       inDetail: dispatches[0].date
         ? {
-            date: TimeManager.formatDate(dispatches[0].date, 'MM/D/YYYY'),
+            date: TimeManager.formatDate(dispatches[0].date, 'D/MM/YYYY'),
             hour: TimeManager.formatDate(dispatches[0].date, 'HH:mm'),
             quantity: dispatches[0].attachmentQuantity,
           }
         : { date: '', hour: '', quantity: '' },
       outDetail: nextStage
         ? {
-            date: TimeManager.formatDate(nextStage.date, 'MM/D/YYYY'),
+            date: TimeManager.formatDate(nextStage.date, 'D/MM/YYYY'),
             hour: TimeManager.formatDate(nextStage.date, 'HH:mm'),
             quantity: nextStage.dispatches[0].attachmentQuantity,
           }
@@ -114,10 +114,19 @@ function getLastPageNumber(lengthData: number): number {
   return nextTerm;
 }
 
-function firstSection(procedure: Procedure, workflow?: Workflow) {
-  const { emitter, receiver } = procedure.routeMapProps();
-  const stage = workflow?.dispatches[0];
-
+function firstSection(procedure: Procedure, workflow: Workflow | undefined) {
+  const { emitter, receiver, phone } = procedure.originDetails();
+  const sectionReceiver = receiver
+    ? {
+        fullname: receiver.fullname,
+        jobtitle: receiver.jobtitle ?? 'Sin cargo',
+      }
+    : workflow
+    ? {
+        fullname: workflow.dispatches[0].receiver.fullname,
+        jobtitle: workflow.dispatches[0].receiver.jobtitle ?? 'Sin cargo',
+      }
+    : { fullname: '', jobtitle: '' };
   return createDetailContainer({
     code: procedure.code,
     cite: procedure.cite,
@@ -127,14 +136,21 @@ function firstSection(procedure: Procedure, workflow?: Workflow) {
       fullname: emitter.fullname,
       jobtitle: emitter.jobtitle ?? 'Sin cargo',
     },
+    phone: phone,
     inDetail: {
-      date: TimeManager.formatDate(procedure.startDate, 'MM/D/YYYY'),
+      date: TimeManager.formatDate(procedure.startDate, 'D/MM/YYYY'),
       hour: TimeManager.formatDate(procedure.startDate, 'HH:mm'),
       quantity: procedure.amount,
     },
     internalNumber: workflow?.dispatches[0].internalNumber ?? '',
-    receiver: { jobtitle: '', fullname: '' },
-    outDetail: { date: '', hour: '', quantity: '' },
+    receiver: sectionReceiver,
+    outDetail: workflow
+      ? {
+          date: TimeManager.formatDate(workflow.date, 'D/MM/YYYY'),
+          hour: TimeManager.formatDate(workflow.date, 'HH:mm'),
+          quantity: workflow.dispatches[0].attachmentQuantity,
+        }
+      : { date: '', hour: '', quantity: '' },
   });
 }
 
@@ -175,7 +191,8 @@ function createDetailContainer({
   emitter,
   receiver,
   outDetail,
-  internalNumber,
+  internalNumber = '',
+  phone,
 }: originDetails) {
   return {
     fontSize: 7,
@@ -200,7 +217,7 @@ function createDetailContainer({
                         border: [false, false, false, false],
                       },
                       {
-                        text: group[0],
+                        text: group === GroupProcedure.Internal ? 'X' : '',
                         style: 'header',
                       },
                     ],
@@ -218,7 +235,7 @@ function createDetailContainer({
                         border: [false, false, false, false],
                       },
                       {
-                        text: group[1],
+                        text: group === GroupProcedure.External ? 'X' : '',
                         style: 'header',
                       },
                     ],
@@ -235,7 +252,7 @@ function createDetailContainer({
                         text: 'COPIA\n\n',
                         border: [false, false, false, false],
                       },
-                      { text: group[2], style: 'header' },
+                      { text: '', style: 'header' },
                     ],
                   ],
                 },
@@ -320,7 +337,7 @@ function createDetailContainer({
               body: [
                 [{ text: 'DATOS DE ORIGEN', bold: true }, ''],
                 [
-                  `CITE: ${cite}`,
+                  `CITE: ${cite}\n${phone ? 'TELEFONO: ' + phone : ''}`,
                   {
                     table: {
                       widths: [85, 100, 40],
@@ -333,7 +350,7 @@ function createDetailContainer({
                           },
                           {
                             text: `${internalNumber}`,
-                            fontSize: 9,
+                            fontSize: 7,
                             alignment: 'center',
                           },
                         ],
@@ -484,7 +501,7 @@ function createStageContainer({
                     text: 'NRO. REGISTRO INTERNO (Correlativo)',
                     border: [false, false, false, false],
                   },
-                  { text: internalNumber },
+                  { text: internalNumber, alignment: 'center', fontSize: 7 },
                 ],
                 [
                   {

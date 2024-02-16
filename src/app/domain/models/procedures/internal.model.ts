@@ -1,5 +1,5 @@
 import { internalResponse } from '../../../infraestructure/interfaces';
-import { Procedure, ProcedureProps } from './procedure.model';
+import { OriginDetails, Procedure, ProcedureProps } from './procedure.model';
 
 interface InternalProps extends ProcedureProps {
   details: details;
@@ -41,7 +41,7 @@ export class InternalProcedure extends Procedure {
     this.details = details;
   }
 
-  override routeMapProps() {
+  override originDetails(): OriginDetails {
     const { remitente, destinatario } = this.details;
     return {
       emitter: {

@@ -20,7 +20,12 @@ import {
   SidenavButtonComponent,
 } from '../../../../components';
 import { InternalProcedure } from '../../../../../domain/models';
-import { CacheService, InternalService } from '../../../../services';
+import {
+  CacheService,
+  InternalService,
+  PdfService,
+  ProcedureService,
+} from '../../../../services';
 import { StateLabelPipe } from '../../../../pipes';
 import { InternalComponent } from './internal/internal.component';
 import { transferDetails } from '../../../../../infraestructure/interfaces';
@@ -57,6 +62,8 @@ export class InternalsComponent {
   private dialog = inject(MatDialog);
   private internalService = inject(InternalService);
   private cacheService = inject(CacheService);
+  private procedureService = inject(ProcedureService);
+  private pdfService = inject(PdfService);
 
   displayedColumns: string[] = [
     'code',
@@ -130,7 +137,7 @@ export class InternalsComponent {
       });
     });
   }
-  
+
   send(procedure: InternalProcedure) {
     const transfer: transferDetails = {
       id_procedure: procedure._id,
@@ -154,7 +161,11 @@ export class InternalsComponent {
     });
   }
 
-  generateRouteMap(id_tramite: string) {}
+  generateRouteMap(procedure: InternalProcedure) {
+    this.procedureService.getWorkflow(procedure._id).subscribe((workflow) => {
+      this.pdfService.generateRouteSheet(procedure, workflow);
+    });
+  }
 
   conclude(procedure: InternalProcedure) {}
 

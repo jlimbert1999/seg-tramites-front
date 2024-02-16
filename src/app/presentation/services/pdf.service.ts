@@ -13,6 +13,14 @@ pdfMake.vfs = pdfFonts.pdfMake.vfs;
 })
 export class PdfService {
   async generateRouteSheet(procedure: Procedure, workflow: Workflow[]) {
+    workflow = workflow
+      .map(({ dispatches, ...values }) => ({
+        ...values,
+        dispatches: dispatches.filter(
+          (el) => el.status !== StatusMail.Rejected
+        ),
+      }))
+      .filter((element) => element.dispatches.length > 0);
     const docDefinition: TDocumentDefinitions = {
       pageSize: 'LETTER',
       pageMargins: [30, 30, 30, 30],

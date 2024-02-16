@@ -17,7 +17,6 @@ import { RouterModule } from '@angular/router';
 import {
   AuthService,
   SocketService,
-  CacheService,
   AppearanceService,
   AlertService,
 } from '../../services';
@@ -26,6 +25,7 @@ import {
   NavigationListComponent,
 } from '../../components';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { MatMenuModule } from '@angular/material/menu';
 
 @Component({
   selector: 'app-home',
@@ -37,6 +37,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
     MatIconModule,
     MatListModule,
     MatButtonModule,
+    MatMenuModule,
     RouterModule,
     NavigationListComponent,
     SidenavButtonComponent,
@@ -51,14 +52,16 @@ export class HomeComponent implements OnInit {
 
   private authService = inject(AuthService);
   private appearanceService = inject(AppearanceService);
-  public cacheService = inject(CacheService);
   private socketService = inject(SocketService);
   private alertservice = inject(AlertService);
   private detroyref = inject(DestroyRef);
 
   constructor(changeDetectorRef: ChangeDetectorRef, media: MediaMatcher) {
     this.mobileQuery = media.matchMedia('(max-width: 600px)');
-    this._mobileQueryListener = () => changeDetectorRef.detectChanges();
+    this._mobileQueryListener = () => {
+      console.log('change view');
+      return changeDetectorRef.detectChanges();
+    };
     this.mobileQuery.addListener(this._mobileQueryListener);
   }
   ngOnInit(): void {
@@ -80,6 +83,10 @@ export class HomeComponent implements OnInit {
 
   get menu() {
     return this.authService.menu();
+  }
+
+  get user() {
+    return this.authService.account()!;
   }
 
   get isToggle() {
