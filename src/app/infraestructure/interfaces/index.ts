@@ -15,8 +15,9 @@ export * from './procedures/external-response.interface';
 export * from './procedures/internal-response.interface';
 export * from './procedures/procedure-response.interface';
 export * from './procedures/workflow-response.interface';
-export * from './procedures/communication-response.interface';
+export * from './procedures/observation-response.interface';
 
+export * from './communications/communication-response.interface';
 export * from './communications/transfer-details.interface';
 export * from './communications/receiver.interface';
 export * from './communications/grouped-communication-response.interface';

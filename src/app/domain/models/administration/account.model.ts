@@ -13,6 +13,7 @@ interface AccountProps {
 interface dependency {
   _id: string;
   nombre: string;
+  institution: string;
 }
 
 export class Account {
@@ -25,9 +26,14 @@ export class Account {
   dependencia: dependency;
 
   static fromJson(account: accountResponse) {
-    const { funcionario, ...values } = account;
+    const { funcionario, dependencia, ...values } = account;
     return new Account({
       ...values,
+      dependencia: {
+        _id: dependencia._id,
+        nombre: dependencia.nombre,
+        institution: dependencia.institucion.nombre,
+      },
       ...(funcionario && { funcionario: Officer.officerFromJson(funcionario) }),
     });
   }

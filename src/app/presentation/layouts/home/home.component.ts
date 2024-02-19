@@ -13,7 +13,7 @@ import { MediaMatcher } from '@angular/cdk/layout';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
 import { MatButtonModule } from '@angular/material/button';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import {
   AuthService,
   SocketService,
@@ -26,7 +26,7 @@ import {
 } from '../../components';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatMenuModule } from '@angular/material/menu';
-
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 @Component({
   selector: 'app-home',
   standalone: true,
@@ -39,6 +39,8 @@ import { MatMenuModule } from '@angular/material/menu';
     MatButtonModule,
     MatMenuModule,
     RouterModule,
+    MatProgressSpinnerModule,
+
     NavigationListComponent,
     SidenavButtonComponent,
   ],
@@ -55,11 +57,11 @@ export class HomeComponent implements OnInit {
   private socketService = inject(SocketService);
   private alertservice = inject(AlertService);
   private detroyref = inject(DestroyRef);
+  private router = inject(Router);
 
   constructor(changeDetectorRef: ChangeDetectorRef, media: MediaMatcher) {
     this.mobileQuery = media.matchMedia('(max-width: 600px)');
     this._mobileQueryListener = () => {
-      console.log('change view');
       return changeDetectorRef.detectChanges();
     };
     this.mobileQuery.addListener(this._mobileQueryListener);
@@ -81,6 +83,12 @@ export class HomeComponent implements OnInit {
     this.mobileQuery.removeListener(this._mobileQueryListener);
   }
 
+  logout() {
+    this.socketService.disconnect();
+    this.authService.logout();
+    this.router.navigate(['/login']);
+  }
+
   get menu() {
     return this.authService.menu();
   }
@@ -91,5 +99,9 @@ export class HomeComponent implements OnInit {
 
   get isToggle() {
     return this.appearanceService.toggleSidenav();
+  }
+
+  get isLoading() {
+    return this.appearanceService.loading();
   }
 }

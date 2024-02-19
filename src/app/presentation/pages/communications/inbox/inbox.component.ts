@@ -20,8 +20,11 @@ import { FormsModule } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   AlertService,
+  ArchiveService,
   CacheService,
   InboxService,
+  PdfService,
+  ProcedureService,
   SocketService,
 } from '../../../services';
 import {
@@ -29,10 +32,15 @@ import {
   SearchInputComponent,
   SidenavButtonComponent,
 } from '../../../components';
-import { Communication, StatusMail } from '../../../../domain/models';
+import {
+  Communication,
+  StateProcedure,
+  StatusMail,
+} from '../../../../domain/models';
 import { StateLabelPipe } from '../../../pipes';
 import { transferDetails } from '../../../../infraestructure/interfaces';
 import { ProcedureDispatcherComponent } from './procedure-dispatcher/procedure-dispatcher.component';
+import { forkJoin } from 'rxjs';
 
 interface PaginationOptions {
   limit: number;
@@ -74,6 +82,9 @@ export class InboxComponent implements OnInit {
   private destroyRef = inject(DestroyRef);
   private alertService = inject(AlertService);
   private dialog = inject(MatDialog);
+  private procedureService = inject(ProcedureService);
+  private pdfService = inject(PdfService);
+  private archiveService = inject(ArchiveService);
 
   public displayedColumns: string[] = [
     'group',
@@ -178,6 +189,49 @@ export class InboxComponent implements OnInit {
       if (!message) return;
       this.datasize.update((length) => (length -= 1));
       this.datasource.update((values) => values.filter((el) => el._id !== _id));
+    });
+  }
+
+  archive({ _id, procedure }: Communication) {
+    this.alertService.ConfirmAlert({
+      title: `¿Concluir el tramite ${procedure.code}?`,
+      text: 'Concluir indica que no hay más acciones pendientes',
+      callback: (description) => {
+        this.archiveService
+          .archiveCommunication(_id, {
+            description: description,
+            state: StateProcedure.Concluido,
+          })
+          .subscribe(() => {
+            this.removeItemDataSource(_id);
+          });
+      },
+    });
+  }
+
+  suspend({ _id, procedure }: Communication) {
+    this.alertService.ConfirmAlert({
+      title: `¿Suspender el tramite ${procedure.code}?`,
+      text: 'Suspender detiene temporalmente el proceso',
+      callback: (description) => {
+        this.archiveService
+          .archiveCommunication(_id, {
+            description: description,
+            state: StateProcedure.Suspendido,
+          })
+          .subscribe(() => {
+            this.removeItemDataSource(_id);
+          });
+      },
+    });
+  }
+
+  generateRouteMap({ procedure }: Communication) {
+    forkJoin([
+      this.procedureService.getDetail(procedure._id, procedure.group),
+      this.procedureService.getWorkflow(procedure._id),
+    ]).subscribe((resp) => {
+      this.pdfService.generateRouteSheet(resp[0], resp[1]);
     });
   }
 

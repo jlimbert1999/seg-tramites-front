@@ -29,9 +29,16 @@ import {
   PaginatorComponent,
   SearchInputComponent,
 } from '../../../components';
-import { AlertService, CacheService, OutboxService } from '../../../services';
+import {
+  AlertService,
+  CacheService,
+  OutboxService,
+  PdfService,
+  ProcedureService,
+} from '../../../services';
 import { GroupedCommunication } from '../../../../domain/models';
 import { StateLabelPipe } from '../../../pipes';
+import { forkJoin } from 'rxjs';
 
 interface PaginationOptions {
   limit: number;
@@ -74,6 +81,8 @@ export class OutboxComponent {
   private alertService = inject(AlertService);
   private outboxService = inject(OutboxService);
   private cacheService = inject(CacheService);
+  private procedureService = inject(ProcedureService);
+  private pdfService = inject(PdfService);
 
   public displayedColumns = [
     'code',
@@ -148,12 +157,13 @@ export class OutboxComponent {
     });
   }
 
-  generateRouteMap() {
-    // this.procedureService
-    //   .getFullProcedure(procedure._id, procedure.group)
-    //   .subscribe((data) => {
-    //     this.pdf.generateRouteSheet(data.procedure, data.workflow);
-    //   });
+  generateRouteMap({ procedure }: GroupedCommunication) {
+    forkJoin([
+      this.procedureService.getDetail(procedure._id, procedure.group),
+      this.procedureService.getWorkflow(procedure._id),
+    ]).subscribe((resp) => {
+      this.pdfService.generateRouteSheet(resp[0], resp[1]);
+    });
   }
 
   private removeElementDatasource(outboundDate: Date, ids: string[]) {

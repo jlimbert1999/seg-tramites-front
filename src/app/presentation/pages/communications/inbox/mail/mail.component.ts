@@ -17,6 +17,7 @@ import {
   ExternalDetailComponent,
   GraphWorkflowComponent,
   InternalDetailComponent,
+  ListObservationsComponent,
   ListWorkflowComponent,
 } from '../../../../components';
 import {
@@ -34,7 +35,10 @@ import {
   InboxService,
   ProcedureService,
 } from '../../../../services';
-import { transferDetails } from '../../../../../infraestructure/interfaces';
+import {
+  observationResponse,
+  transferDetails,
+} from '../../../../../infraestructure/interfaces';
 import { ProcedureDispatcherComponent } from '../procedure-dispatcher/procedure-dispatcher.component';
 import { MatDialog } from '@angular/material/dialog';
 import { InboxCacheData, InboxComponent } from '../inbox.component';
@@ -55,6 +59,7 @@ type Procedure = ExternalProcedure | InternalProcedure;
     InternalDetailComponent,
     GraphWorkflowComponent,
     ListWorkflowComponent,
+    ListObservationsComponent,
   ],
   templateUrl: './mail.component.html',
   styleUrl: './mail.component.scss',
@@ -72,6 +77,7 @@ export class MailComponent implements OnInit {
   public mail = signal<Communication | null>(null);
   public procedure = signal<Procedure | null>(null);
   public workflow = signal<Workflow[]>([]);
+  public observations = signal<observationResponse[]>([]);
 
   ngOnInit(): void {
     this.activateRoute.params.subscribe(({ id }) => {
@@ -86,6 +92,7 @@ export class MailComponent implements OnInit {
         .subscribe((data) => {
           this.procedure.set(data[0]);
           this.workflow.set(data[1]);
+          this.observations.set(data[2]);
         });
     });
   }
@@ -94,6 +101,7 @@ export class MailComponent implements OnInit {
     return forkJoin([
       this.procedureService.getDetail(id_procedure, group),
       this.procedureService.getWorkflow(id_procedure),
+      this.procedureService.getObservations(id_procedure),
     ]);
   }
 
@@ -141,6 +149,42 @@ export class MailComponent implements OnInit {
       if (!result) return;
       this.removeMailCache();
       this.backLocation();
+    });
+  }
+
+  addObservation() {
+    this.alertService.ConfirmAlert({
+      title: `¿Observar el tramite: ${this.procedure()!.code}?`,
+      text: 'El tramite se mostrara como "OBSERVADO" hasta que usted marque como corregida la observacion',
+      callback: (descripion) => {
+        this.procedureService
+          .addObservation(this.procedure()!._id, descripion)
+          .subscribe((obs) => {
+            this.observations.update((values) => [obs, ...values]);
+          });
+      },
+    });
+  }
+
+  solveObservation(id_observation: string) {
+    this.alertService.QuestionAlert({
+      title: '¿Marcar la observacion como corregida?',
+      text: 'Si todas las observaciones son corregidas el tramite dejara de estar "OBSERVADO"',
+      callback: () => {
+        this.procedureService
+          .solveObservation(id_observation)
+          .subscribe((resp) => {
+            this.procedure.update((values) => {
+              values!.state = resp.state;
+              return values;
+            });
+            this.observations.update((values) => {
+              const index = values.findIndex((el) => el._id === id_observation);
+              values[index].isSolved = true;
+              return [...values];
+            });
+          });
+      },
     });
   }
 

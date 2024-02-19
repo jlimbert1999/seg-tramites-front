@@ -25,17 +25,17 @@
           <mat-icon>more_vert</mat-icon>
         </button>
         <mat-menu #menus="matMenu">
-          <button mat-menu-item>
-            <mat-icon>dialpad</mat-icon>
-            <span>Redial</span>
+          <button mat-menu-item routerLink="/home/settings">
+            <mat-icon>settings</mat-icon>
+            <span>Configuraciones</span>
           </button>
-          <button mat-menu-item disabled>
-            <mat-icon>voicemail</mat-icon>
-            <span>Check voice mail</span>
+          <button mat-menu-item routerLink="/home/resources">
+            <mat-icon>widgets</mat-icon>
+            <span>Recursos</span>
           </button>
-          <button mat-menu-item>
-            <mat-icon>notifications_off</mat-icon>
-            <span>Disable alerts</span>
+          <button mat-menu-item (click)="logout()">
+            <mat-icon>logout</mat-icon>
+            <span>Cerrar sesion</span>
           </button>
         </mat-menu>
       </div>
@@ -43,6 +43,11 @@
       <navigation-list [menu]="menu" />
     </mat-sidenav>
     <mat-sidenav-content>
+      @if(isLoading){
+      <div class="overlay">
+        <mat-spinner class="spinner" [strokeWidth]="20" [diameter]="200" />
+      </div>
+      }
       <router-outlet></router-outlet>
     </mat-sidenav-content>
   </mat-sidenav-container>

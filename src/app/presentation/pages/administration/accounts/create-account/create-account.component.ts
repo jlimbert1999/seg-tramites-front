@@ -23,7 +23,7 @@ import { MatInputModule } from '@angular/material/input';
 import { ServerSelectSearchComponent } from '../../../../components';
 import { AccountService } from '../services/account.service';
 import { roleResponse } from '../../../../../infraestructure/interfaces';
-import { OfficerService } from '../../../officers/services/officer.service';
+import { OfficerService } from '../../officers/services/officer.service';
 
 interface SelectOption {
   value: string;

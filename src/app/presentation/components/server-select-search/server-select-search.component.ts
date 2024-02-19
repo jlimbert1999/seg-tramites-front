@@ -62,7 +62,6 @@ export class ServerSelectSearchComponent<T> implements OnInit, OnDestroy {
         debounceTime(350)
       )
       .subscribe((value) => {
-        if (!value) console.log('mal');
         this.onSearch.emit(value!);
       });
   }

@@ -5,5 +5,6 @@ import { Injectable, signal } from '@angular/core';
 })
 export class AppearanceService {
   public toggleSidenav = signal<boolean>(true);
+  public loading = signal<boolean>(false);
   constructor() {}
 }

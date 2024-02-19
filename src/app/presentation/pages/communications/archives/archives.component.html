@@ -1,0 +1,93 @@
+<p>
+  <mat-toolbar color="primary">
+    <sidenav-button />
+    <span>Archivos</span>
+  </mat-toolbar>
+</p>
+<div class="container-fluid">
+  <search-input
+    placeholder="Alterno / Referencia / Solicitante"
+    [initialValue]="term"
+    (onSearch)="applyFilter($event)"
+  />
+
+  <div class="example-container mat-elevation-z8">
+    <div class="table-container">
+      <table mat-table [dataSource]="datasource()">
+        <ng-container matColumnDef="code">
+          <th mat-header-cell *matHeaderCellDef>Tramite</th>
+          <td mat-cell *matCellDef="let element">
+            <a
+              [routerLink]="[
+                '/home/archives',
+                element.procedure.group,
+                element.procedure._id
+              ]"
+              [queryParams]="{limit, index}"
+            >
+              {{ element.procedure.code }}
+            </a>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="manager">
+          <th mat-header-cell *matHeaderCellDef>Responsable</th>
+          <td mat-cell *matCellDef="let element">
+            {{ element.eventLog.manager | titlecase }}
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="date">
+          <th mat-header-cell *matHeaderCellDef>Fecha</th>
+          <td mat-cell *matCellDef="let element">
+            {{ element.eventLog.date | date : "short" }}
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="reference">
+          <th mat-header-cell *matHeaderCellDef>Descripcion</th>
+          <td mat-cell *matCellDef="let element">
+            {{ element.eventLog.description }}
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="state">
+          <th mat-header-cell *matHeaderCellDef>Estado</th>
+          <td mat-cell *matCellDef="let element">
+            <span
+              class="badge"
+              [ngClass]="element.procedure.state | stateLabel"
+            >
+              {{ element.procedure.state }}
+            </span>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="options">
+          <th mat-header-cell *matHeaderCellDef></th>
+          <td mat-cell *matCellDef="let element">
+            <button
+              mat-icon-button
+              (click)="unarchive(element)"
+              matTooltip="Desarchivar tramite"
+            >
+              <mat-icon>drive_folder_upload</mat-icon>
+            </button>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+        <tr class="mat-row" *matNoDataRow>
+          <td class="mat-cell p-3" colspan="4">No se encontraron resultados</td>
+        </tr>
+      </table>
+    </div>
+    <paginator
+      [pageSizeOptions]="[10, 20, 30, 50]"
+      [limit]="limit"
+      [index]="index"
+      [length]="datasize()"
+      (onPageChage)="changePage($event)"
+    />
+  </div>
+</div>

@@ -20,7 +20,7 @@ export class PdfService {
           (el) => el.status !== StatusMail.Rejected
         ),
       }))
-      .filter((element) => element.dispatches.length > 0);
+      .filter((el) => el.dispatches.length > 0);
     const docDefinition: TDocumentDefinitions = {
       pageSize: 'LETTER',
       pageMargins: [30, 30, 30, 30],

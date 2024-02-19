@@ -66,8 +66,8 @@
               <mat-icon>more_vert</mat-icon>
             </button>
             <mat-menu #menu="matMenu">
-              <button mat-menu-item>
-                <mat-icon>print</mat-icon>
+              <button (click)="generateRouteMap(row)" mat-menu-item>
+                <mat-icon>description</mat-icon>
                 <span>Hoja de ruta</span>
               </button>
               <button

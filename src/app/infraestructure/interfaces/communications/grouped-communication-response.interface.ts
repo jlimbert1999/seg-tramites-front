@@ -1,4 +1,4 @@
-import { communicationResponse } from '../procedures/communication-response.interface';
+import { communicationResponse } from './communication-response.interface';
 import { procedure } from '../procedures/procedure-response.interface';
 
 export interface groupedCommunicationResponse {

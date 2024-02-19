@@ -97,24 +97,18 @@
                 <mat-icon>send</mat-icon>
                 <span>Remitir tramite</span>
               </button>
-              <!-- <button (click)="generateRouteMap(row)" mat-menu-item>
+              <button (click)="generateRouteMap(row)" mat-menu-item>
                 <mat-icon>description</mat-icon>
                 <span>Hoja de ruta</span>
               </button>
-              <button mat-menu-item [matMenuTriggerFor]="endingOptions">
-                <mat-icon>task</mat-icon>
-                <span>Concluir tramite</span>
+              <button mat-menu-item (click)="archive(row)">
+                <mat-icon>domain_verification</mat-icon>
+                Finalizar proceso
               </button>
-              <mat-menu #endingOptions="matMenu">
-                <button mat-menu-item (click)="conclude(row, state.CONCLUIDO)">
-                  <mat-icon>domain_verification</mat-icon>
-                  Finalizar proceso
-                </button>
-                <button mat-menu-item (click)="conclude(row, state.SUSPENDIDO)">
-                  <mat-icon>snooze</mat-icon>
-                  Suspender proceso
-                </button>
-              </mat-menu> -->
+              <button mat-menu-item (click)="suspend(row)">
+                <mat-icon>pause_presentation</mat-icon>
+                Suspender proceso
+              </button>
               }
             </mat-menu>
           </td>

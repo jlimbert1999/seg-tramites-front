@@ -6,6 +6,10 @@
       </button>
       <span>{{ detail ? detail.procedure.code : "" }}</span>
       <span class="toolbar-spacer"></span>
+
+      <button mat-icon-button (click)="addObservation()">
+        <mat-icon>attach_file</mat-icon>
+      </button>
     </mat-toolbar>
   </p>
 
@@ -85,8 +89,15 @@
         <p>Type procedure is note defined</p>
         } } }
       </mat-tab>
-
-      @if(workflow().length > 0){
+      @if(observations().length>0){
+      <mat-tab label="Observaciones">
+        <list-observations
+          [data]="observations()"
+          [showOptions]="true"
+          (solveObservation)="solveObservation($event)"
+        />
+      </mat-tab>
+      } @if(workflow().length > 0){
       <mat-tab label="Flujo de trabajo">
         <list-workflow [data]="workflow()" />
       </mat-tab>

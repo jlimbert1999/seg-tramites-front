@@ -4,15 +4,16 @@ import { environment } from '../../../../environments/environment';
 import {
   externalResponse,
   internalResponse,
+  observationResponse,
   workflowResponse,
 } from '../../../infraestructure/interfaces';
 
-import { Observable, map } from 'rxjs';
+import { map } from 'rxjs';
 import {
   ExternalProcedure,
   GroupProcedure,
   InternalProcedure,
-  Procedure,
+  StateProcedure,
   Workflow,
 } from '../../../domain/models';
 
@@ -43,19 +44,25 @@ export class ProcedureService {
       .pipe(map((resp) => this.toModel(group, resp)));
   }
 
-  getProcedureDetail(id: string, group: GroupProcedure) {
-    return this.http
-      .get<ProcedureDetailResponse>(`${this.url}/${group}/${id}`)
-      .pipe(
-        map((resp) => {
-          return {
-            procedure: this.toModel(group, resp.procedure),
-            workflow: resp.workflow.map((el) => Workflow.responseToModel(el)),
-            observations: resp.observations,
-          };
-        })
-      );
+  addObservation(id_procedure: string, description: string) {
+    return this.http.post<observationResponse>(
+      `${this.url}/observation/${id_procedure}`,
+      { description }
+    );
   }
+  solveObservation(id_observation: string) {
+    return this.http.put<{ state: StateProcedure }>(
+      `${this.url}/observation/${id_observation}`,
+      undefined
+    );
+  }
+
+  getObservations(id_procedure: string) {
+    return this.http.get<observationResponse[]>(
+      `${this.url}/observations/${id_procedure}`
+    );
+  }
+
   private toModel(
     group: GroupProcedure,
     response: internalResponse | externalResponse

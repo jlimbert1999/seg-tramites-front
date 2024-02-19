@@ -1,0 +1,35 @@
+@if (procedure()) {
+<mat-toolbar color="primary">
+  <button (click)="backLocation()" mat-icon-button matTooltip="Regresar">
+    <mat-icon>arrow_back</mat-icon>
+  </button>
+  <span>{{ procedure()!.code }}</span>
+  <span class="toolbar-spacer"></span>
+  <button matTooltip="Generar ficha de tramite" mat-icon-button>
+    <mat-icon>print</mat-icon>
+  </button>
+</mat-toolbar>
+<mat-tab-group>
+  <mat-tab label="Detalle">
+    @switch (procedure()!.group) { @case ('ExternalDetail') {
+    <external-detail [data]="external" />
+    } @case ('InternalDetail') {
+    <internal-detail [data]="internal" />
+    } @default {
+    <p>Type procedure is note defined</p>
+    } }
+  </mat-tab>
+  @if(observations().length>0){
+  <mat-tab label="Observaciones">
+    <list-observations [data]="observations()" />
+  </mat-tab>
+  } @if(workflow()){
+  <mat-tab label="Flujo de trabajo">
+    <list-workflow [data]="workflow()!"
+  /></mat-tab>
+  <mat-tab label="Flujo de trabajo grafico ">
+    <graph-workflow [data]="workflow()!"
+  /></mat-tab>
+  }
+</mat-tab-group>
+}

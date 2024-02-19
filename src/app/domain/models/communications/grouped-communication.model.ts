@@ -1,5 +1,6 @@
 import { groupedCommunicationResponse } from '../../../infraestructure/interfaces';
 import { Communication, StatusMail } from '../procedures/communication.model';
+import { GroupProcedure } from '../procedures/procedure.model';
 
 interface GroupedCommunicationProps {
   account: string;
@@ -11,6 +12,7 @@ interface procedure {
   _id: string;
   code: string;
   reference: string;
+  group: GroupProcedure;
 }
 
 export class GroupedCommunication {

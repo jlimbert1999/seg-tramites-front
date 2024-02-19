@@ -84,7 +84,6 @@ export class InboxService {
     const params = new HttpParams({
       fromObject: { ...values, ...(status && { status }) },
     });
-    console.log(text);
     return this.http
       .get<{ mails: communicationResponse[]; length: number }>(
         `${this.url}/inbox/search/${text}`,
@@ -118,4 +117,5 @@ export class InboxService {
       rejectionReason,
     });
   }
+
 }

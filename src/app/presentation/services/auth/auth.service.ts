@@ -5,7 +5,12 @@ import { jwtDecode } from 'jwt-decode';
 import { Observable, of } from 'rxjs';
 
 import { environment } from '../../../../environments/environment';
-import { AuthStatus, JwtPayload } from '../../../infraestructure/interfaces';
+import {
+  AuthStatus,
+  JwtPayload,
+  accountResponse,
+} from '../../../infraestructure/interfaces';
+import { Account } from '../../../domain/models';
 
 @Injectable({
   providedIn: 'root',
@@ -30,7 +35,6 @@ export class AuthService {
   }
 
   checkAuthStatus(): Observable<boolean> {
-    console.log('check auth status');
     const token = localStorage.getItem('token');
     if (!token) {
       this.logout();
@@ -53,7 +57,21 @@ export class AuthService {
   }
 
   getMyAccount() {
-    return this.http.get<any>(`${this.base_url}/auth/detail`);
+    return this.http.get<accountResponse>(`${this.base_url}/auth/detail`).pipe(
+      map((resp) => {
+        resp.dependencia = resp.dependencia
+          ? resp.dependencia
+          : {
+              _id: '',
+              nombre: '',
+              sigla: '',
+              codigo: '',
+              activo: true,
+              institucion: { _id: '', nombre: '', sigla: '', activo: true },
+            };
+        return Account.fromJson(resp);
+      })
+    );
   }
 
   updateMyAccount(password: string) {

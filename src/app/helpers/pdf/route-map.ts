@@ -45,6 +45,46 @@ export async function CreateRouteMap(
   ];
 }
 
+function firstSection(procedure: Procedure, workflow: Workflow | undefined) {
+  const { emitter, receiver, phone } = procedure.originDetails();
+  const sectionReceiver = receiver
+    ? {
+        fullname: receiver.fullname,
+        jobtitle: receiver.jobtitle ?? 'Sin cargo',
+      }
+    : workflow
+    ? {
+        fullname: workflow.dispatches[0].receiver.fullname,
+        jobtitle: workflow.dispatches[0].receiver.jobtitle ?? 'Sin cargo',
+      }
+    : { fullname: '', jobtitle: '' };
+  return createDetailContainer({
+    code: procedure.code,
+    cite: procedure.cite,
+    reference: procedure.reference,
+    group: procedure.group,
+    emitter: {
+      fullname: emitter.fullname,
+      jobtitle: emitter.jobtitle ?? 'Sin cargo',
+    },
+    phone: phone,
+    inDetail: {
+      date: TimeManager.formatDate(procedure.startDate, 'D/MM/YYYY'),
+      hour: TimeManager.formatDate(procedure.startDate, 'HH:mm'),
+      quantity: procedure.amount,
+    },
+    internalNumber: workflow?.dispatches[0].internalNumber ?? '',
+    receiver: sectionReceiver,
+    outDetail: workflow
+      ? {
+          date: TimeManager.formatDate(workflow.date, 'D/MM/YYYY'),
+          hour: TimeManager.formatDate(workflow.date, 'HH:mm'),
+          quantity: workflow.dispatches[0].attachmentQuantity,
+        }
+      : { date: '', hour: '', quantity: '' },
+  });
+}
+
 function secondSection(workflow: Workflow[]) {
   const containers: ContentTable[] = [];
   for (const [index, { dispatches }] of workflow.entries()) {
@@ -56,7 +96,7 @@ function secondSection(workflow: Workflow[]) {
         index: index,
         reference: dispatches[0].reference,
         officers: officers,
-        internalNumber: '',
+        internalNumber: dispatches[0].internalNumber,
         inDetail: { date: '', hour: '', quantity: '' },
         outDetail: { date: '', hour: '', quantity: '' },
       });
@@ -102,6 +142,17 @@ function secondSection(workflow: Workflow[]) {
     });
     containers.push(container);
   }
+  containers[0].table.body.push([
+    {
+      text: `SEGUNDA PARTE`,
+      fontSize: 7,
+      bold: true,
+      alignment: 'left',
+      border: [true, false, true, true],
+      colSpan: 2,
+    },
+    '',
+  ]);
   return containers;
 }
 
@@ -112,46 +163,6 @@ function getLastPageNumber(lengthData: number): number {
   const termsBefore = Math.ceil((lengthData - firstTerm) / increment);
   const nextTerm = firstTerm + termsBefore * increment;
   return nextTerm;
-}
-
-function firstSection(procedure: Procedure, workflow: Workflow | undefined) {
-  const { emitter, receiver, phone } = procedure.originDetails();
-  const sectionReceiver = receiver
-    ? {
-        fullname: receiver.fullname,
-        jobtitle: receiver.jobtitle ?? 'Sin cargo',
-      }
-    : workflow
-    ? {
-        fullname: workflow.dispatches[0].receiver.fullname,
-        jobtitle: workflow.dispatches[0].receiver.jobtitle ?? 'Sin cargo',
-      }
-    : { fullname: '', jobtitle: '' };
-  return createDetailContainer({
-    code: procedure.code,
-    cite: procedure.cite,
-    reference: procedure.reference,
-    group: procedure.group,
-    emitter: {
-      fullname: emitter.fullname,
-      jobtitle: emitter.jobtitle ?? 'Sin cargo',
-    },
-    phone: phone,
-    inDetail: {
-      date: TimeManager.formatDate(procedure.startDate, 'D/MM/YYYY'),
-      hour: TimeManager.formatDate(procedure.startDate, 'HH:mm'),
-      quantity: procedure.amount,
-    },
-    internalNumber: workflow?.dispatches[0].internalNumber ?? '',
-    receiver: sectionReceiver,
-    outDetail: workflow
-      ? {
-          date: TimeManager.formatDate(workflow.date, 'D/MM/YYYY'),
-          hour: TimeManager.formatDate(workflow.date, 'HH:mm'),
-          quantity: workflow.dispatches[0].attachmentQuantity,
-        }
-      : { date: '', hour: '', quantity: '' },
-  });
 }
 
 async function createHeaderContainer(): Promise<Content> {
@@ -182,6 +193,7 @@ async function createHeaderContainer(): Promise<Content> {
     },
   ];
 }
+
 function createDetailContainer({
   group,
   code,
@@ -426,6 +438,7 @@ function createDetailContainer({
     },
   };
 }
+
 function createStageContainer({
   index,
   officers,

@@ -101,4 +101,11 @@ export class AlertService {
       timeOut: seconds,
     });
   }
+  SuccesToast({ seconds = 5000, title, message }: ToastOptions) {
+    this.toast.success(message, title, {
+      positionClass: 'toast-bottom-right',
+      closeButton: true,
+      timeOut: seconds,
+    });
+  }
 }

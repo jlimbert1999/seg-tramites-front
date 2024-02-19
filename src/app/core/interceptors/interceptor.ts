@@ -4,29 +4,35 @@ import {
   HttpHandlerFn,
   HttpRequest,
 } from '@angular/common/http';
-import { Observable, catchError, throwError } from 'rxjs';
+import { Observable, catchError, finalize, throwError } from 'rxjs';
+import { inject } from '@angular/core';
 import { Alert } from '../../helpers';
+import { AppearanceService } from '../../presentation/services';
 
 export function loggingInterceptor(
   req: HttpRequest<unknown>,
   next: HttpHandlerFn
 ): Observable<HttpEvent<unknown>> {
+  const { loading } = inject(AppearanceService);
   const reqWithHeader = req.clone({
     headers: req.headers.append(
       'Authorization',
       `Bearer ${localStorage.getItem('token') || ''}`
     ),
   });
+  loading.set(true);
   return next(reqWithHeader).pipe(
     catchError((error) => {
       if (error instanceof HttpErrorResponse) hendleHttpErrors(error);
       return throwError(() => Error);
+    }),
+    finalize(() => {
+      loading.set(false);
     })
   );
 }
 
 const hendleHttpErrors = (error: HttpErrorResponse) => {
-  console.log(error);
   switch (error.status) {
     case 500:
       Alert.Alert({

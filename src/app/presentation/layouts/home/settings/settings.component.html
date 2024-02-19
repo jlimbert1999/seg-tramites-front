@@ -1,0 +1,184 @@
+<p>
+  <mat-toolbar color="primary">
+    <sidenav-button />
+    <span>Configuraciones</span>
+  </mat-toolbar>
+</p>
+
+<div class="container-fluid">
+  <mat-accordion>
+    <ng-container>
+      <mat-expansion-panel>
+        <mat-expansion-panel-header>
+          <mat-panel-title> INFORMACION FUNCIONARIO </mat-panel-title>
+          <mat-panel-description> Datos personales </mat-panel-description>
+        </mat-expansion-panel-header>
+        @if(account()){ @if(account()?.funcionario){
+        <form class="row g-3">
+          <div class="col-md-3">
+            <label for="txtDep" class="form-label">Unidad</label>
+            <input
+              type="text"
+              class="form-control"
+              id="txtDep"
+              [value]="account()!.dependencia.institution"
+              readonly
+            />
+          </div>
+          <div class="col-md-9">
+            <label for="txtInst" class="form-label">Dependencia</label>
+            <input
+              type="text"
+              class="form-control"
+              id="txtInst"
+              [value]="account()!.dependencia.nombre"
+              readonly
+            />
+          </div>
+
+          <div class="col-md-5">
+            <label for="txtOfficer" class="form-label">Nombre completo</label>
+            <input
+              type="text"
+              class="form-control"
+              id="txtOfficer"
+              [value]="account()?.fullnameManager()"
+              readonly
+            />
+          </div>
+          <div class="col-md-7">
+            <label for="txtCargo" class="form-label">Cargo</label>
+            <input
+              type="text"
+              class="form-control"
+              id="txtCargo"
+              [value]="account()!.funcionario?.cargo?.nombre ?? 'Sin cargo'"
+              readonly
+            />
+          </div>
+          <div class="col-md-2">
+            <label for="txtDni" class="form-label">Dni</label>
+            <input
+              type="text"
+              class="form-control"
+              id="txtDni"
+              [value]="account()!.funcionario?.dni"
+              readonly
+            />
+          </div>
+          <div class="col-md-2">
+            <label for="txtTel" class="form-label">Telefono</label>
+            <input
+              type="text"
+              class="form-control"
+              id="txtTel"
+              [value]="account()!.funcionario?.telefono"
+              readonly
+            />
+          </div>
+        </form>
+        } @else {
+        <div class="row">
+          <div class="col-md-12 p-3">
+            <div class="alert alert-success" role="alert">
+              <h4 class="alert-heading">ADMINISTRADOR</h4>
+              <p>Esta cuenta no pertenece a ningun funcionario</p>
+              <hr />
+              <p class="mb-0">
+                Como administrador/a, usted posee privilegios y acceso especial
+                a recursos críticos para el funcionamiento del sistema.
+              </p>
+            </div>
+          </div>
+        </div>
+        } }
+      </mat-expansion-panel>
+      <mat-expansion-panel>
+        <mat-expansion-panel-header>
+          <mat-panel-title> CONFIGURACION CUENTA </mat-panel-title>
+          <mat-panel-description>
+            Configuracion de inicio de sesion
+          </mat-panel-description>
+        </mat-expansion-panel-header>
+        <div class="row">
+          <div class="col-3">
+            <mat-form-field class="example-full-width">
+              <mat-label>Nombre de usuario</mat-label>
+              <input matInput [value]="account()?.login" readonly />
+              <mat-hint>Este campo no se puede editar</mat-hint>
+            </mat-form-field>
+          </div>
+          <div class="col-4">
+            <mat-form-field>
+              <mat-label>Nueva contraseña</mat-label>
+              <input
+                matInput
+                [type]="hidePassword ? 'password' : 'text'"
+                autocomplete="off"
+                placeholder="Ingrese una nueva contraseña"
+                [formControl]="passoword"
+                required
+              />
+              <button
+                mat-icon-button
+                matSuffix
+                (click)="hidePassword = !hidePassword"
+                [attr.aria-label]="'Hide password'"
+                [attr.aria-pressed]="hidePassword"
+              >
+                <mat-icon>{{
+                  hidePassword ? "visibility_off" : "visibility"
+                }}</mat-icon>
+              </button>
+              @if (passoword.invalid) {
+              <mat-error>{{ getErrorMessage() }}</mat-error>
+              }
+            </mat-form-field>
+          </div>
+        </div>
+        <mat-action-row>
+          <button
+            mat-button
+            color="primary"
+            (click)="updatePassword()"
+            [disabled]="passoword.invalid"
+          >
+            Actualizar
+          </button>
+        </mat-action-row>
+      </mat-expansion-panel>
+    </ng-container>
+    <mat-expansion-panel>
+      <mat-expansion-panel-header>
+        <mat-panel-title> PERSONALIZACION </mat-panel-title>
+        <mat-panel-description> Cambiar tema principal </mat-panel-description>
+      </mat-expansion-panel-header>
+      <div class="d-flex justify-content-center">
+        <!-- <input
+          id="switch"
+          type="checkbox"
+          [ngModel]="isDarkTheme"
+          (change)="toggleDarkTheme()"
+        /> -->
+        <div class="app">
+          <div class="body">
+            <div class="phone">
+              <div class="content">
+                <div class="circle">
+                  <div class="crescent"></div>
+                </div>
+                <label class="option-theme" for="switch">
+                  <div class="toggle"></div>
+                  <div class="names">
+                    <p class="light">Claro</p>
+                    <p class="dark">Oscuro</p>
+                  </div>
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </mat-expansion-panel>
+  </mat-accordion>
+</div>
