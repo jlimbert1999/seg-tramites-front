@@ -10,3 +10,5 @@ export * from './procedures/graph-workflow/graph-workflow.component';
 export * from './procedures/list-workflow/list-workflow.component';
 export * from './procedures/search-input/search-input.component';
 export * from './procedures/list-observations/list-observations.component';
+
+export * from './reports/report-procedure-table/report-procedure-table.component';

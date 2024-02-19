@@ -174,8 +174,8 @@ async function createHeaderContainer(): Promise<Content> {
           image: await convertImageABase64(
             '../../../assets/img/gams/logo_alcaldia.jpeg'
           ),
-          width: 150,
-          height: 60,
+          width: 140,
+          height: 50,
         },
         {
           text: '\nHOJA DE RUTA DE CORRESPONDENCIA',
@@ -186,8 +186,8 @@ async function createHeaderContainer(): Promise<Content> {
           image: await convertImageABase64(
             '../../../assets/img/gams/escudo_sacaba.jpeg'
           ),
-          width: 70,
-          height: 70,
+          width: 60,
+          height: 50,
         },
       ],
     },

@@ -1,25 +1,33 @@
-<mat-nav-list>
+<mat-nav-list class="menu">
   @for (item of menu; track item.resource) { @if(item.children){
-  <!-- <mat-expansion-panel>
-    <mat-expansion-panel-header> 
-      <mat-icon matListItemIcon style=" flex-basis: 0;">{{ item.icon }}</mat-icon>
+  <mat-expansion-panel>
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        <mat-icon>{{ item.icon }}</mat-icon>
+        <div class="ss">{{ item.text }}</div>
+      </mat-panel-title>
     </mat-expansion-panel-header>
-    @for (subitem of item.children; track subitem.resource) {
-    <mat-list-item>
-      <mat-icon matListItemIcon>{{ item.icon }}</mat-icon>
-      <div matListItemTitle>{{ subitem.text }}</div>
-    </mat-list-item>
-    }
-  </mat-expansion-panel> -->
-
+    <mat-nav-list>
+      @for (subitem of item.children; track $index) {
+      <mat-list-item
+        [routerLink]="subitem.routerLink"
+        [routerLinkActive]="['is-active']"
+        class="item-link"
+      >
+        <mat-icon class="icon" matListItemIcon>{{ subitem.icon }}</mat-icon>
+        <div class="text" matListItemTitle>{{ subitem.text }}</div>
+      </mat-list-item>
+      }
+    </mat-nav-list>
+  </mat-expansion-panel>
   } @else {
   <mat-list-item
     [routerLink]="item.routerLink"
     [routerLinkActive]="['is-active']"
     class="item-link"
   >
-    <mat-icon matListItemIcon>{{ item.icon }}</mat-icon>
-    <div matListItemTitle>{{ item.text }}</div>
+    <mat-icon class="icon" matListItemIcon>{{ item.icon }}</mat-icon>
+    <div class="text" matListItemTitle>{{ item.text }}</div>
   </mat-list-item>
   } }
 </mat-nav-list>

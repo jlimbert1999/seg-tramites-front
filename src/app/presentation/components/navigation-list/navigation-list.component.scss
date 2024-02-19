@@ -1,11 +1,52 @@
-// .is-active {
-//   background-color: royalblue;
-// }
-
-mat-panel-title {
-    flex-basis: 0;
+.menu {
+    padding: 10px;
 }
 
-mat-panel-description {
-    flex-basis: 100%;
+mat-list-item {
+    &.is-active .text {
+        font-weight: bold;
+        color: #1565C0;
+    }
+
+    &.is-active .icon {
+        color: #1565C0;
+    }
+}
+
+.is-active {
+    background-color: #BBDEFB;
+}
+
+mat-expansion-panel {
+    box-shadow: none !important;
+}
+
+mat-expansion-panel-header {
+    padding: 0 16px !important;
+}
+
+.mat-mdc-list-item-icon {
+    color: rgba(0, 0, 0, 0.54);
+}
+
+::ng-deep .mat-mdc-nav-list .mat-icon {
+    margin-right: 20px;
+    vertical-align: middle;
+}
+
+.mat-mdc-expansion-panel-body {
+    padding: 0 !important;
+    background-color: rebeccapurple;
+}
+
+::ng-deep .mat-expansion-panel-header {
+    height: 52px !important;
+}
+
+::ng-deep .mat-expansion-panel .ss {
+    padding-left: 12px !important;
+}
+
+::ng-deep .mat-expansion-panel .mat-mdc-list-item {
+    padding-left: 15px !important;
 }

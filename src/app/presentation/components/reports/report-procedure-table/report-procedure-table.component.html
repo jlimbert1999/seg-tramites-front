@@ -1,0 +1,25 @@
+<table mat-table [dataSource]="datasource()">
+  @for (item of columns; track $index) {
+  <ng-container matColumnDef="{{ item.columnDef }}">
+    <th mat-header-cell *matHeaderCellDef>{{ item.header }}</th>
+    <td mat-cell *matCellDef="let element" [id]="element.id_procedure">
+      @switch (item.columnDef) { @case ('code') {
+      <a (click)="navigate(element)"> {{ element["code"] }}</a>
+      } @case ('state') {
+      <span class="badge" [ngClass]="element['state'] | stateLabel">
+        {{ element.state }}
+      </span>
+      } @case ('date') {
+      {{ element["date"] | date : "short" : "-400" }}
+      } @default {
+      {{ element[item.columnDef] }}
+      }}
+    </td>
+  </ng-container>
+  }
+  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+  <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+  <tr class="mat-row" *matNoDataRow>
+    <td class="mat-cell p-3" colspan="4">No se encontraron resultados</td>
+  </tr>
+</table>

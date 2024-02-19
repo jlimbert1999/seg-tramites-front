@@ -5,12 +5,12 @@
       <div class="col-sm-6 align-middle">
         <div class="card bg-transparent">
           <div class="card-body">
-            <h5 class="card-title">
+            <h3 class="card-title">
               {{ stage.emitter.fullname | titlecase }}
-            </h5>
-            <h6 class="card-subtitle mb-2 text-body-secondary">
+            </h3>
+            <h4 class="card-subtitle mb-2 text-body-secondary">
               {{ stage.emitter.jobtitle | uppercase }}
-            </h6>
+            </h4>
             <hr />
           </div>
           <ul class="list-group list-group-flush">
@@ -39,22 +39,22 @@
           ]"
         >
           <div class="card-body">
-            <h5 class="card-title">
+            <h3 class="card-title">
               {{ stage.receiver.fullname | titlecase }}
-            </h5>
-            <h6 class="card-subtitle mb-2 text-body-secondary">
+            </h3>
+            <h4 class="card-subtitle mb-2 text-body-secondary">
               {{ stage.receiver.jobtitle }}
-            </h6>
+            </h4>
           </div>
           <ul class="list-group list-group-flush">
             @switch (stage.status) { @case ('pending') {
             <li class="list-group-item list-group-item-warning">Sin aceptar</li>
             } @case ('rejected') {
             <li class="list-group-item list-group-item-danger">
-              Fecha rechazdo: {{ stage.eventLog?.date | date }}
+              Fecha rechazdo: {{ stage.eventLog?.date | date : "short" }}
             </li>
             <li class="list-group-item list-group-item-danger">
-              Motivo: {{ stage.eventLog?.manager }}:
+              {{ stage.eventLog?.manager }}:
               {{ stage.eventLog?.description }}
             </li>
             <li class="list-group-item list-group-item-danger">
@@ -64,7 +64,9 @@
               }}</span>
             </li>
             } @default {
-            <li class="list-group-item">Fecha recibido: {{ stage.date }}</li>
+            <li class="list-group-item">
+              Fecha recibido: {{ stage.date | date : "short" }}
+            </li>
             <li class="list-group-item">
               Duracion:
               <span class="badge text-bg-primary fs-6">{{

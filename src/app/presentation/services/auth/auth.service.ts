@@ -18,10 +18,24 @@ import { Account } from '../../../domain/models';
 export class AuthService {
   private readonly base_url: string = environment.base_url;
   private _account = signal<JwtPayload | null>(null);
-  private _menu = signal<any[]>([]);
+  private _menu = signal<
+    {
+      icon: string;
+      resource: string;
+      routerLink: string;
+      text: string;
+      childred: {
+        icon: string;
+        resource: string;
+        routerLink: string;
+        text: string;
+      }[];
+    }[]
+  >([]);
 
   public account = computed(() => this._account());
   public menu = computed(() => this._menu());
+  public code = signal<string>('');
 
   constructor(private http: HttpClient) {}
 
@@ -44,10 +58,12 @@ export class AuthService {
       .get<{
         token: string;
         menu: any[];
+        code: string;
       }>(`${this.base_url}/auth`)
       .pipe(
-        map(({ menu, token }) => {
+        map(({ menu, token, code }) => {
           this._menu.set(menu);
+          this.code.set(code);
           return this.setAuthentication(token);
         }),
         catchError(() => {

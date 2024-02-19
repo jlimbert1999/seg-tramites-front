@@ -33,8 +33,6 @@ import { typeProcedureResponse } from '../../../../../infraestructure/interfaces
 import { SimpleSelectSearchComponent } from '../../../../components';
 import { AuthService, InternalService } from '../../../../services';
 
-
-
 interface SelectOption {
   value: typeProcedureResponse;
   text: string;
@@ -86,7 +84,7 @@ export class InternalComponent {
       Validators.required,
     ],
     //  TODO CODE OF DEPENDENCY
-    cite: ['000-000'],
+    cite: [this.authService.code()],
   });
 
   ngOnInit(): void {

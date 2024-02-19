@@ -38,12 +38,12 @@
             Desvincular
           </button>
           } @else {
-          <!-- <app-server-mat-select-search
-            placeholder="Buscar funcionario"
-            [options]="officers()"
-            (keyupEvent)="searchOfficer($event)"
-            (selectEvent)="selectOfficer($event)"
-          /> -->
+          <server-select-search
+            [placeholder]="'Seleccione una dependencia'"
+            [data]="officers()"
+            (onSearch)="searchOfficer($event)"
+            (onSelect)="selectOfficer($event)"
+          />
           }
         </div>
       </div>

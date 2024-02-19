@@ -19,6 +19,9 @@ import { ExternalsComponent } from './presentation/pages/procedures/externals/ex
 import { InternalsComponent } from './presentation/pages/procedures/internals/internals.component';
 import { ResourcesComponent } from './presentation/layouts/home/resources/resources.component';
 import { SettingsComponent } from './presentation/layouts/home/settings/settings.component';
+import { ReportApplicantComponent } from './presentation/pages/reports/report-applicant/report-applicant.component';
+import { ReportSearchComponent } from './presentation/pages/reports/report-search/report-search.component';
+import { MainComponent } from './presentation/layouts/home/main/main.component';
 
 export const routes: Routes = [
   {
@@ -31,6 +34,8 @@ export const routes: Routes = [
     canActivate: [AuthGuard],
     component: HomeComponent,
     children: [
+      { path: '', redirectTo: 'main', pathMatch: 'full' },
+      { path: 'main', component: MainComponent },
       { path: 'dependencies', component: DependenciesComponent },
       { path: 'institutions', component: InstitutionsComponent },
       { path: 'types-procedures', component: TypesProceduresComponent },
@@ -48,6 +53,14 @@ export const routes: Routes = [
       { path: 'posts', component: PostsComponent },
       { path: 'resources', component: ResourcesComponent },
       { path: 'settings', component: SettingsComponent },
+      {
+        path: 'reports',
+        children: [
+          { path: 'applicant', component: ReportApplicantComponent },
+          { path: 'search', component: ReportSearchComponent },
+          { path: ':from/:group/:id', component: DetailComponent },
+        ],
+      },
     ],
   },
   { path: '', redirectTo: '/home', pathMatch: 'full' },

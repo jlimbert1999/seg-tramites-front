@@ -20,10 +20,14 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatSelectModule } from '@angular/material/select';
 import { MatStepperModule } from '@angular/material/stepper';
 import { MatInputModule } from '@angular/material/input';
-import { ServerSelectSearchComponent } from '../../../../components';
+import {
+  ServerSelectSearchComponent,
+  SimpleSelectSearchComponent,
+} from '../../../../components';
 import { AccountService } from '../services/account.service';
 import { roleResponse } from '../../../../../infraestructure/interfaces';
 import { OfficerService } from '../../officers/services/officer.service';
+import { PdfService } from '../../../../services';
 
 interface SelectOption {
   value: string;
@@ -43,6 +47,7 @@ interface SelectOption {
     MatInputModule,
     ReactiveFormsModule,
     ServerSelectSearchComponent,
+    SimpleSelectSearchComponent,
   ],
   templateUrl: './create-account.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -52,6 +57,7 @@ export class CreateAccountComponent {
   private accountService = inject(AccountService);
   private officerService = inject(OfficerService);
   private dialogRef = inject(MatDialogRef<CreateAccountComponent>);
+  private pdfService = inject(PdfService);
 
   institutions = signal<SelectOption[]>([]);
   filteredInstitutions = signal<SelectOption[]>([]);
@@ -84,16 +90,17 @@ export class CreateAccountComponent {
 
   ngOnInit(): void {
     this.getRoles();
+    this.getInstitutions();
   }
 
   save() {
     this.accountService
       .add(this.FormAccount.value, this.FormOfficer.value)
       .subscribe((account) => {
-        // this.pdfService.createAccountSheet(
-        //   account,
-        //   this.FormAccount.get('password')?.value
-        // );
+        this.pdfService.createAccountSheet(
+          account,
+          this.FormAccount.get('password')?.value
+        );
         this.dialogRef.close(account);
       });
   }
@@ -109,15 +116,8 @@ export class CreateAccountComponent {
       );
     });
   }
-  filterInstitutions() {
-    // this.filteredDependencies.set(
-    //   this.dependencies().filter(
-    //     (op) => op.text.toLowerCase().indexOf(term!) > -1
-    //   )
-    // );
-  }
 
-  getDependencies(id_institucion?: string) {
+  getDependencies(id_institucion: string) {
     if (!id_institucion) {
       this.dependencies.set([]);
       this.filteredDependencies.set([]);
@@ -134,14 +134,6 @@ export class CreateAccountComponent {
         );
         this.filteredDependencies.set(this.dependencies());
       });
-  }
-
-  filterDependencies(term: string) {
-    this.filteredDependencies.set(
-      this.dependencies().filter(
-        (op) => op.text.toLowerCase().indexOf(term!) > -1
-      )
-    );
   }
 
   setDependency(id: string): void {

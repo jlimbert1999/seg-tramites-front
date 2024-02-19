@@ -57,20 +57,18 @@
           <ng-template matStepLabel>Datos cuenta</ng-template>
           <div class="row">
             <div class="col-12">
-              <!-- <server-select-search
+              <simple-select-search
                 placeholder="Buscar institucion"
                 [data]="institutions()"
-                (onSearch)="searchInstitutions($event)"
                 (onSelect)="getDependencies($event)"
-              ></server-select-search> -->
+              ></simple-select-search>
             </div>
             <div class="col-12">
-              <server-select-search
-                placeholder="Buscar dependencia"
+              <simple-select-search
+                placeholder="Buscar institucion"
                 [data]="dependencies()"
-                (onSearch)="filterDependencies($event)"
                 (onSelect)="setDependency($event)"
-              ></server-select-search>
+              ></simple-select-search>
             </div>
           </div>
           <div class="row">

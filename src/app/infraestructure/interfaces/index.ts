@@ -23,3 +23,5 @@ export * from './communications/receiver.interface';
 export * from './communications/grouped-communication-response.interface';
 
 export * from './groupware/user_socket.interface';
+
+export * from './reports/report-data.interface';

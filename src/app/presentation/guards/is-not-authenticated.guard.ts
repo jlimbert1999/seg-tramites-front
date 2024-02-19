@@ -4,9 +4,8 @@ import { AuthService } from '../services';
 
 export const isNotAuthenticatedGuard: CanActivateFn = (route, state) => {
   const authService = inject(AuthService);
-  const router = inject(Router);
-  // if (authService.authStatus() === AuthStatus.authenticated) {
-  //   console.log('usted ya esta autenticado');
+  // const router = inject(Router);
+  // if (!authService.account()) {
   //   router.navigateByUrl('/home');
   //   return false;
   // }

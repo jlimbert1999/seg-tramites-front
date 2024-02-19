@@ -15,3 +15,6 @@ export * from './procedures/procedure.service';
 export * from './communications/inbox.service';
 export * from './communications/outbox.service';
 export * from './communications/archive.service';
+
+export * from './reports/report.service';
+

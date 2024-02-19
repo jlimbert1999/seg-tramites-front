@@ -8,6 +8,7 @@ import {
 import { Account, Officer } from '../../../../../domain/models';
 import {
   FormBuilder,
+  FormControl,
   FormGroup,
   ReactiveFormsModule,
   Validators,
@@ -18,7 +19,7 @@ import {
   MatDialogModule,
   MatDialogRef,
 } from '@angular/material/dialog';
-import { AlertService } from '../../../../services';
+import { AlertService, PdfService } from '../../../../services';
 import { roleResponse } from '../../../../../infraestructure/interfaces';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTabsModule } from '@angular/material/tabs';
@@ -27,9 +28,10 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
+import { ServerSelectSearchComponent } from '../../../../components';
 interface SelectOption {
   text: string;
-  value: string;
+  value: Officer;
 }
 @Component({
   selector: 'app-edit-account',
@@ -45,15 +47,31 @@ interface SelectOption {
     MatSelectModule,
     MatButtonModule,
     MatInputModule,
+    ServerSelectSearchComponent,
   ],
   templateUrl: './edit-account.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  styles: `.account-settings .user-profile {
+    text-align: center;
+  }
+  
+  .account-settings .user-profile .user-avatar {
+    margin: 0 0 1rem 0;
+  }
+  
+  .account-settings .user-profile .user-avatar img {
+    width: 90px;
+    height: 90px;
+    border-radius: 100px;
+  }
+  `,
 })
 export class EditAccountComponent {
   private fb = inject(FormBuilder);
   private dialogRef = inject(MatDialogRef<EditAccountComponent>);
   private alertService = inject(AlertService);
   private accountService = inject(AccountService);
+  private pdfService = inject(PdfService);
 
   public account: Account = inject(MAT_DIALOG_DATA);
   public roles = signal<roleResponse[]>([]);
@@ -71,9 +89,6 @@ export class EditAccountComponent {
     this.FormAccount.patchValue(props);
     this.currentOfficer.set(funcionario);
     this.accountService.getRoles().subscribe((roles) => this.roles.set(roles));
-    // this.reportService.getWorkDetails(this.data._id).subscribe((data) => {
-    //   this.workDetails = data;
-    // });
   }
 
   unlinkAccount() {
@@ -81,62 +96,61 @@ export class EditAccountComponent {
       this.currentOfficer.set(undefined);
       return;
     }
-    // this.alertService.QuestionAlert(
-    //   {
-    //     title: `¿Desvincular cuenta de ${this.account.fullnameManager()}?`,
-    //     text:`La cuenta quedará deshabilitada hasta que se realice una nueva asignación.`,
-    //     callback:{}
-    //   }
-    //   () => {
-    //     this.accountService.unlinkAccount(this.account._id).subscribe(() => {
-    //       delete this.account.funcionario;
-    //       this.currentOfficer.set(undefined);
-    //     });
-    //   }
-    // );
+    this.alertService.QuestionAlert({
+      title: `¿Desvincular cuenta de ${this.account.fullnameManager()}?`,
+      text: `La cuenta quedará deshabilitada hasta que se realice una nueva asignación.`,
+      callback: () => {
+        this.accountService.unlinkAccount(this.account._id).subscribe(() => {
+          delete this.account.funcionario;
+          this.currentOfficer.set(undefined);
+        });
+      },
+    });
   }
 
   searchOfficer(text: string) {
-    // this.accountService.searchOfficersWithoutAccount(text).subscribe((data) => {
-    //   this.officers.set(
-    //     data.map((officer) => ({ value: officer, text: officer.fullWorkTitle }))
-    //   );
-    // });
+    this.accountService.searchOfficersWithoutAccount(text).subscribe((data) => {
+      this.officers.set(
+        data.map((officer) => ({
+          value: officer,
+          text: officer.fullWorkTitle,
+        }))
+      );
+    });
   }
 
   selectOfficer(officer: Officer) {
-    // this.FormAccount.setControl(
-    //   'funcionario',
-    //   new FormControl(officer._id, Validators.required)
-    // );
-    // this.currentOfficer.set(officer);
-    // this.togglePassword(true);
+    this.FormAccount.setControl(
+      'funcionario',
+      new FormControl(officer._id, Validators.required)
+    );
+    this.currentOfficer.set(officer);
+    this.togglePassword(true);
   }
-
   save() {
-    // this.accountService
-    //   .edit(this.data._id, this.FormAccount.value)
-    //   .subscribe((account) => {
-    //     const updatedPassword = this.FormAccount.get('password')?.value;
-    //     if (updatedPassword && this.data.funcionario) {
-    //       this.pdfService.createAccountSheet(account, updatedPassword);
-    //     }
-    //     this.dialogRef.close(account);
-    //   });
+    this.accountService
+      .edit(this.account._id, this.FormAccount.value)
+      .subscribe((account) => {
+        const updatedPassword = this.FormAccount.get('password')?.value;
+        if (updatedPassword && this.account.funcionario) {
+          this.pdfService.createAccountSheet(account, updatedPassword);
+        }
+        this.dialogRef.close(account);
+      });
   }
 
   togglePassword(value: boolean) {
-    // this.updatePassword = value;
-    // if (!value) {
-    //   this.FormAccount.removeControl('password');
-    //   return;
-    // }
-    // this.FormAccount.setControl(
-    //   'password',
-    //   new FormControl(this.currentOfficer()?.dni ?? '', [
-    //     Validators.required,
-    //     Validators.pattern(/^[a-zA-Z0-9$]+$/),
-    //   ])
-    // );
+    this.updatePassword = value;
+    if (!value) {
+      this.FormAccount.removeControl('password');
+      return;
+    }
+    this.FormAccount.setControl(
+      'password',
+      new FormControl(this.currentOfficer()?.dni ?? '', [
+        Validators.required,
+        Validators.pattern(/^[a-zA-Z0-9$]+$/),
+      ])
+    );
   }
 }

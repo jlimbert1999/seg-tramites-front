@@ -15,27 +15,6 @@
         </mat-expansion-panel-header>
         @if(account()){ @if(account()?.funcionario){
         <form class="row g-3">
-          <div class="col-md-3">
-            <label for="txtDep" class="form-label">Unidad</label>
-            <input
-              type="text"
-              class="form-control"
-              id="txtDep"
-              [value]="account()!.dependencia.institution"
-              readonly
-            />
-          </div>
-          <div class="col-md-9">
-            <label for="txtInst" class="form-label">Dependencia</label>
-            <input
-              type="text"
-              class="form-control"
-              id="txtInst"
-              [value]="account()!.dependencia.nombre"
-              readonly
-            />
-          </div>
-
           <div class="col-md-5">
             <label for="txtOfficer" class="form-label">Nombre completo</label>
             <input
@@ -73,6 +52,16 @@
               class="form-control"
               id="txtTel"
               [value]="account()!.funcionario?.telefono"
+              readonly
+            />
+          </div>
+          <div class="col-md-8">
+            <label for="txtInst" class="form-label">Dependencia</label>
+            <input
+              type="text"
+              class="form-control"
+              id="txtInst"
+              [value]="account()!.dependencia.nombre"
               readonly
             />
           </div>
@@ -154,12 +143,12 @@
         <mat-panel-description> Cambiar tema principal </mat-panel-description>
       </mat-expansion-panel-header>
       <div class="d-flex justify-content-center">
-        <!-- <input
+        <input
           id="switch"
           type="checkbox"
           [ngModel]="isDarkTheme"
           (change)="toggleDarkTheme()"
-        /> -->
+        />
         <div class="app">
           <div class="body">
             <div class="phone">

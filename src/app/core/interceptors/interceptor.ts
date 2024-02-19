@@ -7,13 +7,16 @@ import {
 import { Observable, catchError, finalize, throwError } from 'rxjs';
 import { inject } from '@angular/core';
 import { Alert } from '../../helpers';
-import { AppearanceService } from '../../presentation/services';
+import { AppearanceService, AuthService } from '../../presentation/services';
+import { Router } from '@angular/router';
 
 export function loggingInterceptor(
   req: HttpRequest<unknown>,
   next: HttpHandlerFn
 ): Observable<HttpEvent<unknown>> {
   const { loading } = inject(AppearanceService);
+  const autService = inject(AuthService);
+  const router = inject(Router);
   const reqWithHeader = req.clone({
     headers: req.headers.append(
       'Authorization',
@@ -23,7 +26,14 @@ export function loggingInterceptor(
   loading.set(true);
   return next(reqWithHeader).pipe(
     catchError((error) => {
-      if (error instanceof HttpErrorResponse) hendleHttpErrors(error);
+      console.log('intercetpor', error);
+      if (error instanceof HttpErrorResponse) {
+        if (error.status === 401) {
+          autService.logout();
+          router.navigate(['/login']);
+        }
+        hendleHttpErrors(error);
+      }
       return throwError(() => Error);
     }),
     finalize(() => {

@@ -12,7 +12,7 @@ import {
 } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { AlertService, AuthService } from '../../../services';
+import { AlertService, AppearanceService, AuthService } from '../../../services';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { Account } from '../../../../domain/models';
 import { handleFormErrorMessages } from '../../../../helpers';
@@ -41,6 +41,7 @@ import { MatButtonModule } from '@angular/material/button';
 export class SettingsComponent {
   private authService = inject(AuthService);
   private alertService = inject(AlertService);
+  private appearanceService = inject(AppearanceService);
   public account = toSignal<Account>(this.authService.getMyAccount());
   public passoword = new FormControl('', [
     Validators.required,
@@ -62,5 +63,13 @@ export class SettingsComponent {
         this.passoword.reset();
         this.hidePassword = true;
       });
+  }
+
+  get isDarkTheme() {
+    return this.appearanceService.isDarkTheme();
+  }
+
+  toggleDarkTheme() {
+    this.appearanceService.toggleTheme();
   }
 }

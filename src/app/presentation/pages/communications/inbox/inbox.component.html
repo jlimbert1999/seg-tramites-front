@@ -9,7 +9,7 @@
   <div class="row">
     <div class="col-sm-9">
       <search-input
-        placeholder="Alterno / Referencia / Solicitante"
+        placeholder="Alterno / Referencia"
         [initialValue]="term"
         (onSearch)="applyTextFilter($event)"
       />
@@ -103,11 +103,11 @@
               </button>
               <button mat-menu-item (click)="archive(row)">
                 <mat-icon>domain_verification</mat-icon>
-                Finalizar proceso
+                Concluir tramite
               </button>
               <button mat-menu-item (click)="suspend(row)">
                 <mat-icon>pause_presentation</mat-icon>
-                Suspender proceso
+                Suspender tramite
               </button>
               }
             </mat-menu>

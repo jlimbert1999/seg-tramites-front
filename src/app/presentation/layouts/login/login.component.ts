@@ -47,11 +47,15 @@ export class LoginComponent {
   ) {}
 
   ngOnInit(): void {
-    // const loginSaved = localStorage.getItem('login');
-    // if (loginSaved) {
-    //   this.loginForm.controls['remember'].setValue(true);
-    //   this.loginForm.controls['login'].setValue(loginSaved);
-    // }
+    if (localStorage.getItem('token')) {
+      this.router.navigate(['/home']);
+      return;
+    }
+    const loginSaved = localStorage.getItem('login');
+    if (loginSaved) {
+      this.loginForm.controls['remember'].setValue(true);
+      this.loginForm.controls['login'].setValue(loginSaved);
+    }
   }
   login() {
     if (this.loginForm.invalid) return;
