@@ -5,7 +5,7 @@
   </button>
   <span>{{ procedure()!.code }}</span>
   <span class="toolbar-spacer"></span>
-  <button matTooltip="Generar ficha de tramite" mat-icon-button>
+  <button matTooltip="Generar ficha de tramite" mat-icon-button (click)="sheetProcedure()">
     <mat-icon>print</mat-icon>
   </button>
 </mat-toolbar>

@@ -1,19 +1,24 @@
 import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
-  ChangeDetectorRef,
   Component,
   DestroyRef,
   OnInit,
+  ViewChild,
+  effect,
   inject,
 } from '@angular/core';
-import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatSidenav, MatSidenavModule } from '@angular/material/sidenav';
+import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { MatToolbarModule } from '@angular/material/toolbar';
-import { MediaMatcher } from '@angular/cdk/layout';
+import { MatButtonModule } from '@angular/material/button';
+import { MatMenuModule } from '@angular/material/menu';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
-import { MatButtonModule } from '@angular/material/button';
 import { Router, RouterModule } from '@angular/router';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { map } from 'rxjs';
 import {
   AuthService,
   SocketService,
@@ -24,9 +29,7 @@ import {
   SidenavButtonComponent,
   NavigationListComponent,
 } from '../../components';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatMenuModule } from '@angular/material/menu';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+
 @Component({
   selector: 'app-home',
   standalone: true,
@@ -40,7 +43,6 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
     MatMenuModule,
     RouterModule,
     MatProgressSpinnerModule,
-
     NavigationListComponent,
     SidenavButtonComponent,
   ],
@@ -49,23 +51,26 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HomeComponent implements OnInit {
-  mobileQuery: MediaQueryList;
-  private _mobileQueryListener: () => void;
-
   private authService = inject(AuthService);
   private appearanceService = inject(AppearanceService);
   private socketService = inject(SocketService);
   private alertservice = inject(AlertService);
   private detroyref = inject(DestroyRef);
   private router = inject(Router);
+  private breakpointObserver = inject(BreakpointObserver);
 
-  constructor(changeDetectorRef: ChangeDetectorRef, media: MediaMatcher) {
-    this.mobileQuery = media.matchMedia('(max-width: 600px)');
-    this._mobileQueryListener = () => {
-      return changeDetectorRef.detectChanges();
-    };
-    this.mobileQuery.addListener(this._mobileQueryListener);
+  @ViewChild('snav') public sidenav!: MatSidenav;
+  public isHandset$ = this.breakpointObserver
+    .observe(Breakpoints.Handset)
+    .pipe(map((result) => result.matches));
+
+  constructor() {
+    effect(() => {
+      this.sidenav.toggle();
+      return this.appearanceService.isSidenavToggle();
+    });
   }
+
   ngOnInit(): void {
     this.socketService.listenUserConnection();
     this.socketService
@@ -77,10 +82,6 @@ export class HomeComponent implements OnInit {
           message: data.reference,
         })
       );
-  }
-
-  ngOnDestroy(): void {
-    this.mobileQuery.removeListener(this._mobileQueryListener);
   }
 
   logout() {
@@ -97,11 +98,7 @@ export class HomeComponent implements OnInit {
     return this.authService.account()!;
   }
 
-  get isToggle() {
-    return this.appearanceService.toggleSidenav();
-  }
-
   get isLoading() {
-    return this.appearanceService.loading();
+    return this.appearanceService.isloading$;
   }
 }

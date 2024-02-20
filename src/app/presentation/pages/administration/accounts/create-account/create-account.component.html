@@ -1,5 +1,7 @@
 <h1 mat-dialog-title>REGISTRO CUENTA</h1>
 <mat-dialog-content>
+  <p>{{ FormOfficer.value | json }}</p>
+  <p>{{ FormAccount.value | json }}</p>
   <ng-container>
     <mat-stepper
       headerPosition="bottom"
@@ -47,6 +49,7 @@
                 placeholder="Buscar cargo"
                 [data]="jobs()"
                 (onSearch)="searchJob($event)"
+                (onSelect)="setJob($event)"
               ></server-select-search>
             </div>
           </div>

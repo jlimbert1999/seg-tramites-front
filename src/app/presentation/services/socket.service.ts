@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
 import { Socket, io } from 'socket.io-client';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import {
   UserSocket,
   communicationResponse,
 } from '../../infraestructure/interfaces';
-import { BehaviorSubject, Observable } from 'rxjs';
 import { Communication } from '../../domain/models';
 
 @Injectable({
@@ -13,8 +13,7 @@ import { Communication } from '../../domain/models';
 })
 export class SocketService {
   private readonly socket: Socket;
-  private onlineUsersSubject: BehaviorSubject<UserSocket[]> =
-    new BehaviorSubject<UserSocket[]>([]);
+  private onlineUsersSubject = new BehaviorSubject<UserSocket[]>([]);
   public onlineUsers$ = this.onlineUsersSubject.asObservable();
   public readonly users: UserSocket[] = [];
 
@@ -23,7 +22,7 @@ export class SocketService {
       auth: { token: localStorage.getItem('token') ?? '' },
     });
   }
-  
+
   listenUserConnection() {
     this.socket.on('listar', (data: UserSocket[]) => {
       this.onlineUsersSubject.next(data);

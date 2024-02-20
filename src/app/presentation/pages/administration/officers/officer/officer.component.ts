@@ -80,7 +80,6 @@ export class OfficerComponent {
         Validators.maxLength(8),
       ],
     ],
-    direccion: ['Sacaba', Validators.required],
   });
 
   ngOnInit(): void {

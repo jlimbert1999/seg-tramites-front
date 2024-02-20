@@ -29,7 +29,7 @@ import {
   ListWorkflowComponent,
   ListObservationsComponent,
 } from '../../../components';
-import { CacheService, ProcedureService } from '../../../services';
+import { CacheService, PdfService, ProcedureService } from '../../../services';
 import { observationResponse } from '../../../../infraestructure/interfaces';
 
 @Component({
@@ -57,6 +57,7 @@ export class DetailComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private cacheService = inject(CacheService);
   private procedureService = inject(ProcedureService);
+  private pdfService = inject(PdfService);
 
   public procedure = signal<ExternalProcedure | InternalProcedure | null>(null);
   public workflow = signal<Workflow[]>([]);
@@ -87,6 +88,10 @@ export class DetailComponent implements OnInit {
       this.cacheService.keepAliveData.set(true);
       this._location.back();
     });
+  }
+
+  sheetProcedure() {
+    this.pdfService.GenerateIndexCard(this.procedure()!, this.workflow());
   }
 
   get external() {

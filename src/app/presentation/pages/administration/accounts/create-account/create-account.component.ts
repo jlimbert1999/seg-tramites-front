@@ -162,8 +162,8 @@ export class CreateAccountComponent {
     });
   }
 
-  setJob(job: { nombre: string; _id: string }) {
-    this.FormOfficer.setControl('cargo', job._id);
+  setJob(id_job: string) {
+    this.FormOfficer.setControl('cargo', new FormControl(id_job));
   }
 
   removeJob() {

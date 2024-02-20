@@ -1,6 +1,6 @@
 /* You can add global styles to this file, and also import other style files */
-@import "./assets/scss/status-badge.scss";
 @import "ngx-toastr/toastr";
+@import "./assets/scss/status-badge.scss";
 @import "./assets/scss/theme.scss";
 
 html,
@@ -35,4 +35,3 @@ mat-form-field {
 ::-webkit-scrollbar-thumb:hover {
   background-color: #a8bbbf;
 }
-

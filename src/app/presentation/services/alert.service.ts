@@ -32,6 +32,7 @@ interface ToastOptions {
 })
 export class AlertService {
   private toast = inject(ToastrService);
+
   Alert({ icon = 'info', title, text }: AlertOptions) {
     Swal.fire({
       icon,

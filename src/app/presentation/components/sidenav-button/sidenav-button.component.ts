@@ -18,6 +18,6 @@ export class SidenavButtonComponent {
   appearanceService = inject(AppearanceService);
 
   toggleSidenav() {
-    this.appearanceService.toggleSidenav.update((value) => !value);
+    this.appearanceService.isSidenavToggle.update((val) => !val);
   }
 }

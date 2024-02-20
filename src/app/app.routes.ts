@@ -1,27 +1,7 @@
 import { Routes } from '@angular/router';
 import { LoginComponent } from './presentation/layouts/login/login.component';
 import { HomeComponent } from './presentation/layouts/home/home.component';
-import { AccountsComponent } from './presentation/pages/administration/accounts/accounts.component';
 import { AuthGuard, isNotAuthenticatedGuard } from './presentation/guards';
-import { InboxComponent } from './presentation/pages/communications/inbox/inbox.component';
-import { OutboxComponent } from './presentation/pages/communications/outbox/outbox.component';
-import { DependenciesComponent } from './presentation/pages/administration/dependencies/dependencies.component';
-import { PostsComponent } from './presentation/pages/groupware/posts/posts.component';
-import { MailComponent } from './presentation/pages/communications/inbox/mail/mail.component';
-import { ArchivesComponent } from './presentation/pages/communications/archives/archives.component';
-import { InstitutionsComponent } from './presentation/pages/administration/institutions/institutions.component';
-import { JobsComponent } from './presentation/pages/administration/jobs/jobs.component';
-import { OfficersComponent } from './presentation/pages/administration/officers/officers.component';
-import { RolesComponent } from './presentation/pages/administration/roles/roles.component';
-import { TypesProceduresComponent } from './presentation/pages/administration/types-procedures/types-procedures.component';
-import { DetailComponent } from './presentation/pages/procedures/detail/detail.component';
-import { ExternalsComponent } from './presentation/pages/procedures/externals/externals.component';
-import { InternalsComponent } from './presentation/pages/procedures/internals/internals.component';
-import { ResourcesComponent } from './presentation/layouts/home/resources/resources.component';
-import { SettingsComponent } from './presentation/layouts/home/settings/settings.component';
-import { ReportApplicantComponent } from './presentation/pages/reports/report-applicant/report-applicant.component';
-import { ReportSearchComponent } from './presentation/pages/reports/report-search/report-search.component';
-import { MainComponent } from './presentation/layouts/home/main/main.component';
 
 export const routes: Routes = [
   {
@@ -35,31 +15,138 @@ export const routes: Routes = [
     component: HomeComponent,
     children: [
       { path: '', redirectTo: 'main', pathMatch: 'full' },
-      { path: 'main', component: MainComponent },
-      { path: 'dependencies', component: DependenciesComponent },
-      { path: 'institutions', component: InstitutionsComponent },
-      { path: 'types-procedures', component: TypesProceduresComponent },
-      { path: 'officers', component: OfficersComponent },
-      { path: 'jobs', component: JobsComponent },
-      { path: 'roles', component: RolesComponent },
-      { path: 'accounts', component: AccountsComponent },
-      { path: 'external', component: ExternalsComponent },
-      { path: 'internal', component: InternalsComponent },
-      { path: ':from/:group/:id', component: DetailComponent },
-      { path: 'inbox', component: InboxComponent },
-      { path: 'inbox/:id', component: MailComponent },
-      { path: 'outbox', component: OutboxComponent },
-      { path: 'archives', component: ArchivesComponent },
-      { path: 'posts', component: PostsComponent },
-      { path: 'resources', component: ResourcesComponent },
-      { path: 'settings', component: SettingsComponent },
       {
-        path: 'reports',
-        children: [
-          { path: 'applicant', component: ReportApplicantComponent },
-          { path: 'search', component: ReportSearchComponent },
-          { path: ':from/:group/:id', component: DetailComponent },
-        ],
+        path: 'main',
+        loadComponent: () =>
+          import('./presentation/layouts/home/main/main.component').then(
+            (c) => c.MainComponent
+          ),
+      },
+      {
+        path: 'dependencies',
+        loadComponent: () =>
+          import(
+            './presentation/pages/administration/dependencies/dependencies.component'
+          ).then((c) => c.DependenciesComponent),
+      },
+      {
+        path: 'institutions',
+        loadComponent: () =>
+          import(
+            './presentation/pages/administration/institutions/institutions.component'
+          ).then((c) => c.InstitutionsComponent),
+      },
+      {
+        path: 'types-procedures',
+        loadComponent: () =>
+          import(
+            './presentation/pages/administration/types-procedures/types-procedures.component'
+          ).then((c) => c.TypesProceduresComponent),
+      },
+      {
+        path: 'officers',
+        loadComponent: () =>
+          import(
+            './presentation/pages/administration/officers/officers.component'
+          ).then((c) => c.OfficersComponent),
+      },
+      {
+        path: 'jobs',
+        loadComponent: () =>
+          import(
+            './presentation/pages/administration/jobs/jobs.component'
+          ).then((c) => c.JobsComponent),
+      },
+      {
+        path: 'roles',
+        loadComponent: () =>
+          import(
+            './presentation/pages/administration/roles/roles.component'
+          ).then((c) => c.RolesComponent),
+      },
+      {
+        path: 'accounts',
+        loadComponent: () =>
+          import(
+            './presentation/pages/administration/accounts/accounts.component'
+          ).then((c) => c.AccountsComponent),
+      },
+      {
+        path: 'external',
+        loadComponent: () =>
+          import(
+            './presentation/pages/procedures/externals/externals.component'
+          ).then((c) => c.ExternalsComponent),
+      },
+      {
+        path: 'internal',
+        loadComponent: () =>
+          import(
+            './presentation/pages/procedures/internals/internals.component'
+          ).then((c) => c.InternalsComponent),
+      },
+      {
+        path: ':from/:group/:id',
+        loadComponent: () =>
+          import(
+            './presentation/pages/procedures/detail/detail.component'
+          ).then((c) => c.DetailComponent),
+      },
+      {
+        path: 'inbox',
+        loadComponent: () =>
+          import(
+            './presentation/pages/communications/inbox/inbox.component'
+          ).then((c) => c.InboxComponent),
+      },
+      {
+        path: 'inbox/:id',
+        loadComponent: () =>
+          import(
+            './presentation/pages/communications/inbox/mail/mail.component'
+          ).then((c) => c.MailComponent),
+      },
+      {
+        path: 'outbox',
+        loadComponent: () =>
+          import(
+            './presentation/pages/communications/outbox/outbox.component'
+          ).then((c) => c.OutboxComponent),
+      },
+      {
+        path: 'archives',
+        loadComponent: () =>
+          import(
+            './presentation/pages/communications/archives/archives.component'
+          ).then((c) => c.ArchivesComponent),
+      },
+      {
+        path: 'resources',
+        loadComponent: () =>
+          import(
+            './presentation/layouts/home/resources/resources.component'
+          ).then((c) => c.ResourcesComponent),
+      },
+      {
+        path: 'settings',
+        loadComponent: () =>
+          import(
+            './presentation/layouts/home/settings/settings.component'
+          ).then((c) => c.SettingsComponent),
+      },
+      {
+        path: 'reports/applicant',
+        loadComponent: () =>
+          import(
+            './presentation/pages/reports/report-applicant/report-applicant.component'
+          ).then((c) => c.ReportApplicantComponent),
+      },
+      {
+        path: 'reports/search',
+        loadComponent: () =>
+          import(
+            './presentation/pages/reports/report-search/report-search.component'
+          ).then((c) => c.ReportSearchComponent),
       },
     ],
   },

@@ -1,54 +1,48 @@
-<div class="example-container" [class.example-is-mobile]="mobileQuery.matches">
-  <mat-sidenav-container
-    class="example-sidenav-container"
-    [style.marginTop.px]="mobileQuery.matches ? 56 : 0"
+<mat-sidenav-container class="sidenav-container">
+  <mat-sidenav
+    #snav
+    class="sinenav"
+    [autoFocus]="false"
+    [fixedInViewport]="true"
+    [mode]="(isHandset$ | async) ? 'over' : 'side'"
+    [attr.role]="(isHandset$ | async) ? 'dialog' : 'navigation'"
   >
-    <mat-sidenav
-      #snav
-      class="sinenav"
-      [mode]="mobileQuery.matches ? 'over' : 'side'"
-      [fixedInViewport]="mobileQuery.matches"
-      [opened]="isToggle"
-      fixedTopGap="56"
-    >
-      <div class="profile">
-        <img src="../../../../assets/img/account.png" alt="Profile" />
-        <div>
-          <div class="fullname">
-            {{ user.officer.fullname | titlecase | slice : 0 : 20 }}
-          </div>
-          <div class="jobtitle">
-            {{ user.officer.jobtitle | slice : 0 : 18 }}
-          </div>
+    <div class="profile">
+      <img src="../../../../assets/img/account.png" alt="Profile" />
+      <div>
+        <div class="fullname">
+          {{ user.officer.fullname | titlecase | slice : 0 : 20 }}
         </div>
-        <button class="settings" mat-icon-button [matMenuTriggerFor]="menus">
-          <mat-icon>more_vert</mat-icon>
+        <div class="jobtitle">
+          {{ user.officer.jobtitle | slice : 0 : 18 }}
+        </div>
+      </div>
+      <button class="settings" mat-icon-button [matMenuTriggerFor]="menus">
+        <mat-icon>more_vert</mat-icon>
+      </button>
+      <mat-menu #menus="matMenu">
+        <button mat-menu-item routerLink="/home/settings">
+          <mat-icon>settings</mat-icon>
+          <span>Configuraciones</span>
         </button>
-        <mat-menu #menus="matMenu">
-          <button mat-menu-item routerLink="/home/settings">
-            <mat-icon>settings</mat-icon>
-            <span>Configuraciones</span>
-          </button>
-          <button mat-menu-item routerLink="/home/resources">
-            <mat-icon>widgets</mat-icon>
-            <span>Recursos</span>
-          </button>
-          <button mat-menu-item (click)="logout()">
-            <mat-icon>logout</mat-icon>
-            <span>Cerrar sesion</span>
-          </button>
-        </mat-menu>
-      </div>
-
-      <navigation-list [menu]="menu" />
-    </mat-sidenav>
-    <mat-sidenav-content>
-      @if(isLoading){
-      <div class="overlay">
-        <mat-spinner class="spinner" [strokeWidth]="20" [diameter]="200" />
-      </div>
-      }
-      <router-outlet></router-outlet>
-    </mat-sidenav-content>
-  </mat-sidenav-container>
-</div>
+        <button mat-menu-item routerLink="/home/resources">
+          <mat-icon>widgets</mat-icon>
+          <span>Recursos</span>
+        </button>
+        <button mat-menu-item (click)="logout()">
+          <mat-icon>logout</mat-icon>
+          <span>Cerrar sesion</span>
+        </button>
+      </mat-menu>
+    </div>
+    <navigation-list [menu]="menu" />
+  </mat-sidenav>
+  <mat-sidenav-content>
+    @if(isLoading|async){
+    <div class="overlay">
+      <mat-spinner class="spinner" [strokeWidth]="20" [diameter]="200" />
+    </div>
+    }
+    <router-outlet></router-outlet>
+  </mat-sidenav-content>
+</mat-sidenav-container>

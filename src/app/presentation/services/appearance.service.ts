@@ -1,13 +1,15 @@
 import { DOCUMENT } from '@angular/common';
 import { Inject, Injectable, effect, signal } from '@angular/core';
+import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AppearanceService {
-  public toggleSidenav = signal<boolean>(true);
-  public loading = signal<boolean>(false);
+  public isloading$ = new BehaviorSubject(false);
+
   public isDarkTheme = signal<boolean>(false);
+  public isSidenavToggle = signal(true);
 
   constructor(@Inject(DOCUMENT) private document: Document) {
     effect(() => {

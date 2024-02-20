@@ -14,7 +14,7 @@ export function loggingInterceptor(
   req: HttpRequest<unknown>,
   next: HttpHandlerFn
 ): Observable<HttpEvent<unknown>> {
-  const { loading } = inject(AppearanceService);
+  const loading = inject(AppearanceService).isloading$;
   const autService = inject(AuthService);
   const router = inject(Router);
   const reqWithHeader = req.clone({
@@ -23,7 +23,7 @@ export function loggingInterceptor(
       `Bearer ${localStorage.getItem('token') || ''}`
     ),
   });
-  loading.set(true);
+  loading.next(true);
   return next(reqWithHeader).pipe(
     catchError((error) => {
       console.log('intercetpor', error);
@@ -37,7 +37,7 @@ export function loggingInterceptor(
       return throwError(() => Error);
     }),
     finalize(() => {
-      loading.set(false);
+      loading.next(false);
     })
   );
 }

@@ -1,5 +1,13 @@
-import { Injectable } from '@angular/core';
-import { Account, Procedure, StatusMail, Workflow } from '../../domain/models';
+import { Injectable, inject } from '@angular/core';
+import {
+  Account,
+  ExternalProcedure,
+  GroupProcedure,
+  InternalProcedure,
+  Procedure,
+  StatusMail,
+  Workflow,
+} from '../../domain/models';
 
 import { TDocumentDefinitions } from 'pdfmake/interfaces';
 
@@ -10,14 +18,21 @@ import {
   accountResponse,
   communicationResponse,
 } from '../../infraestructure/interfaces';
-import { AccountSheet, ApprovedSheet } from '../../helpers';
+import {
+  AccountSheet,
+  ApprovedSheet,
+  IndexCard,
+  convertImageABase64,
+} from '../../helpers';
 import { UnlinkSheet } from '../../helpers/pdf/unlink-form';
+import { AuthService } from './auth/auth.service';
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
 @Injectable({
   providedIn: 'root',
 })
 export class PdfService {
+  private authService = inject(AuthService);
   async generateRouteSheet(procedure: Procedure, workflow: Workflow[]) {
     workflow = workflow
       .map(({ dispatches, ...values }) => ({
@@ -129,6 +144,73 @@ export class PdfService {
         }),
         AccountSheet.createContent(account, password),
       ],
+    };
+    pdfMake.createPdf(docDefinition).print();
+  }
+
+  async GenerateIndexCard(procedure: Procedure, workflow: Workflow[]) {
+    const docDefinition: TDocumentDefinitions = {
+      header: {
+        columns: [
+          {
+            width: 100,
+            image: await convertImageABase64(
+              '../../../assets/img/gams/logo_alcaldia.jpeg'
+            ),
+          },
+          {
+            width: '*',
+            text: [
+              `\nFicha de tramite ${
+                procedure.group === GroupProcedure.External
+                  ? 'EXTERNO'
+                  : 'INTERNO'
+              }`,
+              { text: `\n${procedure.code}`, fontSize: 12 },
+            ],
+            bold: true,
+            fontSize: 16,
+          },
+          {
+            width: 100,
+            text: `${new Date().toLocaleString()}`,
+            fontSize: 10,
+            bold: true,
+            alignment: 'left',
+          },
+        ],
+        alignment: 'center',
+        margin: [10, 10, 10, 10],
+      },
+      footer: {
+        margin: [10, 0, 10, 0],
+        fontSize: 8,
+        text: `Generado por: ${this.authService.account()?.officer.fullname} (${
+          this.authService.account()?.officer.jobtitle
+        })`,
+      },
+      pageSize: 'LETTER',
+      pageMargins: [30, 110, 40, 30],
+      content: [
+        IndexCard.CreateDetailSection(procedure),
+        ...(procedure.group === GroupProcedure.External
+          ? [IndexCard.CreateExternalSection(procedure as ExternalProcedure)]
+          : [IndexCard.CreateInternalSection(procedure as InternalProcedure)]),
+          IndexCard.CreateLocationSection(workflow),
+        IndexCard.CreateSectionWorkflow(workflow),
+      ],
+      styles: {
+        table: {
+          marginTop: 20,
+        },
+        tableHeader: {
+          fillColor: '#0077B6',
+          color: 'white',
+          bold: true,
+          fontSize: 9,
+          alignment: 'center',
+        },
+      },
     };
     pdfMake.createPdf(docDefinition).print();
   }
