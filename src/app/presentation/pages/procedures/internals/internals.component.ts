@@ -36,6 +36,11 @@ interface PaginationOptions {
   limit: number;
   index: number;
 }
+interface CacheData {
+  results: InternalProcedure[];
+  length: number;
+  term: string;
+}
 @Component({
   selector: 'app-internals',
   standalone: true,
@@ -62,9 +67,9 @@ interface PaginationOptions {
 export class InternalsComponent {
   private dialog = inject(MatDialog);
   private internalService = inject(InternalService);
-  private cacheService = inject(CacheService);
   private procedureService = inject(ProcedureService);
   private pdfService = inject(PdfService);
+  private cacheService: CacheService<CacheData> = inject(CacheService);
 
   displayedColumns: string[] = [
     'code',
@@ -172,22 +177,23 @@ export class InternalsComponent {
 
   private savePaginationData(): void {
     this.cacheService.resetPagination();
-    this.cacheService.storage[this.constructor.name] = {
-      datasource: this.datasource(),
-      datasize: this.datasize(),
-      text: this.term,
+    const cache = {
+      results: this.datasource(),
+      length: this.datasize(),
+      term: this.term,
     };
+    this.cacheService.save('internals', cache);
   }
 
   private loadPaginationData(): void {
-    const cacheData = this.cacheService.storage[this.constructor.name];
+    const cacheData = this.cacheService.load('internals');
     if (!this.cacheService.keepAliveData() || !cacheData) {
       this.getData();
       return;
     }
-    this.datasource.set(cacheData.datasource);
-    this.datasize.set(cacheData.datasize);
-    this.term = cacheData.text;
+    this.datasource.set(cacheData.results);
+    this.datasize.set(cacheData.length);
+    this.term = cacheData.term;
   }
 
   changePage({ limit, index }: PaginationOptions) {

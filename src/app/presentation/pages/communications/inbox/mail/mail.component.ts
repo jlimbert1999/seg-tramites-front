@@ -41,7 +41,7 @@ import {
 } from '../../../../../infraestructure/interfaces';
 import { ProcedureDispatcherComponent } from '../procedure-dispatcher/procedure-dispatcher.component';
 import { MatDialog } from '@angular/material/dialog';
-import { InboxCacheData, InboxComponent } from '../inbox.component';
+import { InboxComponent } from '../inbox.component';
 
 type Procedure = ExternalProcedure | InternalProcedure;
 
@@ -68,7 +68,7 @@ type Procedure = ExternalProcedure | InternalProcedure;
 export class MailComponent implements OnInit {
   private _location = inject(Location);
   private inboxService = inject(InboxService);
-  private cacheService: CacheService<InboxCacheData> = inject(CacheService);
+  private cacheService: CacheService<any> = inject(CacheService);
   private alertService = inject(AlertService);
   private activateRoute = inject(ActivatedRoute);
   private procedureService = inject(ProcedureService);
@@ -209,28 +209,26 @@ export class MailComponent implements OnInit {
     return this.mail()!;
   }
 
-  get inboxCache() {
-    return this.cacheService.storage[InboxComponent.name];
-  }
 
-  set inboxCache(data: InboxCacheData) {
-    this.cacheService.storage[InboxComponent.name] = data;
+
+  set inboxCache(data: any) {
+    // this.cacheService.storage[InboxComponent.name] = data;
   }
 
   private removeMailCache() {
-    if (this.inboxCache) {
-      this.inboxCache.datasize = this.inboxCache.datasize -= 1;
-      this.inboxCache.datasource = this.inboxCache.datasource.filter(
-        (el) => el._id !== this.detail._id
-      );
-    }
+    // if (this.inboxCache) {
+    //   this.inboxCache.datasize = this.inboxCache.datasize -= 1;
+    //   this.inboxCache.datasource = this.inboxCache.datasource.filter(
+    //     (el) => el._id !== this.detail._id
+    //   );
+    // }
   }
   private updateMailCache() {
-    if (this.inboxCache) {
-      const index = this.inboxCache.datasource.findIndex(
-        (el) => el._id === this.detail._id
-      );
-      this.inboxCache.datasource[index].status = StatusMail.Received;
-    }
+    // if (this.inboxCache) {
+    //   const index = this.inboxCache.datasource.findIndex(
+    //     (el) => el._id === this.detail._id
+    //   );
+    //   this.inboxCache.datasource[index].status = StatusMail.Received;
+    // }
   }
 }

@@ -15,14 +15,22 @@ import { MatMenuModule } from '@angular/material/menu';
 import { RouterModule } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 
-import { PaginatorComponent, SearchInputComponent, SidenavButtonComponent } from '../../../components';
+import {
+  PaginatorComponent,
+  SearchInputComponent,
+  SidenavButtonComponent,
+} from '../../../components';
 import { ProcedureDispatcherComponent } from '../../communications/inbox/procedure-dispatcher/procedure-dispatcher.component';
-import { ExternalService, CacheService, ProcedureService, PdfService } from '../../../services';
+import {
+  ExternalService,
+  CacheService,
+  ProcedureService,
+  PdfService,
+} from '../../../services';
 import { ExternalComponent } from './external/external.component';
 import { ExternalProcedure } from '../../../../domain/models';
 import { transferDetails } from '../../../../infraestructure/interfaces';
 import { StateLabelPipe } from '../../../pipes';
-
 
 interface PaginationOptions {
   limit: number;
@@ -190,22 +198,23 @@ export class ExternalsComponent {
 
   private savePaginationData(): void {
     this.cacheService.resetPagination();
-    this.cacheService.storage[this.constructor.name] = {
+    const cache: CacheData = {
       datasource: this.datasource(),
       datasize: this.datasize(),
       text: this.term,
     };
+    this.cacheService.save('externals', cache);
   }
 
   private loadPaginationData(): void {
-    const cacheData = this.cacheService.storage[this.constructor.name];
-    if (!this.cacheService.keepAliveData() || !cacheData) {
+    const cache = this.cacheService.load('externals');
+    if (!this.cacheService.keepAliveData() || !cache) {
       this.getData();
       return;
     }
-    this.datasource.set(cacheData.datasource);
-    this.datasize.set(cacheData.datasize);
-    this.term = cacheData.text;
+    this.datasource.set(cache.datasource);
+    this.datasize.set(cache.datasize);
+    this.term = cache.text;
   }
 
   changePage({ limit, index }: PaginationOptions) {

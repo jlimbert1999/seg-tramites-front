@@ -53,8 +53,8 @@ export interface CacheData {
 })
 export class ArchivesComponent implements OnInit {
   private archiveService = inject(ArchiveService);
-  private cacheService = inject(CacheService);
   private alertService = inject(AlertService);
+  private cacheService: CacheService<CacheData> = inject(CacheService);
 
   public displayedColumns: string[] = [
     'code',
@@ -127,11 +127,11 @@ export class ArchivesComponent implements OnInit {
       datasize: this.datasize(),
       text: this.term,
     };
-    this.cacheService.storage[this.constructor.name] = cache;
+    this.cacheService.save('archives', cache);
   }
 
   private loadPaginationData(): void {
-    const cache = this.cacheService.storage[this.constructor.name];
+    const cache = this.cacheService.load('archives');
     if (!this.cacheService.keepAliveData() || !cache) {
       this.getData();
       return;

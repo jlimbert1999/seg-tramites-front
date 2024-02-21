@@ -46,7 +46,7 @@ interface PaginationOptions {
   limit: number;
   index: number;
 }
-export interface InboxCacheData {
+export interface CacheData {
   datasource: Communication[];
   status?: StatusMail;
   datasize: number;
@@ -77,7 +77,6 @@ export interface InboxCacheData {
 })
 export class InboxComponent implements OnInit {
   private inboxService = inject(InboxService);
-  private cacheService: CacheService<InboxCacheData> = inject(CacheService);
   private socketService = inject(SocketService);
   private destroyRef = inject(DestroyRef);
   private alertService = inject(AlertService);
@@ -85,6 +84,7 @@ export class InboxComponent implements OnInit {
   private procedureService = inject(ProcedureService);
   private pdfService = inject(PdfService);
   private archiveService = inject(ArchiveService);
+  private cacheService: CacheService<CacheData> = inject(CacheService);
 
   public displayedColumns: string[] = [
     'group',
@@ -247,17 +247,17 @@ export class InboxComponent implements OnInit {
 
   private savePaginationData(): void {
     this.cacheService.resetPagination();
-    const cache: InboxCacheData = {
+    const cache: CacheData = {
       datasource: this.datasource(),
       datasize: this.datasize(),
       text: this.term,
       status: this.status,
     };
-    this.cacheService.storage[this.constructor.name] = cache;
+    this.cacheService.save('inbox', cache);
   }
 
   private loadPaginationData(): void {
-    const cache = this.cacheService.storage[this.constructor.name];
+    const cache = this.cacheService.load('inbox');
     if (!this.cacheService.keepAliveData() || !cache) {
       this.getData();
       return;

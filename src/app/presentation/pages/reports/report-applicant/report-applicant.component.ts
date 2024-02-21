@@ -37,7 +37,8 @@ interface PaginationOptions {
 }
 type validReportType = 'solicitante' | 'representante';
 type typeApplicant = 'NATURAL' | 'JURIDICO';
-interface SearchParams {
+
+interface CacheData {
   form: Object;
   typeSearch: validReportType;
   typeApplicant: typeApplicant;
@@ -69,7 +70,7 @@ interface SearchParams {
 })
 export class ReportApplicantComponent {
   private fb = inject(FormBuilder);
-  private cacheService: CacheService<SearchParams> = inject(CacheService);
+  private cacheService: CacheService<CacheData> = inject(CacheService);
   private reportService = inject(ReportService);
   private router = inject(Router);
 
@@ -171,20 +172,21 @@ export class ReportApplicantComponent {
 
   private savePaginationData(): void {
     this.cacheService.resetPagination();
-    this.cacheService.storage[this.constructor.name] = {
+    const cache = {
       form: this.FormApplicant().value,
       typeSearch: this.typeSearch(),
       typeApplicant: this.typeApplicant(),
       data: this.datasource(),
       size: this.datasize(),
     };
+    this.cacheService.save('report-applicant', cache);
   }
 
   private loadPaginationData(): void {
-    const cacheData = this.cacheService.storage[this.constructor.name];
+    const cacheData = this.cacheService.load('report-applicant');
     if (!this.cacheService.keepAliveData() || !cacheData) return;
     this.datasource.set(cacheData.data);
-    this.datasize.set(cacheData.size);
+    this.datasize.set(cacheData.size);  
     this.FormApplicant().patchValue(cacheData.form);
     this.typeApplicant.set(cacheData.typeApplicant);
     this.typeSearch.set(cacheData.typeSearch);

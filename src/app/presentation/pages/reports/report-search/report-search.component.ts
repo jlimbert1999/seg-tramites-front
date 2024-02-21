@@ -33,7 +33,7 @@ import { Router } from '@angular/router';
 import { MatNativeDateModule } from '@angular/material/core';
 
 type SearchMode = 'simple' | 'advanced';
-interface SearchParams {
+interface CacheData {
   form: Object;
   types: SelectOptiom[];
   data: reportProcedureData[];
@@ -76,8 +76,8 @@ interface PaginationOptions {
 export class ReportSearchComponent {
   private fb = inject(FormBuilder);
   private reportService = inject(ReportService);
-  private cacheService: CacheService<SearchParams> = inject(CacheService);
   private router = inject(Router);
+  private cacheService: CacheService<CacheData> = inject(CacheService);
 
   public panelIsOpened = signal<boolean>(true);
   public searchMode = signal<SearchMode>('simple');
@@ -141,7 +141,7 @@ export class ReportSearchComponent {
   }
 
   navigate({ id_procedure, group }: reportProcedureData) {
-    this.router.navigate([`/home/reports/search`, group, id_procedure], {
+    this.router.navigate([`/home/reports/`, group, id_procedure], {
       queryParams: { limit: this.limit, index: this.index },
     });
   }
@@ -183,7 +183,7 @@ export class ReportSearchComponent {
 
   private savePaginationData() {
     this.cacheService.resetPagination();
-    this.cacheService.storage[this.constructor.name] = {
+    const cache: CacheData = {
       form: this.FormProcedure().value,
       types: this.types(),
       data: this.datasource(),
@@ -191,10 +191,11 @@ export class ReportSearchComponent {
       searchMode: this.searchMode(),
       panelIsOpened: this.panelIsOpened(),
     };
+    this.cacheService.save('report-search', cache);
   }
 
   private loadPaginationData() {
-    const cacheData = this.cacheService.storage[this.constructor.name];
+    const cacheData = this.cacheService.load('report-search');
     if (!this.cacheService.keepAliveData() || !cacheData) return;
     this.searchMode.set(cacheData.searchMode);
     this.FormProcedure().patchValue(cacheData.form);

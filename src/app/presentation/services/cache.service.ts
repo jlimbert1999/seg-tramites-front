@@ -1,20 +1,17 @@
 import { Injectable, computed, signal } from '@angular/core';
 
-interface PersistStorageProps<T> {
-  key: string;
-  data: T;
-}
 @Injectable({
   providedIn: 'root',
 })
 export class CacheService<T> {
+  private storage: Record<string, T> = {};
+
   public pageSize = signal<number>(10);
   public pageIndex = signal<number>(0);
   public pageOffset = computed<number>(
     () => this.pageIndex() * this.pageSize()
   );
   public keepAliveData = signal(false);
-  public storage: Record<string, T> = {};
 
   resetPagination() {
     this.pageSize.set(10);
@@ -22,13 +19,11 @@ export class CacheService<T> {
     this.keepAliveData.set(false);
   }
 
-  setPersistStorage(key: string, data: T) {
-    sessionStorage.setItem(key, JSON.stringify(data));
+  save(key: string, data: T) {
+    this.storage[key] = data;
   }
 
-  getPersistStorage(key: string) {
-    const data = sessionStorage.getItem(key);
-    if (!data) return null;
-    return JSON.parse(data);
+  load(key: string): T | undefined {
+    return this.storage[key];
   }
 }
