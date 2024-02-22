@@ -99,6 +99,6 @@ export class HomeComponent implements OnInit {
   }
 
   get isLoading() {
-    return this.appearanceService.isloading$;
+    return this.appearanceService.isLoading;
   }
 }

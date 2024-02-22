@@ -186,14 +186,14 @@ export class ReportApplicantComponent {
     const cacheData = this.cacheService.load('report-applicant');
     if (!this.cacheService.keepAliveData() || !cacheData) return;
     this.datasource.set(cacheData.data);
-    this.datasize.set(cacheData.size);  
+    this.datasize.set(cacheData.size);
     this.FormApplicant().patchValue(cacheData.form);
     this.typeApplicant.set(cacheData.typeApplicant);
     this.typeSearch.set(cacheData.typeSearch);
   }
 
   navigate({ id_procedure, group }: reportProcedureData) {
-    this.router.navigate([`/home/reports/applicant`, group, id_procedure], {
+    this.router.navigate([`/home/reports`, group, id_procedure], {
       queryParams: { limit: this.limit, index: this.index },
     });
   }

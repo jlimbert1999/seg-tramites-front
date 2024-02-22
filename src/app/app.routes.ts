@@ -2,6 +2,9 @@ import { Routes } from '@angular/router';
 import { LoginComponent } from './presentation/layouts/login/login.component';
 import { HomeComponent } from './presentation/layouts/home/home.component';
 import { AuthGuard, isNotAuthenticatedGuard } from './presentation/guards';
+import { ReportsComponent } from './presentation/pages/reportss/reports/reports.component';
+import { ReportApplicantComponent } from './presentation/pages/reportss/report-applicant/report-applicant.component';
+import { MainComponent } from './presentation/layouts/home/main/main.component';
 
 export const routes: Routes = [
   {
@@ -17,10 +20,7 @@ export const routes: Routes = [
       { path: '', redirectTo: 'main', pathMatch: 'full' },
       {
         path: 'main',
-        loadComponent: () =>
-          import('./presentation/layouts/home/main/main.component').then(
-            (c) => c.MainComponent
-          ),
+        component: MainComponent,
       },
       {
         path: 'dependencies',
@@ -73,6 +73,7 @@ export const routes: Routes = [
       },
       {
         path: 'external',
+        title: 'Externos',
         loadComponent: () =>
           import(
             './presentation/pages/procedures/externals/externals.component'
@@ -80,6 +81,7 @@ export const routes: Routes = [
       },
       {
         path: 'internal',
+        title: 'Internos',
         loadComponent: () =>
           import(
             './presentation/pages/procedures/internals/internals.component'
@@ -94,6 +96,7 @@ export const routes: Routes = [
       },
       {
         path: 'inbox',
+        title: 'Bandeja - Entrada',
         loadComponent: () =>
           import(
             './presentation/pages/communications/inbox/inbox.component'
@@ -101,6 +104,7 @@ export const routes: Routes = [
       },
       {
         path: 'inbox/:id',
+        title: 'Detalle',
         loadComponent: () =>
           import(
             './presentation/pages/communications/inbox/mail/mail.component'
@@ -108,6 +112,7 @@ export const routes: Routes = [
       },
       {
         path: 'outbox',
+        title: 'Bandeja - Salida',
         loadComponent: () =>
           import(
             './presentation/pages/communications/outbox/outbox.component'
@@ -135,18 +140,23 @@ export const routes: Routes = [
           ).then((c) => c.SettingsComponent),
       },
       {
-        path: 'reports/applicant',
-        loadComponent: () =>
-          import(
-            './presentation/pages/reports/report-applicant/report-applicant.component'
-          ).then((c) => c.ReportApplicantComponent),
-      },
-      {
-        path: 'reports/search',
-        loadComponent: () =>
-          import(
-            './presentation/pages/reports/report-search/report-search.component'
-          ).then((c) => c.ReportSearchComponent),
+        path: 'reports',
+        component: ReportsComponent,
+        title: 'Reportes',
+        children: [
+          {
+            path: 'applicant',
+            component: ReportApplicantComponent,
+          },
+
+          {
+            path: 'search',
+            loadComponent: () =>
+              import(
+                './presentation/pages/reportss/report-search/report-search.component'
+              ).then((c) => c.ReportSearchComponent),
+          },
+        ],
       },
     ],
   },

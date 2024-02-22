@@ -5,28 +5,28 @@ import {
   HttpRequest,
 } from '@angular/common/http';
 import { Observable, catchError, finalize, throwError } from 'rxjs';
+import { Router } from '@angular/router';
 import { inject } from '@angular/core';
 import { Alert } from '../../helpers';
 import { AppearanceService, AuthService } from '../../presentation/services';
-import { Router } from '@angular/router';
 
 export function loggingInterceptor(
   req: HttpRequest<unknown>,
   next: HttpHandlerFn
 ): Observable<HttpEvent<unknown>> {
-  const loading = inject(AppearanceService).isloading$;
+  const appearanceService = inject(AppearanceService);
   const autService = inject(AuthService);
   const router = inject(Router);
+
   const reqWithHeader = req.clone({
     headers: req.headers.append(
       'Authorization',
       `Bearer ${localStorage.getItem('token') || ''}`
     ),
   });
-  loading.next(true);
+  appearanceService.showLoading();
   return next(reqWithHeader).pipe(
     catchError((error) => {
-      console.log('intercetpor', error);
       if (error instanceof HttpErrorResponse) {
         if (error.status === 401) {
           autService.logout();
@@ -37,7 +37,7 @@ export function loggingInterceptor(
       return throwError(() => Error);
     }),
     finalize(() => {
-      loading.next(false);
+      appearanceService.hideLoading();
     })
   );
 }
@@ -72,7 +72,6 @@ const hendleHttpErrors = (error: HttpErrorResponse) => {
         text: error.error.message,
       });
       break;
-
     default:
       break;
   }

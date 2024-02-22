@@ -1,13 +1,12 @@
 import { DOCUMENT } from '@angular/common';
 import { Inject, Injectable, effect, signal } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import { Subject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AppearanceService {
-  public isloading$ = new BehaviorSubject(false);
-
+  public isLoading = new Subject<boolean>();
   public isDarkTheme = signal<boolean>(false);
   public isSidenavToggle = signal(true);
 
@@ -26,5 +25,13 @@ export class AppearanceService {
 
   toggleTheme() {
     this.isDarkTheme.update((value) => !value);
+  }
+
+  public showLoading(): void {
+    this.isLoading.next(true);
+  }
+
+  public hideLoading(): void {
+    this.isLoading.next(false);
   }
 }

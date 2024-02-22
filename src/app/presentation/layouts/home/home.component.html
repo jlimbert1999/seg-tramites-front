@@ -38,11 +38,17 @@
     <navigation-list [menu]="menu" />
   </mat-sidenav>
   <mat-sidenav-content>
-    @if(isLoading|async){
+    @if(isLoading | async){
     <div class="overlay">
-      <mat-spinner class="spinner" [strokeWidth]="20" [diameter]="200" />
+      <mat-spinner
+        [diameter]="100"
+        class="spinner"
+        color="primary"
+        mode="indeterminate"
+      ></mat-spinner>
     </div>
     }
+
     <router-outlet></router-outlet>
   </mat-sidenav-content>
 </mat-sidenav-container>
