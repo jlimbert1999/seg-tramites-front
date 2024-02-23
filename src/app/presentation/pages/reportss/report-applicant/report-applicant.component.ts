@@ -19,16 +19,14 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatSelectModule } from '@angular/material/select';
-import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
-import { CacheService, ReportService } from '../../../services';
+import { CacheService, PdfService, ReportService } from '../../../services';
 import {
   PaginatorComponent,
   ReportProcedureTableComponent,
-  SidenavButtonComponent,
 } from '../../../components';
-import { Router, RouterModule } from '@angular/router';
+
 import { reportProcedureData } from '../../../../infraestructure/interfaces';
 
 interface PaginationOptions {
@@ -53,7 +51,6 @@ interface CacheData {
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
-    MatToolbarModule,
     MatExpansionModule,
     MatRadioModule,
     MatFormFieldModule,
@@ -61,7 +58,6 @@ interface CacheData {
     MatSelectModule,
     MatIconModule,
     MatButtonModule,
-    SidenavButtonComponent,
     ReportProcedureTableComponent,
     PaginatorComponent,
   ],
@@ -72,7 +68,7 @@ export class ReportApplicantComponent {
   private fb = inject(FormBuilder);
   private cacheService: CacheService<CacheData> = inject(CacheService);
   private reportService = inject(ReportService);
-  private router = inject(Router);
+  private pdfService = inject(PdfService);
 
   public typeSearch = signal<validReportType>('solicitante');
   public typeApplicant = signal<typeApplicant>('NATURAL');
@@ -93,6 +89,7 @@ export class ReportApplicantComponent {
     { columnDef: 'state', header: 'Estado' },
     { columnDef: 'date', header: 'Fecha' },
   ];
+
   constructor() {
     inject(DestroyRef).onDestroy(() => {
       this.savePaginationData();
@@ -104,28 +101,36 @@ export class ReportApplicantComponent {
   }
 
   generate() {
-    this.cacheService.pageIndex.set(0);
+    const isFormEmpty = Object.values(this.FormApplicant().value).every(
+      (val) => val === ''
+    );
+    if (isFormEmpty) return;
+    this.cacheService.resetPagination();
     this.getData();
   }
 
+  clear() {
+    this.cacheService.resetPagination();
+    this.datasize.set(0);
+    this.datasource.set([]);
+    this.FormApplicant().reset({});
+  }
+
   getData() {
-    if (!Object.values(this.FormApplicant().value).some((val) => val !== '')) {
-      return;
-    }
     this.reportService
       .searchProcedureByApplicant({
         limit: this.limit,
         offset: this.offset,
-        type: this.typeSearch(),
-        form: this.FormApplicant().value,
-      })
-      .subscribe(
-        (resp) => {
-          this.datasource.set(resp.procedures);
-          this.datasize.set(resp.length);
+        by: this.typeSearch(),
+        form: {
+          tipo: this.typeApplicant(),
+          ...this.FormApplicant().value,
         },
-        () => this.datasource.set([])
-      );
+      })
+      .subscribe((resp) => {
+        this.datasource.set(resp.procedures);
+        this.datasize.set(resp.length);
+      });
   }
 
   changePage({ limit, index }: PaginationOptions) {
@@ -146,9 +151,8 @@ export class ReportApplicantComponent {
       nombre: ['', [Validators.minLength(3)]],
       paterno: ['', [Validators.minLength(3)]],
       materno: ['', [Validators.minLength(3)]],
-      telefono: ['', [Validators.minLength(7)]],
+      telefono: ['', [Validators.minLength(6)]],
       dni: ['', [Validators.minLength(6)]],
-      tipo: ['NATURAL'],
     });
   }
 
@@ -156,7 +160,6 @@ export class ReportApplicantComponent {
     return this.fb.group({
       nombre: ['', [Validators.minLength(3)]],
       telefono: ['', [Validators.minLength(6)]],
-      tipo: ['JURIDICO'],
     });
   }
 
@@ -165,7 +168,7 @@ export class ReportApplicantComponent {
       nombre: ['', [Validators.minLength(3)]],
       paterno: ['', [Validators.minLength(3)]],
       materno: ['', [Validators.minLength(3)]],
-      telefono: ['', [Validators.minLength(7)]],
+      telefono: ['', [Validators.minLength(6)]],
       dni: ['', [Validators.minLength(6)]],
     });
   }
@@ -192,10 +195,9 @@ export class ReportApplicantComponent {
     this.typeSearch.set(cacheData.typeSearch);
   }
 
-  navigate({ id_procedure, group }: reportProcedureData) {
-    this.router.navigate([`/home/reports`, group, id_procedure], {
-      queryParams: { limit: this.limit, index: this.index },
-    });
+  test() {
+    const s = document.getElementById('pdfTable');
+    if (s) this.pdfService.htmlToPdf(s.innerHTML);
   }
 
   get limit() {

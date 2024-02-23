@@ -27,6 +27,7 @@ import {
 import { UnlinkSheet } from '../../helpers/pdf/unlink-form';
 import { AuthService } from './auth/auth.service';
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
+import htmlToPdfmake from 'html-to-pdfmake';
 
 @Injectable({
   providedIn: 'root',
@@ -196,7 +197,7 @@ export class PdfService {
         ...(procedure.group === GroupProcedure.External
           ? [IndexCard.CreateExternalSection(procedure as ExternalProcedure)]
           : [IndexCard.CreateInternalSection(procedure as InternalProcedure)]),
-          IndexCard.CreateLocationSection(workflow),
+        IndexCard.CreateLocationSection(workflow),
         IndexCard.CreateSectionWorkflow(workflow),
       ],
       styles: {
@@ -213,5 +214,18 @@ export class PdfService {
       },
     };
     pdfMake.createPdf(docDefinition).print();
+  }
+
+  htmlToPdf(element: any) {
+    const html = htmlToPdfmake(element, { tableAutoSize: false });
+    const dd: TDocumentDefinitions = {
+      content: html,
+      styles: {
+        'html-a': {
+          color: 'purple', // it won't work: all links will remain 'blue'
+        },
+      },
+    };
+    pdfMake.createPdf(dd).open();
   }
 }

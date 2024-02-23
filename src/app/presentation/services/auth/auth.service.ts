@@ -36,6 +36,7 @@ export class AuthService {
   public account = computed(() => this._account());
   public menu = computed(() => this._menu());
   public code = signal<string>('');
+  public permissions = signal<{ [resource: string]: string[] }>({});
 
   constructor(private http: HttpClient) {}
 
@@ -59,11 +60,14 @@ export class AuthService {
         token: string;
         menu: any[];
         code: string;
+        resources: any;
       }>(`${this.base_url}/auth`)
       .pipe(
-        map(({ menu, token, code }) => {
+        map(({ menu, token, code, resources }) => {
           this._menu.set(menu);
           this.code.set(code);
+          this.permissions.set(resources);
+          console.log(this.permissions());
           return this.setAuthentication(token);
         }),
         catchError(() => {

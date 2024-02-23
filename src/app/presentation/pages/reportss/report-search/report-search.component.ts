@@ -31,6 +31,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { Router } from '@angular/router';
 import { MatNativeDateModule } from '@angular/material/core';
+import { MatExpansionModule } from '@angular/material/expansion';
 
 type SearchMode = 'simple' | 'advanced';
 interface CacheData {
@@ -39,7 +40,6 @@ interface CacheData {
   data: reportProcedureData[];
   size: number;
   searchMode: SearchMode;
-  panelIsOpened: boolean;
 }
 interface SelectOptiom {
   text: string;
@@ -55,7 +55,6 @@ interface PaginationOptions {
   standalone: true,
   imports: [
     CommonModule,
-    MatToolbarModule,
     MatButtonToggleModule,
     MatDatepickerModule,
     ReactiveFormsModule,
@@ -67,8 +66,8 @@ interface PaginationOptions {
     MatIconModule,
     MatNativeDateModule,
     ReportProcedureTableComponent,
-    SidenavButtonComponent,
     PaginatorComponent,
+    MatExpansionModule,
   ],
   templateUrl: './report-search.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -76,10 +75,8 @@ interface PaginationOptions {
 export class ReportSearchComponent {
   private fb = inject(FormBuilder);
   private reportService = inject(ReportService);
-  private router = inject(Router);
   private cacheService: CacheService<CacheData> = inject(CacheService);
 
-  public panelIsOpened = signal<boolean>(true);
   public searchMode = signal<SearchMode>('simple');
   public types = signal<SelectOptiom[]>([]);
   public FormProcedure = computed<FormGroup>(() => {
@@ -140,12 +137,6 @@ export class ReportSearchComponent {
     this.getData();
   }
 
-  navigate({ id_procedure, group }: reportProcedureData) {
-    this.router.navigate([`/home/reports/`, group, id_procedure], {
-      queryParams: { limit: this.limit, index: this.index },
-    });
-  }
-
   get statesProcedure() {
     return Object.values(StateProcedure);
   }
@@ -155,30 +146,13 @@ export class ReportSearchComponent {
   }
 
   selectSearchMode(value: SearchMode) {
-    this.datasize.set(0);
-    this.datasource.set([]);
-    this.panelIsOpened.set(true);
     this.searchMode.set(value);
-  }
-
-  togglePanel() {
-    this.panelIsOpened.update((value) => !value);
   }
 
   resetForm() {
     this.FormProcedure().reset({});
     this.datasource.set([]);
     this.datasize.set(0);
-  }
-
-  get limit() {
-    return this.cacheService.pageSize();
-  }
-  get offset() {
-    return this.cacheService.pageOffset();
-  }
-  get index() {
-    return this.cacheService.pageIndex();
   }
 
   private savePaginationData() {
@@ -189,7 +163,6 @@ export class ReportSearchComponent {
       data: this.datasource(),
       size: this.datasize(),
       searchMode: this.searchMode(),
-      panelIsOpened: this.panelIsOpened(),
     };
     this.cacheService.save('report-search', cache);
   }
@@ -202,12 +175,12 @@ export class ReportSearchComponent {
     this.types.set(cacheData.types);
     this.datasource.set(cacheData.data);
     this.datasize.set(cacheData.size);
-    this.panelIsOpened.set(cacheData.panelIsOpened);
   }
 
   private createSimpleForm(): FormGroup {
     return this.fb.group({
-      code: ['', [Validators.minLength(4), Validators.required]],
+      code: ['', Validators.minLength(4)],
+      reference: [''],
       group: [''],
     });
   }
@@ -223,5 +196,16 @@ export class ReportSearchComponent {
       group: [''],
       cite: [''],
     });
+  }
+  
+
+  get limit() {
+    return this.cacheService.pageSize();
+  }
+  get offset() {
+    return this.cacheService.pageOffset();
+  }
+  get index() {
+    return this.cacheService.pageIndex();
   }
 }

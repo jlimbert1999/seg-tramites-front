@@ -5,12 +5,15 @@ import { AuthGuard, isNotAuthenticatedGuard } from './presentation/guards';
 import { ReportsComponent } from './presentation/pages/reportss/reports/reports.component';
 import { ReportApplicantComponent } from './presentation/pages/reportss/report-applicant/report-applicant.component';
 import { MainComponent } from './presentation/layouts/home/main/main.component';
+import { DetailComponent } from './presentation/pages/procedures/detail/detail.component';
+import { ReportSearchComponent } from './presentation/pages/reportss/report-search/report-search.component';
 
 export const routes: Routes = [
   {
     path: 'login',
     canActivate: [isNotAuthenticatedGuard],
     component: LoginComponent,
+    title: 'Inicio de sesion',
   },
   {
     path: 'home',
@@ -151,10 +154,12 @@ export const routes: Routes = [
 
           {
             path: 'search',
-            loadComponent: () =>
-              import(
-                './presentation/pages/reportss/report-search/report-search.component'
-              ).then((c) => c.ReportSearchComponent),
+            component: ReportSearchComponent,
+          },
+          {
+            path: '',
+            redirectTo: '/home/reports/search',
+            pathMatch: 'full',
           },
         ],
       },

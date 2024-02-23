@@ -7,16 +7,19 @@ import {
   communicationResponse,
   externalResponse,
   internalResponse,
+  procedure,
   reportProcedureData,
   typeProcedureResponse,
 } from '../../../infraestructure/interfaces';
+import { Procedure } from '../../../domain/models';
 
 interface SearchApplicantProps {
+  by: 'solicitante' | 'representante';
   limit: number;
   offset: number;
-  type: 'solicitante' | 'representante';
   form: Object;
 }
+
 @Injectable({
   providedIn: 'root',
 })
@@ -32,66 +35,42 @@ export class ReportService {
   }
 
   searchProcedureByApplicant({
+    by,
+    form,
     limit,
     offset,
-    type,
-    form,
   }: SearchApplicantProps) {
     const params = new HttpParams({ fromObject: { limit, offset } });
-    const fields = this.removeEmptyValuesFromObject(form);
+    const properties = this.removeEmptyValuesFromObject(form);
     return this.http
       .post<{ procedures: externalResponse[]; length: number }>(
-        `${this.url}/applicant/${type}`,
-        fields,
+        `${this.url}/applicant`,
+        { by, properties },
         { params }
       )
       .pipe(
-        map((resp) => {
-          const data: reportProcedureData[] = resp.procedures.map(
-            ({ details: { solicitante }, ...values }) => {
-              return {
-                id_procedure: values._id,
-                group: values.group,
-                code: values.code,
-                reference: values.reference,
-                state: values.state,
-                date: values.startDate,
-                applicant: [
-                  solicitante.nombre,
-                  solicitante.paterno,
-                  solicitante.materno,
-                ]
-                  .filter(Boolean)
-                  .join(' '),
-              };
-            }
-          );
-          return { procedures: data, length: resp.length };
-        })
+        map((resp) => ({
+          procedures: this.responseToInterface(resp.procedures),
+          length: resp.length,
+        }))
       );
   }
 
   searchProcedureByProperties(limit: number, offset: number, form: Object) {
     const params = new HttpParams({ fromObject: { limit, offset } });
+    const properties = this.removeEmptyValuesFromObject(form);
     return this.http
       .post<{
         procedures: externalResponse[] | internalResponse[];
         length: number;
-      }>(`${this.url}/procedure`, this.removeEmptyValuesFromObject(form), {
+      }>(`${this.url}/procedure`, properties, {
         params,
       })
       .pipe(
-        map((resp) => {
-          const data: reportProcedureData[] = resp.procedures.map((el) => ({
-            id_procedure: el._id,
-            date: el.startDate,
-            reference: el.reference,
-            state: el.state,
-            group: el.group,
-            code: el.code,
-          }));
-          return { procedures: data, length: resp.length };
-        })
+        map((resp) => ({
+          procedures: this.responseToInterface(resp.procedures),
+          length: resp.length,
+        }))
       );
   }
 
@@ -111,6 +90,18 @@ export class ReportService {
     return Object.entries(form).reduce(
       (acc, [key, value]) => (value ? { ...acc, [key]: value } : acc),
       {}
+    );
+  }
+  private responseToInterface(procedures: procedure[]): reportProcedureData[] {
+    return procedures.map(
+      ({ _id, group, reference, startDate, code, state }) => ({
+        id_procedure: _id,
+        group: group,
+        state: state,
+        reference: reference,
+        date: startDate,
+        code: code,
+      })
     );
   }
 }

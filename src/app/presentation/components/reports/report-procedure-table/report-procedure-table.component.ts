@@ -42,11 +42,5 @@ export class ReportProcedureTableComponent {
     this.columns = values;
     this.displayedColumns = values.map(({ columnDef }) => columnDef);
   }
-  @Output() onNavigate = new EventEmitter<reportProcedureData>();
-
   constructor() {}
-
-  navigate(element: reportProcedureData) {
-    this.onNavigate.emit(element);
-  }
 }

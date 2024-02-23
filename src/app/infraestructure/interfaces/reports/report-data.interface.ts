@@ -5,7 +5,7 @@ export interface reportProcedureData {
   group: GroupProcedure;
   state: StateProcedure;
   reference: string;
-  applicant?: string;
   date: string;
   code: string;
+  applicant?: string;
 }
