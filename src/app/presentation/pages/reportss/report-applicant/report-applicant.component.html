@@ -1,5 +1,4 @@
-<button (click)="test()">sds</button>
-<mat-accordion id="pdfTable" #pdfTable>
+<mat-accordion>
   <mat-expansion-panel expanded="true">
     <mat-expansion-panel-header>
       <mat-panel-title>DATOS SOLICITANTE / REPRESENTANTE </mat-panel-title>
@@ -22,7 +21,6 @@
           <div class="col-12">
             @if (typeSearch()==='solicitante') {
             <section>
-              <label>TIPO: </label>
               <mat-radio-group
                 (change)="typeApplicant.set($event.value)"
                 [ngModel]="typeApplicant()"
@@ -88,13 +86,25 @@
       </div>
     </div>
     <mat-action-row>
+      <button mat-icon-button (click)="print()">
+        <mat-icon>print</mat-icon>
+      </button>
       <button mat-flat-button (click)="clear()">Limpiar</button>
-      <button mat-flat-button color="primary" [disabled]="FormApplicant().invalid" (click)="generate()">Buscar</button>
+      <button
+        mat-flat-button
+        color="primary"
+        [disabled]="FormApplicant().invalid"
+        (click)="generate()"
+      >
+        Buscar
+      </button>
     </mat-action-row>
   </mat-expansion-panel>
 </mat-accordion>
 <div class="mat-elevation-z8 mt-2">
   <report-procedure-table
+    [pageSize]="limit"
+    [pageIndex]="index"
     [datasource]="datasource"
     [colums]="displaycolums"
   />

@@ -1,6 +1,10 @@
 import { GroupProcedure, StateProcedure } from '../../../domain/models';
 
-export interface reportProcedureData {
+export interface TableProcedureColums {
+  columnDef: keyof TableProcedureData;
+  header: string;
+}
+export interface TableProcedureData {
   id_procedure: string;
   group: GroupProcedure;
   state: StateProcedure;

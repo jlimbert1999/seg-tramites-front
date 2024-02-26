@@ -1,4 +1,12 @@
 <mat-nav-list class="menu">
+  <mat-list-item
+    [routerLink]="'posts'"
+    [routerLinkActive]="['is-active']"
+    class="item-link"
+  >
+    <mat-icon class="icon" matListItemIcon>person</mat-icon>
+    <div class="text" matListItemTitle>Porst</div>
+  </mat-list-item>
   @for (item of menu; track item.resource) { @if(item.children){
   <mat-expansion-panel>
     <mat-expansion-panel-header>

@@ -26,8 +26,10 @@ import {
   PaginatorComponent,
   ReportProcedureTableComponent,
 } from '../../../components';
-
-import { reportProcedureData } from '../../../../infraestructure/interfaces';
+import {
+  TableProcedureColums,
+  TableProcedureData,
+} from '../../../../infraestructure/interfaces';
 
 interface PaginationOptions {
   limit: number;
@@ -40,7 +42,7 @@ interface CacheData {
   form: Object;
   typeSearch: validReportType;
   typeApplicant: typeApplicant;
-  data: reportProcedureData[];
+  data: TableProcedureData[];
   size: number;
 }
 
@@ -80,15 +82,18 @@ export class ReportApplicantComponent {
       ? this.FormByApplicatNatural()
       : this.FormByApplicatJuridico();
   });
-  public datasource = signal<reportProcedureData[]>([]);
+  public datasource = signal<TableProcedureData[]>([]);
   public datasize = signal<number>(0);
-  public displaycolums = [
+  public displaycolums: TableProcedureColums[] = [
     { columnDef: 'code', header: 'Alterno' },
-    { columnDef: 'applicant', header: 'Solicitante' },
     { columnDef: 'reference', header: 'Referencia' },
     { columnDef: 'state', header: 'Estado' },
     { columnDef: 'date', header: 'Fecha' },
   ];
+
+  private mapProertyrs: Record<string, string> = {
+    nombre: 'NOmbre',
+  };
 
   constructor() {
     inject(DestroyRef).onDestroy(() => {
@@ -123,7 +128,9 @@ export class ReportApplicantComponent {
         offset: this.offset,
         by: this.typeSearch(),
         form: {
-          tipo: this.typeApplicant(),
+          ...(this.typeSearch() === 'solicitante' && {
+            tipo: this.typeApplicant(),
+          }),
           ...this.FormApplicant().value,
         },
       })
@@ -144,6 +151,15 @@ export class ReportApplicantComponent {
     if (this.typeSearch() === 'representante') {
       this.typeApplicant.set('NATURAL');
     }
+  }
+
+  print() {
+    this.pdfService.GenerateReportSheet(
+      'un reporte',
+      this.FormApplicant().value,
+      this.datasource(),
+      this.displaycolums
+    );
   }
 
   private FormByApplicatNatural(): FormGroup {
@@ -190,14 +206,9 @@ export class ReportApplicantComponent {
     if (!this.cacheService.keepAliveData() || !cacheData) return;
     this.datasource.set(cacheData.data);
     this.datasize.set(cacheData.size);
-    this.FormApplicant().patchValue(cacheData.form);
     this.typeApplicant.set(cacheData.typeApplicant);
     this.typeSearch.set(cacheData.typeSearch);
-  }
-
-  test() {
-    const s = document.getElementById('pdfTable');
-    if (s) this.pdfService.htmlToPdf(s.innerHTML);
+    this.FormApplicant().patchValue(cacheData.form);
   }
 
   get limit() {

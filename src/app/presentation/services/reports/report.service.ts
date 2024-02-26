@@ -8,7 +8,7 @@ import {
   externalResponse,
   internalResponse,
   procedure,
-  reportProcedureData,
+  TableProcedureData,
   typeProcedureResponse,
 } from '../../../infraestructure/interfaces';
 import { Procedure } from '../../../domain/models';
@@ -28,9 +28,9 @@ export class ReportService {
 
   constructor(private http: HttpClient) {}
 
-  searchTypeProceduresByText(text: string) {
+  getTypeProceduresByText(term: string, group: 'INTERNO' | 'EXTERNO') {
     return this.http.get<typeProcedureResponse[]>(
-      `${this.url}/types-procedures/${text}`
+      `${this.url}/types-procedures/${group}/${term}`
     );
   }
 
@@ -92,7 +92,7 @@ export class ReportService {
       {}
     );
   }
-  private responseToInterface(procedures: procedure[]): reportProcedureData[] {
+  private responseToInterface(procedures: procedure[]): TableProcedureData[] {
     return procedures.map(
       ({ _id, group, reference, startDate, code, state }) => ({
         id_procedure: _id,

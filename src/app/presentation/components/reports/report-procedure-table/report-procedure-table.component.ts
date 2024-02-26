@@ -2,14 +2,12 @@ import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
-  EventEmitter,
   Input,
-  Output,
   signal,
 } from '@angular/core';
-import { reportProcedureData } from '../../../../infraestructure/interfaces';
 import { MatTableModule } from '@angular/material/table';
 import { RouterModule } from '@angular/router';
+import { TableProcedureData } from '../../../../infraestructure/interfaces';
 import { StateLabelPipe } from '../../../pipes';
 
 export interface ProcedureTableColumns {
@@ -37,7 +35,9 @@ export interface ProcedureTableColumns {
 export class ReportProcedureTableComponent {
   public displayedColumns: string[] = [];
   public columns: ProcedureTableColumns[] = [];
-  @Input() datasource = signal<reportProcedureData[]>([]);
+  @Input({ required: true }) pageIndex!: number;
+  @Input({ required: true }) pageSize!: number;
+  @Input() datasource = signal<TableProcedureData[]>([]);
   @Input() set colums(values: ProcedureTableColumns[]) {
     this.columns = values;
     this.displayedColumns = values.map(({ columnDef }) => columnDef);

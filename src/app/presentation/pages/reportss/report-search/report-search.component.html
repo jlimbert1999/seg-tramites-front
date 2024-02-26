@@ -8,7 +8,7 @@
       <div>
         <mat-button-toggle-group
           (change)="selectSearchMode($event.value)"
-          value="simple"
+          [value]="searchMode()"
         >
           <mat-button-toggle value="simple">Simple</mat-button-toggle>
           <mat-button-toggle value="advanced">Avanzada</mat-button-toggle>
@@ -19,13 +19,23 @@
       <form [formGroup]="FormProcedure()">
         @switch (searchMode()) { @case ('simple') {
         <div class="row">
+          <div class="col-sm-3">
+            <mat-form-field>
+              <mat-label>Grupo</mat-label>
+              <mat-select formControlName="group">
+                <mat-option> - </mat-option>
+                <mat-option value="ExternalDetail"> EXTERNOS</mat-option>
+                <mat-option value="InternalDetail"> INTERNOS</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
           <div class="col-sm-4">
             <mat-form-field>
               <mat-label>Alterno</mat-label>
               <input matInput formControlName="code" />
             </mat-form-field>
           </div>
-          <div class="col-sm-4">
+          <div class="col-sm-5">
             <mat-form-field>
               <mat-label>Referencia</mat-label>
               <textarea
@@ -35,27 +45,23 @@
               ></textarea>
             </mat-form-field>
           </div>
-          <div class="col-sm-4">
-            <mat-form-field>
-              <mat-label>GRUPO TRAMITE:</mat-label>
-              <mat-select formControlName="group">
-                <mat-option value="ExternalDetail"
-                  >TRAMITES EXTERNOS</mat-option
-                >
-                <mat-option value="InternalDetail"
-                  >TRAMITES INTERNOS</mat-option
-                >
-              </mat-select>
-            </mat-form-field>
-          </div>
         </div>
         } @case ('advanced') {
-
         <div class="row">
           <div class="col-sm-3">
             <mat-form-field>
               <mat-label>Alterno</mat-label>
               <input matInput formControlName="code" />
+            </mat-form-field>
+          </div>
+          <div class="col-sm-3">
+            <mat-form-field>
+              <mat-label>Estado:</mat-label>
+              <mat-select formControlName="state">
+                @for (state of statesProcedure; track $index) {
+                <mat-option [value]="state">{{ state }}</mat-option>
+                }
+              </mat-select>
             </mat-form-field>
           </div>
           <div class="col-sm-2">
@@ -73,6 +79,27 @@
                 formControlName="reference"
               ></textarea>
             </mat-form-field>
+          </div>
+          <div class="col-sm-2">
+            <mat-form-field>
+              <mat-label>GRUPO:</mat-label>
+              <mat-select
+                (valueChange)="changeGroupProcedure()"
+                formControlName="group"
+              >
+                <mat-option value="ExternalDetail"> EXTERNOS</mat-option>
+                <mat-option value="InternalDetail"> INTERNOS</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+          <div class="col-sm-7">
+            <server-select-search
+              placeholder="Buscar tipo de tramite"
+              [initialValue]="FormProcedure().get('type')?.value"
+              [data]="typeProcedures()"
+              (onSearch)="searchTypesProcedures($event)"
+              (onSelect)="setTypeProcedure($event)"
+            />
           </div>
           <div class="col-sm-3">
             <mat-form-field>
@@ -99,29 +126,6 @@
           </div>
         </div>
         <div class="row mt-2">
-          <div class="col-sm-3">
-            <mat-form-field>
-              <mat-label>GRUPO TRAMITE:</mat-label>
-              <mat-select formControlName="group">
-                <mat-option value="ExternalDetail"
-                  >TRAMITES EXTERNOS</mat-option
-                >
-                <mat-option value="InternalDetail"
-                  >TRAMITES INTERNOS</mat-option
-                >
-              </mat-select>
-            </mat-form-field>
-          </div>
-          <div class="col-sm-2">
-            <mat-form-field>
-              <mat-label>Estado:</mat-label>
-              <mat-select formControlName="state">
-                @for (state of statesProcedure; track $index) {
-                <mat-option [value]="state">{{ state }}</mat-option>
-                }
-              </mat-select>
-            </mat-form-field>
-          </div>
           <div class="col-sm-7"></div>
         </div>
         } @default { unknown search type } }
@@ -129,8 +133,13 @@
     </div>
 
     <mat-action-row>
-      <button mat-flat-button>Limpiar</button>
-      <button mat-flat-button color="primary" (click)="generate()">
+      <button mat-flat-button (click)="clear()">Limpiar</button>
+      <button
+        mat-flat-button
+        color="primary"
+        [disabled]="FormProcedure().invalid"
+        (click)="generate()"
+      >
         Buscar
       </button>
     </mat-action-row>
@@ -138,7 +147,12 @@
 </mat-accordion>
 
 <div class="mat-elevation-z8 mt-2">
-  <report-procedure-table [datasource]="datasource" [colums]="displaycolums" />
+  <report-procedure-table
+    [pageSize]="limit"
+    [pageIndex]="index"
+    [datasource]="datasource"
+    [colums]="displaycolums"
+  />
   <paginator
     [pageSizeOptions]="[10, 20, 30, 50]"
     [limit]="limit"

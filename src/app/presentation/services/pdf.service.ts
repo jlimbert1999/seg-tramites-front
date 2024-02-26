@@ -15,6 +15,8 @@ import pdfMake from 'pdfmake/build/pdfmake';
 import pdfFonts from 'pdfmake/build/vfs_fonts';
 import { CreateRouteMap } from '../../helpers/pdf/route-map';
 import {
+  TableProcedureColums,
+  TableProcedureData,
   accountResponse,
   communicationResponse,
 } from '../../infraestructure/interfaces';
@@ -26,8 +28,15 @@ import {
 } from '../../helpers';
 import { UnlinkSheet } from '../../helpers/pdf/unlink-form';
 import { AuthService } from './auth/auth.service';
+import { GenerateReportSheet } from '../../helpers/pdf/report-sheet';
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
-import htmlToPdfmake from 'html-to-pdfmake';
+
+interface ReportSheetProps {
+  title: string;
+  FormQuery: Object;
+  results: TableProcedureData[];
+  colums: TableProcedureColums[];
+}
 
 @Injectable({
   providedIn: 'root',
@@ -216,16 +225,53 @@ export class PdfService {
     pdfMake.createPdf(docDefinition).print();
   }
 
-  htmlToPdf(element: any) {
-    const html = htmlToPdfmake(element, { tableAutoSize: false });
-    const dd: TDocumentDefinitions = {
-      content: html,
-      styles: {
-        'html-a': {
-          color: 'purple', // it won't work: all links will remain 'blue'
-        },
+  async GenerateReportSheet(
+    title: string,
+    FormQuery: Object,
+    results: Object[],
+    colums: {
+      columnDef: string;
+      header: string;
+    }[]
+  ) {
+    const docDefinition: TDocumentDefinitions = {
+      header: {
+        columns: [
+          {
+            width: 100,
+            image: await convertImageABase64(
+              '../../../assets/img/gams/escudo_alcaldia.png'
+            ),
+          },
+          {
+            width: '*',
+            text: [`\n${title}`],
+            bold: true,
+            fontSize: 16,
+          },
+          {
+            width: 100,
+            text: `${new Date().toLocaleString()}`,
+            fontSize: 10,
+            bold: true,
+            alignment: 'left',
+          },
+        ],
+        alignment: 'center',
+        margin: [10, 10, 10, 10],
       },
+      footer: {
+        margin: [10, 0, 10, 0],
+        fontSize: 8,
+        text: `Generado por: ${this.authService.account()?.officer.fullname} (${
+          this.authService.account()?.officer.jobtitle
+        })`,
+      },
+      pageSize: 'LETTER',
+      pageOrientation: 'portrait',
+      pageMargins: [30, 110, 40, 30],
+      content: [GenerateReportSheet(FormQuery, results, colums)],
     };
-    pdfMake.createPdf(dd).open();
+    pdfMake.createPdf(docDefinition).print();
   }
 }

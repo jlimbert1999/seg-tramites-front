@@ -1,4 +1,12 @@
-<div class="container" #containerRef style="height: 100vh; overflow-y: auto">
+<mat-toolbar color="primary">
+  <sidenav-button />
+  <span>Publicaciones</span>
+  <span class="toolbar-spacer"></span>
+  <button mat-icon-button (click)="create()">
+    <mat-icon>menu</mat-icon>
+  </button>
+</mat-toolbar>
+<div class="content" #containerRef>
   <div
     class="search-results"
     infinite-scroll

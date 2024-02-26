@@ -7,6 +7,7 @@ import { ReportApplicantComponent } from './presentation/pages/reportss/report-a
 import { MainComponent } from './presentation/layouts/home/main/main.component';
 import { DetailComponent } from './presentation/pages/procedures/detail/detail.component';
 import { ReportSearchComponent } from './presentation/pages/reportss/report-search/report-search.component';
+import { PostsComponent } from './presentation/pages/groupware/posts/posts.component';
 
 export const routes: Routes = [
   {
@@ -162,6 +163,10 @@ export const routes: Routes = [
             pathMatch: 'full',
           },
         ],
+      },
+      {
+        path: 'posts',
+        component: PostsComponent,
       },
     ],
   },

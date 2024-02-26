@@ -4,7 +4,10 @@
     <th mat-header-cell *matHeaderCellDef>{{ item.header }}</th>
     <td mat-cell *matCellDef="let element" [id]="element.id_procedure">
       @switch (item.columnDef) { @case ('code') {
-      <a [routerLink]="['../', element.group, element.id_procedure]">
+      <a
+        [routerLink]="['../', element.group, element.id_procedure]"
+        [queryParams]="{ limit: pageSize, index: pageIndex }"
+      >
         {{ element["code"] }}</a
       >
       } @case ('state') {

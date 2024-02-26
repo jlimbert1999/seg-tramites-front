@@ -91,8 +91,4 @@ export class ReportsComponent implements OnInit {
     overlayRef.backdropClick().subscribe(() => overlayRef.detach());
   }
 
-  generate() {
-    const s = document.getElementById('pdfTable');
-    if (s) this.pdfService.htmlToPdf(s.innerHTML);
-  }
 }

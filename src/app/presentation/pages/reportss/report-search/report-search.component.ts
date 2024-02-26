@@ -7,37 +7,37 @@ import {
   inject,
   signal,
 } from '@angular/core';
-import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatDatepickerModule } from '@angular/material/datepicker';
-import {
-  PaginatorComponent,
-  ReportProcedureTableComponent,
-  SidenavButtonComponent,
-} from '../../../components';
 import { MatSelectModule } from '@angular/material/select';
 import {
   FormBuilder,
+  FormControl,
   FormGroup,
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { CacheService, ReportService } from '../../../services';
-import { reportProcedureData } from '../../../../infraestructure/interfaces';
-import { StateProcedure } from '../../../../domain/models';
+
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
-import { Router } from '@angular/router';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatExpansionModule } from '@angular/material/expansion';
+import {
+  PaginatorComponent,
+  ReportProcedureTableComponent,
+  ServerSelectSearchComponent,
+} from '../../../components';
+import { CacheService, ReportService } from '../../../services';
+import { GroupProcedure, StateProcedure } from '../../../../domain/models';
+import { TableProcedureData } from '../../../../infraestructure/interfaces';
 
 type SearchMode = 'simple' | 'advanced';
 interface CacheData {
   form: Object;
   types: SelectOptiom[];
-  data: reportProcedureData[];
+  data: TableProcedureData[];
   size: number;
   searchMode: SearchMode;
 }
@@ -48,6 +48,11 @@ interface SelectOptiom {
 interface PaginationOptions {
   limit: number;
   index: number;
+}
+
+interface SelectOption {
+  text: string;
+  value: string;
 }
 
 @Component({
@@ -68,6 +73,7 @@ interface PaginationOptions {
     ReportProcedureTableComponent,
     PaginatorComponent,
     MatExpansionModule,
+    ServerSelectSearchComponent,
   ],
   templateUrl: './report-search.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -78,13 +84,13 @@ export class ReportSearchComponent {
   private cacheService: CacheService<CacheData> = inject(CacheService);
 
   public searchMode = signal<SearchMode>('simple');
-  public types = signal<SelectOptiom[]>([]);
+  public typeProcedures = signal<SelectOptiom[]>([]);
   public FormProcedure = computed<FormGroup>(() => {
     return this.searchMode() === 'simple'
       ? this.createSimpleForm()
       : this.createAdvancedForm();
   });
-  public datasource = signal<reportProcedureData[]>([]);
+  public datasource = signal<TableProcedureData[]>([]);
   public datasize = signal<number>(0);
   public displaycolums = [
     { columnDef: 'code', header: 'Alterno' },
@@ -103,16 +109,6 @@ export class ReportSearchComponent {
     this.loadPaginationData();
   }
 
-  searchTypesProcedures(text: string) {
-    this.reportService.searchTypeProceduresByText(text).subscribe((types) => {
-      this.types.set(types.map((el) => ({ value: el._id, text: el.nombre })));
-    });
-  }
-
-  selectTypeProcedure(id_type: string) {
-    // this.formProcedure.get('type')?.setValue(id_type);
-  }
-
   getData() {
     this.reportService
       .searchProcedureByProperties(
@@ -126,40 +122,65 @@ export class ReportSearchComponent {
       });
   }
 
+  generate() {
+    const isFormEmpty = Object.values(this.FormProcedure().value).every(
+      (val) => val === ''
+    );
+    if (isFormEmpty) return;
+    this.cacheService.pageIndex.set(0);
+    this.getData();
+  }
+
+  clear() {
+    this.FormProcedure().reset({});
+    this.datasource.set([]);
+    this.datasize.set(0);
+    this.typeProcedures.set([]);
+  }
+
+  searchTypesProcedures(term: string) {
+    if (!this.FormProcedure().get('group')?.value) return;
+    const group =
+      this.FormProcedure().get('group')?.value === GroupProcedure.External
+        ? 'EXTERNO'
+        : 'INTERNO';
+    this.reportService
+      .getTypeProceduresByText(term, group)
+      .subscribe((types) => {
+        this.typeProcedures.set(
+          types.map((el) => ({ value: el._id, text: el.nombre }))
+        );
+      });
+  }
+
+  setTypeProcedure(id_type: string | undefined) {
+    if (!id_type) {
+      this.FormProcedure().removeControl('type');
+      return;
+    }
+    this.FormProcedure().setControl('type', new FormControl(id_type));
+  }
+
   changePage({ limit, index }: PaginationOptions) {
     this.cacheService.pageSize.set(limit);
     this.cacheService.pageIndex.set(index);
     this.getData();
   }
 
-  generate() {
-    this.cacheService.pageIndex.set(0);
-    this.getData();
-  }
-
-  get statesProcedure() {
-    return Object.values(StateProcedure);
-  }
-
-  get currentMatSelectOption() {
-    return this.FormProcedure().get('type')?.value;
-  }
-
   selectSearchMode(value: SearchMode) {
     this.searchMode.set(value);
   }
 
-  resetForm() {
-    this.FormProcedure().reset({});
-    this.datasource.set([]);
-    this.datasize.set(0);
+  changeGroupProcedure() {
+    this.FormProcedure().get('type')?.setValue('');
+    this.typeProcedures.set([]);
   }
 
   private savePaginationData() {
     this.cacheService.resetPagination();
     const cache: CacheData = {
       form: this.FormProcedure().value,
-      types: this.types(),
+      types: this.typeProcedures(),
       data: this.datasource(),
       size: this.datasize(),
       searchMode: this.searchMode(),
@@ -172,7 +193,7 @@ export class ReportSearchComponent {
     if (!this.cacheService.keepAliveData() || !cacheData) return;
     this.searchMode.set(cacheData.searchMode);
     this.FormProcedure().patchValue(cacheData.form);
-    this.types.set(cacheData.types);
+    this.typeProcedures.set(cacheData.types);
     this.datasource.set(cacheData.data);
     this.datasize.set(cacheData.size);
   }
@@ -187,7 +208,7 @@ export class ReportSearchComponent {
 
   private createAdvancedForm(): FormGroup {
     return this.fb.group({
-      code: ['', [Validators.minLength(4), Validators.required]],
+      code: ['', Validators.minLength(4)],
       state: [''],
       reference: [''],
       type: [''],
@@ -197,7 +218,10 @@ export class ReportSearchComponent {
       cite: [''],
     });
   }
-  
+
+  get statesProcedure() {
+    return Object.values(StateProcedure);
+  }
 
   get limit() {
     return this.cacheService.pageSize();
