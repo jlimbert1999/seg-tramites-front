@@ -1,6 +1,7 @@
-export * from './auth/auth-status.interface';
 export * from './auth/jwt-payload.interface';
 export * from './auth/system-resources.interface';
+export * from './auth/resources.enum';
+export * from './auth/menu.interface';
 
 export * from './administration/account-response.interface';
 export * from './administration/institution-response.interface';

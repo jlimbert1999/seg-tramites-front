@@ -1,9 +1,9 @@
 export interface roleResponse {
   _id: string;
   name: string;
-  permissions: permissions[];
+  permissions: rolePermissions[];
 }
-export interface permissions {
+export interface rolePermissions {
   resource: string;
   actions: string[];
 }

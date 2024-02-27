@@ -6,9 +6,10 @@ import { Observable, of } from 'rxjs';
 
 import { environment } from '../../../../environments/environment';
 import {
-  AuthStatus,
   JwtPayload,
+  VALID_RESOURCES,
   accountResponse,
+  menu,
 } from '../../../infraestructure/interfaces';
 import { Account } from '../../../domain/models';
 
@@ -18,25 +19,14 @@ import { Account } from '../../../domain/models';
 export class AuthService {
   private readonly base_url: string = environment.base_url;
   private _account = signal<JwtPayload | null>(null);
-  private _menu = signal<
-    {
-      icon: string;
-      resource: string;
-      routerLink: string;
-      text: string;
-      childred: {
-        icon: string;
-        resource: string;
-        routerLink: string;
-        text: string;
-      }[];
-    }[]
-  >([]);
+  private _menu = signal<menu[]>([]);
+  private _code = signal<string>('');
+  private _permissions = signal<Record<VALID_RESOURCES, string[]> | null>(null);
 
   public account = computed(() => this._account());
   public menu = computed(() => this._menu());
-  public code = signal<string>('');
-  public permissions = signal<{ [resource: string]: string[] }>({});
+  public code = computed(() => this._code());
+  public permissions = computed(() => this._permissions());
 
   constructor(private http: HttpClient) {}
 
@@ -49,6 +39,12 @@ export class AuthService {
       .pipe(map(({ token }) => this.setAuthentication(token)));
   }
 
+  logout() {
+    localStorage.removeItem('token');
+    this._account.set(null);
+    this._permissions.set(null);
+  }
+
   checkAuthStatus(): Observable<boolean> {
     const token = localStorage.getItem('token');
     if (!token) {
@@ -58,16 +54,15 @@ export class AuthService {
     return this.http
       .get<{
         token: string;
-        menu: any[];
         code: string;
-        resources: any;
+        menu: menu[];
+        permissions: Record<VALID_RESOURCES, string[]>;
       }>(`${this.base_url}/auth`)
       .pipe(
-        map(({ menu, token, code, resources }) => {
+        map(({ menu, token, code, permissions }) => {
           this._menu.set(menu);
-          this.code.set(code);
-          this.permissions.set(resources);
-          console.log(this.permissions());
+          this._code.set(code);
+          this._permissions.set(permissions);
           return this.setAuthentication(token);
         }),
         catchError(() => {
@@ -104,10 +99,5 @@ export class AuthService {
     this._account.set(jwtDecode(token));
     localStorage.setItem('token', token);
     return true;
-  }
-
-  logout() {
-    localStorage.removeItem('token');
-    this._account.set(null);
   }
 }

@@ -4,18 +4,18 @@ import {
   HttpHandlerFn,
   HttpRequest,
 } from '@angular/common/http';
-import { Observable, catchError, finalize, throwError } from 'rxjs';
 import { Router } from '@angular/router';
 import { inject } from '@angular/core';
-import { Alert } from '../../helpers';
+import { Observable, catchError, finalize, throwError } from 'rxjs';
 import { AppearanceService, AuthService } from '../../presentation/services';
+import { Alert } from '../../helpers';
 
 export function loggingInterceptor(
   req: HttpRequest<unknown>,
   next: HttpHandlerFn
 ): Observable<HttpEvent<unknown>> {
   const appearanceService = inject(AppearanceService);
-  const autService = inject(AuthService);
+  const authService = inject(AuthService);
   const router = inject(Router);
 
   const reqWithHeader = req.clone({
@@ -25,11 +25,13 @@ export function loggingInterceptor(
     ),
   });
   appearanceService.showLoading();
+  console.log(reqWithHeader.url);
   return next(reqWithHeader).pipe(
     catchError((error) => {
+      console.error(error);
       if (error instanceof HttpErrorResponse) {
         if (error.status === 401) {
-          autService.logout();
+          authService.logout();
           router.navigate(['/login']);
         }
         hendleHttpErrors(error);

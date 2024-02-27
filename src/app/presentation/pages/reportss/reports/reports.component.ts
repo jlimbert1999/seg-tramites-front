@@ -69,7 +69,7 @@ export class ReportsComponent implements OnInit {
   constructor(private _viewContainerRef: ViewContainerRef) {}
 
   ngOnInit(): void {
-    const actions = this.authService.permissions()['reports'];
+    const actions = this.authService.permissions()!['reports'];
     this.menu = actions.map((action) => ({
       name: action,
       ...this.permissionMappings[action],
@@ -90,5 +90,4 @@ export class ReportsComponent implements OnInit {
     overlayRef.attach(this.portal);
     overlayRef.backdropClick().subscribe(() => overlayRef.detach());
   }
-
 }

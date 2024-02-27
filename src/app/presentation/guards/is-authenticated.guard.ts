@@ -3,14 +3,12 @@ import { Router, type CanActivateFn } from '@angular/router';
 import { tap } from 'rxjs';
 import { AuthService } from '../services';
 
-export const AuthGuard: CanActivateFn = (route, state) => {
+export const isAuthenticatedGuard: CanActivateFn = () => {
   const authService = inject(AuthService);
   const router = inject(Router);
   return authService.checkAuthStatus().pipe(
     tap((isAuthenticated) => {
-      if (!isAuthenticated) {
-        router.navigate(['/login']);
-      }
+      if (!isAuthenticated) router.navigateByUrl('/login');
     })
   );
 };

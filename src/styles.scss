@@ -4,6 +4,7 @@
 @import "./assets/scss/theme.scss";
 @import '@angular/cdk/overlay-prebuilt.css';
 
+
 html,
 body {
   height: 100%;
@@ -12,7 +13,6 @@ body {
 body {
   margin: 0;
   font-family: Roboto, "Helvetica Neue", sans-serif;
-  color: red;
 }
 
 mat-form-field {

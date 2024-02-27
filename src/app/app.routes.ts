@@ -1,13 +1,16 @@
 import { Routes } from '@angular/router';
 import { LoginComponent } from './presentation/layouts/login/login.component';
 import { HomeComponent } from './presentation/layouts/home/home.component';
-import { AuthGuard, isNotAuthenticatedGuard } from './presentation/guards';
 import { ReportsComponent } from './presentation/pages/reportss/reports/reports.component';
 import { ReportApplicantComponent } from './presentation/pages/reportss/report-applicant/report-applicant.component';
 import { MainComponent } from './presentation/layouts/home/main/main.component';
 import { DetailComponent } from './presentation/pages/procedures/detail/detail.component';
 import { ReportSearchComponent } from './presentation/pages/reportss/report-search/report-search.component';
 import { PostsComponent } from './presentation/pages/groupware/posts/posts.component';
+import {
+  isAuthenticatedGuard,
+  isNotAuthenticatedGuard,
+} from './presentation/guards';
 
 export const routes: Routes = [
   {
@@ -18,8 +21,9 @@ export const routes: Routes = [
   },
   {
     path: 'home',
-    canActivate: [AuthGuard],
+    canActivate: [isAuthenticatedGuard],
     component: HomeComponent,
+    title: 'Inicio',
     children: [
       { path: '', redirectTo: 'main', pathMatch: 'full' },
       {
@@ -170,5 +174,5 @@ export const routes: Routes = [
       },
     ],
   },
-  { path: '', redirectTo: '/home', pathMatch: 'full' },
+  { path: '**', redirectTo: 'login' },
 ];
