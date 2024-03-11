@@ -102,7 +102,7 @@ export abstract class Procedure {
   }
 
   get canBeManaged() {
-    if (this.state !== 'INSCRITO' || this.isSend) return false;
+    if (this.isSend) return false;
     return true;
   }
 

@@ -1,31 +1,83 @@
-<dl class="row">
-  <dt class="col-sm-3">Description lists</dt>
-  <dd class="col-sm-9">A description list is perfect for defining terms.</dd>
 
-  <dt class="col-sm-3">Term</dt>
-  <dd class="col-sm-9">
-    <p>Definition for the term.</p>
-    <p>And some more placeholder definition text.</p>
-  </dd>
+<div class="m-3">
+  <div class="row g-3">
+    <div class="col-sm-9">
+      <div class="p-3 h-100">
+        <dl class="row">
+          <dt class="col-sm-2">ALTERNO:</dt>
+          <dd class="col-sm-10">{{ procedure.code }}</dd>
 
-  <dt class="col-sm-3">Another term</dt>
-  <dd class="col-sm-9">
-    This definition is short, so no extra paragraphs or anything.
-  </dd>
+          <dt class="col-sm-2">TIPO:</dt>
+          <dd class="col-sm-10">{{ procedure.type | uppercase }}</dd>
 
-  <dt class="col-sm-3 text-truncate">Truncated term is truncated</dt>
-  <dd class="col-sm-9">
-    This can be useful when space is tight. Adds an ellipsis at the end.
-  </dd>
+          <dt class="col-sm-2">REFERENCIA:</dt>
+          <dd class="col-sm-10">{{ procedure.reference }}</dd>
+        </dl>
+      </div>
+    </div>
+    <!-- <div class="col-sm-3">
+      <div class=" h-100">
+        <dl class="row">
+          <dt class="col-sm-4">ESTADO:</dt>
+          <dd class="col-sm-8">{{ procedure.state }}</dd>
 
-  <dt class="col-sm-3">Nesting</dt>
-  <dd class="col-sm-9">
-    <dl class="row">
-      <dt class="col-sm-4">Nested definition list</dt>
-      <dd class="col-sm-8">
-        I heard you like definition lists. Let me put a definition list inside
-        your definition list.
-      </dd>
-    </dl>
-  </dd>
-</dl>
+          <dt class="col-sm-4">REGISTRO:</dt>
+          <dd class="col-sm-8">{{ procedure.startDate | date : "short" }}</dd>
+        </dl>
+      </div>
+    </div> -->
+    <!-- <div class="col-sm-4">
+      <div class="shadow-sm p-4 rounded h-100">
+        <dl class="row">
+          @if(procedure.details.solicitante.tipo==='NATURAL'){
+          <dt class="col-sm-2">NOMBRE:</dt>
+          <dd class="col-sm-10">{{ procedure.fullNameApplicant }}</dd>
+
+          <dt class="col-sm-2">DNI:</dt>
+          <dd class="col-sm-10">{{ procedure.details.solicitante.dni }}</dd>
+
+          <dt class="col-sm-2">TELEFONO:</dt>
+          <dd class="col-sm-10">{{ procedure.type }}</dd>
+          } @else {
+          <dt class="col-sm-2">NOMBRE:</dt>
+          <dd class="col-sm-10">{{ procedure.fullNameApplicant }}</dd>
+
+          <dt class="col-sm-2">TELEFONO:</dt>
+          <dd class="col-sm-10">{{ procedure.type }}</dd>
+          }
+        </dl>
+      </div>
+    </div> -->
+    <div class="col-sm-12">
+      <ul>
+        @for (item of procedure.details.requirements; track $index) {
+        <li>{{ item }}</li>
+        } @empty {
+        <li>NO SE PRESENTARON REQUERIMIENTOS</li>
+        }
+      </ul>
+    </div>
+    <div class="col-sm-4">
+      <div class="shadow-sm p-4 rounded h-100">
+        <dl class="row">
+          @if(procedure.details.solicitante.tipo==='NATURAL'){
+          <dt class="col-sm-2">NOMBRE:</dt>
+          <dd class="col-sm-10">{{ procedure.fullNameApplicant }}</dd>
+
+          <dt class="col-sm-2">DNI:</dt>
+          <dd class="col-sm-10">{{ procedure.details.solicitante.dni }}</dd>
+
+          <dt class="col-sm-2">TELEFONO:</dt>
+          <dd class="col-sm-10">{{ procedure.type }}</dd>
+          } @else {
+          <dt class="col-sm-2">NOMBRE:</dt>
+          <dd class="col-sm-10">{{ procedure.fullNameApplicant }}</dd>
+
+          <dt class="col-sm-2">TELEFONO:</dt>
+          <dd class="col-sm-10">{{ procedure.type }}</dd>
+          }
+        </dl>
+      </div>
+    </div>
+  </div>
+</div>

@@ -12,7 +12,7 @@
 <mat-tab-group>
   <mat-tab label="Detalle">
     @switch (procedure()!.group) { @case ('ExternalDetail') {
-    <external-detail [data]="external" />
+    <external-detail [procedure]="external" />
     } @case ('InternalDetail') {
     <internal-detail [data]="internal" />
     } @default {

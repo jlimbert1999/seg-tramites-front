@@ -1,8 +1,8 @@
-import moment from 'moment';
+import moment from 'moment-timezone';
 
 export class TimeManager {
   static formatDate(date: Date | string, format = 'MM/D/YYYY HH:mm'): string {
-    return moment(date).format(format);
+    return moment.tz(date, 'America/La_Paz').format(format);
   }
 
   static duration(initDate: string | Date, endDate: string | Date): string {

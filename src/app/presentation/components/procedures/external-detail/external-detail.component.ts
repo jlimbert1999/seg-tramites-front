@@ -17,7 +17,7 @@ import { ExternalProcedure } from '../../../../domain/models';
   // changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ExternalDetailComponent implements OnInit {
-  @Input() data!: ExternalProcedure;
+  @Input() procedure!: ExternalProcedure;
   private destroyRef = inject(DestroyRef);
   public duration = signal<string>('');
 
