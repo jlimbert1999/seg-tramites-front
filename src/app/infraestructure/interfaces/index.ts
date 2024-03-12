@@ -18,10 +18,11 @@ export * from './procedures/procedure-response.interface';
 export * from './procedures/workflow-response.interface';
 export * from './procedures/observation-response.interface';
 
+export * from './communications/grouped-communication-response.interface';
 export * from './communications/communication-response.interface';
+export * from './communications/location-response.interface';
 export * from './communications/transfer-details.interface';
 export * from './communications/receiver.interface';
-export * from './communications/grouped-communication-response.interface';
 
 export * from './groupware/user_socket.interface';
 

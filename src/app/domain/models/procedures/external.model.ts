@@ -34,10 +34,19 @@ interface representative {
 export class ExternalProcedure extends Procedure {
   details: details;
 
-  static ResponseToModel({ send, account, type, ...values }: externalResponse) {
+  static ResponseToModel({
+    send,
+    account,
+    type,
+    startDate,
+    endDate,
+    ...values
+  }: externalResponse) {
     return new ExternalProcedure({
       isSend: send,
       type: typeof type === 'string' ? type : type.nombre,
+      startDate: new Date(startDate),
+      endDate: endDate ? new Date(endDate) : undefined,
       account:
         typeof account === 'string'
           ? { id: account }
@@ -50,7 +59,6 @@ export class ExternalProcedure extends Procedure {
                   }
                 : undefined,
             },
-
       ...values,
     });
   }

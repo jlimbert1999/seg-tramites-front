@@ -17,9 +17,19 @@ interface worker {
 
 export class InternalProcedure extends Procedure {
   details: details;
-  static ResponseToModel({ send, type, account, ...values }: internalResponse) {
+  static ResponseToModel({
+    send,
+    type,
+    account,
+    startDate,
+    endDate,
+    ...values
+  }: internalResponse) {
     return new InternalProcedure({
       type: typeof type === 'string' ? type : type.nombre,
+      startDate: new Date(startDate),
+      endDate: endDate ? new Date(endDate) : undefined,
+      isSend: send,
       account:
         typeof account === 'string'
           ? { id: account }
@@ -32,7 +42,7 @@ export class InternalProcedure extends Procedure {
                   }
                 : undefined,
             },
-      isSend: send,
+
       ...values,
     });
   }

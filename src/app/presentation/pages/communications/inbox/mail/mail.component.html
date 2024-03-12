@@ -70,7 +70,7 @@
       <mat-tab label="Detalle">
         @if(procedure()){ @switch (procedure()!.group) { @case
         ('ExternalDetail') {
-        <external-detail [procedure]="external" />
+        <!-- <external-detail [procedure]="external" /> -->
         } @case ('InternalDetail') {
         <internal-detail [data]="internal" />
         } @default {

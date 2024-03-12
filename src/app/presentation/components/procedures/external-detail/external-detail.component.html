@@ -1,12 +1,37 @@
-
-<div class="m-3">
-  <div class="row g-3">
-    <div class="col-sm-9">
-      <div class="p-3 h-100">
+@if(detail()){
+<div class="m-2">
+  <div class="row g-2">
+    <div class="col-sm-3">
+      <div class="border border-dark rounded p-3">
+        <div class="fs-6 pb-2 mb-3 text-primary border-bottom border-dark">
+          PROPIEDADES TRAMITE
+        </div>
         <dl class="row">
-          <dt class="col-sm-2">ALTERNO:</dt>
-          <dd class="col-sm-10">{{ procedure.code }}</dd>
+          <dt class="col-sm-4">ALTERNO:</dt>
+          <dd class="col-sm-8">{{ procedure.code }}</dd>
 
+          <dt class="col-sm-4">CITE:</dt>
+          <dd class="col-sm-8">{{ procedure.citeCode }}</dd>
+
+          <dt class="col-sm-4">ESTADO:</dt>
+          <dd class="col-sm-8">{{ procedure.state }}</dd>
+
+          <dt class="col-sm-4">REGISTRO:</dt>
+          <dd class="col-sm-8">{{ procedure.startDate | date : "short" }}</dd>
+
+          @if(procedure.endDate){
+          <dt class="col-sm-4">CONCLUSION:</dt>
+          <dd class="col-sm-8">{{ procedure.endDate | date : "short" }}</dd>
+          }
+        </dl>
+      </div>
+    </div>
+    <div class="col-sm-9">
+      <div class="border border-dark rounded p-3 h-100">
+        <div class="fs-6 pb-2 mb-3 text-primary border-bottom border-dark">
+          DESCRIPCION TRAMITE
+        </div>
+        <dl class="row">
           <dt class="col-sm-2">TIPO:</dt>
           <dd class="col-sm-10">{{ procedure.type | uppercase }}</dd>
 
@@ -15,69 +40,91 @@
         </dl>
       </div>
     </div>
-    <!-- <div class="col-sm-3">
-      <div class=" h-100">
-        <dl class="row">
-          <dt class="col-sm-4">ESTADO:</dt>
-          <dd class="col-sm-8">{{ procedure.state }}</dd>
-
-          <dt class="col-sm-4">REGISTRO:</dt>
-          <dd class="col-sm-8">{{ procedure.startDate | date : "short" }}</dd>
-        </dl>
-      </div>
-    </div> -->
-    <!-- <div class="col-sm-4">
-      <div class="shadow-sm p-4 rounded h-100">
-        <dl class="row">
-          @if(procedure.details.solicitante.tipo==='NATURAL'){
-          <dt class="col-sm-2">NOMBRE:</dt>
-          <dd class="col-sm-10">{{ procedure.fullNameApplicant }}</dd>
-
-          <dt class="col-sm-2">DNI:</dt>
-          <dd class="col-sm-10">{{ procedure.details.solicitante.dni }}</dd>
-
-          <dt class="col-sm-2">TELEFONO:</dt>
-          <dd class="col-sm-10">{{ procedure.type }}</dd>
-          } @else {
-          <dt class="col-sm-2">NOMBRE:</dt>
-          <dd class="col-sm-10">{{ procedure.fullNameApplicant }}</dd>
-
-          <dt class="col-sm-2">TELEFONO:</dt>
-          <dd class="col-sm-10">{{ procedure.type }}</dd>
-          }
-        </dl>
-      </div>
-    </div> -->
     <div class="col-sm-12">
-      <ul>
-        @for (item of procedure.details.requirements; track $index) {
-        <li>{{ item }}</li>
-        } @empty {
-        <li>NO SE PRESENTARON REQUERIMIENTOS</li>
-        }
-      </ul>
+      <div class="border border-dark rounded p-3">
+        <div class="fs-6 pb-2 mb-3 text-primary border-bottom border-dark">
+          REQUERIMIENTOS PRESENTADOS
+        </div>
+        <ul>
+          @for (item of procedure.details.requirements; track $index) {
+          <li>{{ item }}</li>
+          } @empty {
+          <li>NO SE PRESENTARON REQUERIMIENTOS</li>
+          }
+        </ul>
+      </div>
     </div>
-    <div class="col-sm-4">
-      <div class="shadow-sm p-4 rounded h-100">
+    <div class="col-sm-6">
+      <div class="border border-dark rounded p-3">
+        <div class="fs-6 pb-2 mb-3 text-primary border-bottom border-dark">
+          SOLICITANTE
+        </div>
         <dl class="row">
           @if(procedure.details.solicitante.tipo==='NATURAL'){
-          <dt class="col-sm-2">NOMBRE:</dt>
-          <dd class="col-sm-10">{{ procedure.fullNameApplicant }}</dd>
+          <dt class="col-sm-3">NOMBRE:</dt>
+          <dd class="col-sm-9">{{ procedure.fullNameApplicant }}</dd>
 
-          <dt class="col-sm-2">DNI:</dt>
-          <dd class="col-sm-10">{{ procedure.details.solicitante.dni }}</dd>
+          <dt class="col-sm-3">DNI:</dt>
+          <dd class="col-sm-9">{{ procedure.details.solicitante.dni }}</dd>
 
-          <dt class="col-sm-2">TELEFONO:</dt>
-          <dd class="col-sm-10">{{ procedure.type }}</dd>
+          <dt class="col-sm-3">TELEFONO:</dt>
+          <dd class="col-sm-9">
+            {{ procedure.details.solicitante.telefono }}
+          </dd>
           } @else {
-          <dt class="col-sm-2">NOMBRE:</dt>
-          <dd class="col-sm-10">{{ procedure.fullNameApplicant }}</dd>
+          <dt class="col-sm-3">NOMBRE:</dt>
+          <dd class="col-sm-9">{{ procedure.fullNameApplicant }}</dd>
 
-          <dt class="col-sm-2">TELEFONO:</dt>
-          <dd class="col-sm-10">{{ procedure.type }}</dd>
+          <dt class="col-sm-3">TELEFONO:</dt>
+          <dd class="col-sm-9">
+            {{ procedure.details.solicitante.telefono }}
+          </dd>
           }
         </dl>
+      </div>
+    </div>
+    <div class="col-sm-6">
+      <div class="border border-dark rounded p-3 h-100">
+        <div class="fs-6 pb-2 mb-3 text-primary border-bottom border-dark">
+          REPRESENTANTE
+        </div>
+        @if(procedure.details.representante){
+        <dl class="row">
+          <dt class="col-sm-3">NOMBRE:</dt>
+          <dd class="col-sm-9">{{ procedure.fullNameRepresentative }}</dd>
+
+          <dt class="col-sm-3">DNI:</dt>
+          <dd class="col-sm-9">{{ procedure.details.representante.dni }}</dd>
+
+          <dt class="col-sm-3">TELEFONO:</dt>
+          <dd class="col-sm-9">
+            {{ procedure.details.representante.telefono }}
+          </dd>
+        </dl>
+        } @else {
+        <p>SIN REPRESENTANTE</p>
+        }
+      </div>
+    </div>
+    <div class="col-12">
+      <div class="border border-dark rounded p-3 h-100">
+        <div class="fs-6 pb-2 mb-3 text-primary border-bottom border-dark">
+          UBICACION ACTUAL
+        </div>
+        <mat-list>
+          @for (user of location; track user) {
+          <mat-list-item>
+            <mat-icon matListItemIcon>location_on</mat-icon>
+            <span matListItemTitle>{{ user.dependencia.nombre }}</span>
+            <span matListItemLine>{{
+              user.funcionario.nombre | titlecase
+            }}</span>
+            <span matListItemMeta>EN BANDEJA</span>
+          </mat-list-item>
+          }
+        </mat-list>
       </div>
     </div>
   </div>
 </div>
+}

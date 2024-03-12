@@ -6,8 +6,8 @@ export interface ProcedureProps {
   amount: string;
   isSend: boolean;
   reference: string;
-  startDate: string;
-  endDate?: string;
+  startDate: Date;
+  endDate?: Date;
   account: manager;
   group: GroupProcedure;
   state: StateProcedure;
@@ -48,7 +48,7 @@ export abstract class Procedure {
   public readonly type: string;
   public readonly group: GroupProcedure;
   public readonly startDate: Date;
-  public readonly account?: manager;
+  public readonly account: manager;
   public readonly endDate?: Date;
   public state: StateProcedure;
   public cite: string;

@@ -25,7 +25,6 @@ export function loggingInterceptor(
     ),
   });
   appearanceService.showLoading();
-  console.log(reqWithHeader.url);
   return next(reqWithHeader).pipe(
     catchError((error) => {
       console.error(error);

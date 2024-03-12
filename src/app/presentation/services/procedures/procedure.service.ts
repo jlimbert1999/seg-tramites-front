@@ -4,6 +4,7 @@ import { environment } from '../../../../environments/environment';
 import {
   externalResponse,
   internalResponse,
+  locationResponse,
   observationResponse,
   workflowResponse,
 } from '../../../infraestructure/interfaces';
@@ -42,6 +43,12 @@ export class ProcedureService {
     return this.http
       .get<procedureResponse>(`${this.url}/detail/${group}/${id_procedure}`)
       .pipe(map((resp) => this.toModel(group, resp)));
+  }
+
+  getLocation(id_procedure: string) {
+    return this.http.get<locationResponse[]>(
+      `${this.url}/location/${id_procedure}`
+    );
   }
 
   addObservation(id_procedure: string, description: string) {

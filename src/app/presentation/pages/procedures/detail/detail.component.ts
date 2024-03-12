@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
+  EventEmitter,
   OnInit,
   computed,
   inject,
@@ -31,6 +32,8 @@ import {
 } from '../../../components';
 import { CacheService, PdfService, ProcedureService } from '../../../services';
 import { observationResponse } from '../../../../infraestructure/interfaces';
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
 
 @Component({
   selector: 'app-detail',
@@ -63,24 +66,17 @@ export class DetailComponent implements OnInit {
   public workflow = signal<Workflow[]>([]);
   public observations = signal<observationResponse[]>([]);
 
+  parentEmitter = new EventEmitter<void>();
+
+  id_procedure!: string;
+  group!: GroupProcedure;
+
   ngOnInit(): void {
-    this.route.params
-      .pipe(switchMap(({ group, id }) => this.getDetail(id, group)))
-      .subscribe((data) => {
-        this.procedure.set(data[0]);
-        this.workflow.set(data[1]);
-        this.observations.set(data[2]);
-      });
+    this.route.params.subscribe(({ group, id }) => {
+      this.id_procedure = id;
+      this.group = group;
+    });
   }
-
-  getDetail(id_procedure: string, group: GroupProcedure) {
-    return forkJoin([
-      this.procedureService.getDetail(id_procedure, group),
-      this.procedureService.getWorkflow(id_procedure),
-      this.procedureService.getObservations(id_procedure),
-    ]);
-  }
-
   backLocation() {
     this.route.queryParams.subscribe((data) => {
       this.cacheService.pageSize.set(data['limit'] ?? 10);
@@ -91,14 +87,11 @@ export class DetailComponent implements OnInit {
   }
 
   sheetProcedure() {
-    this.pdfService.GenerateIndexCard(this.procedure()!, this.workflow());
+    // this.pdfService.GenerateIndexCard(this.procedure()!, this.workflow());
+    this.parentEmitter.emit();
   }
 
-  get external() {
-    return this.procedure() as ExternalProcedure;
-  }
-
-  get internal() {
-    return this.procedure() as InternalProcedure;
+  get groupProcedure() {
+    return GroupProcedure;
   }
 }
