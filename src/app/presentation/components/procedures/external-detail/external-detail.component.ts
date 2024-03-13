@@ -17,12 +17,7 @@ import {
   GroupProcedure,
   StateProcedure,
 } from '../../../../domain/models';
-import { ProcedureService } from '../../../services';
 
-interface detailProps {
-  id_procedure: string;
-  group: GroupProcedure;
-}
 @Component({
   selector: 'external-detail',
   standalone: true,
@@ -32,40 +27,18 @@ interface detailProps {
 })
 export class ExternalDetailComponent implements OnInit {
   @Input() changeState: Subject<void> | undefined;
-  @Input({ required: true }) properties!: detailProps;
+  @Input({ required: true }) procedure!: ExternalProcedure;
+  @Input({ required: true }) location!: any[];
 
   private destroyRef = inject(DestroyRef);
-  private procedureService = inject(ProcedureService);
-
-  detail = signal<ExternalProcedure | null>(null);
-  location: any[] = [];
 
   ngOnInit(): void {
-    this.getData();
     if (!this.changeState) return;
     this.changeState.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
       const updated = new ExternalProcedure({
         ...this.procedure,
         state: StateProcedure.Observado,
       });
-      this.detail.set(updated);
     });
-  }
-
-  getData() {
-    forkJoin([
-      this.procedureService.getDetail(
-        this.properties.id_procedure,
-        this.properties.group
-      ),
-      this.procedureService.getLocation(this.properties.id_procedure),
-    ]).subscribe((data) => {
-      this.detail.set(data[0] as ExternalProcedure);
-      this.location = [...data[1]];
-    });
-  }
-
-  get procedure() {
-    return this.detail()!;
   }
 }

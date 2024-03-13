@@ -14,9 +14,10 @@
 </mat-toolbar>
 <mat-tab-group id="content-to-print">
   <mat-tab label="Tramite">
-    @switch (group) { @case (groupProcedure.External) {
+    @switch (group()) { @case (groupProcedure.External) {
     <external-detail
-      [properties]="{ id_procedure: id_procedure, group: group }"
+      [procedure]="external"
+      [location]="[]"
       [changeState]="parentEmitter"
     />
     } @case (groupProcedure.Internal) {

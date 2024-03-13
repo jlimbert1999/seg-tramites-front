@@ -13,14 +13,14 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatButtonModule } from '@angular/material/button';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatIconModule } from '@angular/material/icon';
-import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute } from '@angular/router';
 import { Location } from '@angular/common';
-import { forkJoin, switchMap } from 'rxjs';
+import { forkJoin, switchMap, tap } from 'rxjs';
 import {
   ExternalProcedure,
   GroupProcedure,
   InternalProcedure,
+  Procedure,
   Workflow,
 } from '../../../../domain/models';
 import {
@@ -62,20 +62,23 @@ export class DetailComponent implements OnInit {
   private procedureService = inject(ProcedureService);
   private pdfService = inject(PdfService);
 
-  public procedure = signal<ExternalProcedure | InternalProcedure | null>(null);
+  public procedure = signal<Procedure | null>(null);
   public workflow = signal<Workflow[]>([]);
   public observations = signal<observationResponse[]>([]);
 
   parentEmitter = new EventEmitter<void>();
-
-  id_procedure!: string;
-  group!: GroupProcedure;
+  group = signal<GroupProcedure | null>(null);
 
   ngOnInit(): void {
-    this.route.params.subscribe(({ group, id }) => {
-      this.id_procedure = id;
-      this.group = group;
-    });
+    this.route.params
+      .pipe(
+        tap(({ group }) => this.group.set(group)),
+        switchMap(({ id, group }) => this.getData(id, group))
+      )
+      .subscribe((data) => {
+        this.procedure.set(data[0]);
+       this.workflow.set(data[2])
+      });
   }
   backLocation() {
     this.route.queryParams.subscribe((data) => {
@@ -91,7 +94,19 @@ export class DetailComponent implements OnInit {
     this.parentEmitter.emit();
   }
 
+  getData(id: string, group: GroupProcedure) {
+    return forkJoin([
+      this.procedureService.getDetail(id, group),
+      this.procedureService.getLocation(id),
+      this.procedureService.getWorkflow(id),
+    ]);
+  }
+
   get groupProcedure() {
     return GroupProcedure;
+  }
+
+  get external() {
+    return this.procedure() as ExternalProcedure;
   }
 }
