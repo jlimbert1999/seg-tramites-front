@@ -1,0 +1,12 @@
+<mat-list>
+  @for (user of data(); track user) {
+  <mat-list-item>
+    <mat-icon matListItemIcon>location_on</mat-icon>
+    <span matListItemTitle>{{ user.dependencia.nombre }}</span>
+    <span matListItemLine>{{ user.funcionario.nombre | titlecase }}</span>
+    <span matListItemMeta>EN BANDEJA</span>
+  </mat-list-item>
+  } @empty {
+  <mat-list-item>SIN INICIO</mat-list-item>
+  }
+</mat-list>

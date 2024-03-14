@@ -11,6 +11,7 @@ import {
   isAuthenticatedGuard,
   isNotAuthenticatedGuard,
 } from './presentation/guards';
+import { InfoComponent } from './presentation/layouts/home/info/info.component';
 
 export const routes: Routes = [
   {
@@ -171,6 +172,10 @@ export const routes: Routes = [
       {
         path: 'posts',
         component: PostsComponent,
+      },
+      {
+        path: 'info',
+        component: InfoComponent,
       },
     ],
   },

@@ -5,7 +5,7 @@ import { SidenavButtonComponent } from '../../../components';
 import { AlertService, PdfService, ReportService } from '../../../services';
 
 @Component({
-  selector: 'app-resources',
+  selector: 'resources',
   standalone: true,
   imports: [CommonModule, MatToolbarModule, SidenavButtonComponent],
   templateUrl: './resources.component.html',

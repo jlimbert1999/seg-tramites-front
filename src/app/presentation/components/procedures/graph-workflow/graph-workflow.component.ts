@@ -95,6 +95,7 @@ export class GraphWorkflowComponent {
       });
     });
     this.nodes = Object.values(listUsers);
+    console.log(this.data);
   }
 
   addNode(user: any): void {

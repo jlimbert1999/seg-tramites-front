@@ -1,29 +1,20 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
-import { map, timer } from 'rxjs';
+import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { InternalProcedure } from '../../../../domain/models';
-import { StateLabelPipe } from '../../../pipes';
-import { TimeManager } from '../../../../helpers';
+import { LocationComponent } from '../location/location.component';
 
 @Component({
   selector: 'internal-detail',
   standalone: true,
-  imports: [CommonModule, StateLabelPipe],
+  imports: [CommonModule, LocationComponent],
   templateUrl: './internal-detail.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class InternalDetailComponent {
-  @Input({ required: true }) data!: InternalProcedure;
+  procedure = input.required<InternalProcedure>();
+  location = input.required<any[]>();
 
-  duration = toSignal<string>(
-    timer(0, 1000).pipe(
-      map(() => {
-        return TimeManager.duration(
-          this.data.startDate,
-          this.data.endDate ?? new Date()
-        );
-      })
-    )
-  );
+  get data() {
+    return this.procedure();
+  }
 }

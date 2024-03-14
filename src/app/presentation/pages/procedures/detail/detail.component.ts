@@ -4,7 +4,6 @@ import {
   Component,
   EventEmitter,
   OnInit,
-  computed,
   inject,
   signal,
 } from '@angular/core';
@@ -31,9 +30,10 @@ import {
   ListObservationsComponent,
 } from '../../../components';
 import { CacheService, PdfService, ProcedureService } from '../../../services';
-import { observationResponse } from '../../../../infraestructure/interfaces';
-import jsPDF from 'jspdf';
-import html2canvas from 'html2canvas';
+import {
+  locationResponse,
+  observationResponse,
+} from '../../../../infraestructure/interfaces';
 
 @Component({
   selector: 'app-detail',
@@ -63,6 +63,7 @@ export class DetailComponent implements OnInit {
   private pdfService = inject(PdfService);
 
   public procedure = signal<Procedure | null>(null);
+  public location = signal<locationResponse[]>([]);
   public workflow = signal<Workflow[]>([]);
   public observations = signal<observationResponse[]>([]);
 
@@ -77,9 +78,11 @@ export class DetailComponent implements OnInit {
       )
       .subscribe((data) => {
         this.procedure.set(data[0]);
-       this.workflow.set(data[2])
+        this.location.set(data[1]);
+        this.workflow.set(data[2]);
       });
   }
+  
   backLocation() {
     this.route.queryParams.subscribe((data) => {
       this.cacheService.pageSize.set(data['limit'] ?? 10);
@@ -94,7 +97,7 @@ export class DetailComponent implements OnInit {
     this.parentEmitter.emit();
   }
 
-  getData(id: string, group: GroupProcedure) {
+  private getData(id: string, group: GroupProcedure) {
     return forkJoin([
       this.procedureService.getDetail(id, group),
       this.procedureService.getLocation(id),
@@ -108,5 +111,9 @@ export class DetailComponent implements OnInit {
 
   get external() {
     return this.procedure() as ExternalProcedure;
+  }
+
+  get internal() {
+    return this.procedure() as InternalProcedure;
   }
 }
