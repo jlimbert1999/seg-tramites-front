@@ -3,6 +3,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   OnInit,
+  computed,
   inject,
   signal,
 } from '@angular/core';
@@ -12,7 +13,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
 import { MatTabsModule } from '@angular/material/tabs';
 import { ActivatedRoute } from '@angular/router';
-import { forkJoin, switchMap, tap } from 'rxjs';
+import { Subject, forkJoin, switchMap, tap } from 'rxjs';
 import {
   ExternalDetailComponent,
   GraphWorkflowComponent,
@@ -33,6 +34,7 @@ import {
   AlertService,
   CacheService,
   InboxService,
+  PdfService,
   ProcedureService,
 } from '../../../../services';
 import {
@@ -42,6 +44,7 @@ import {
 import { ProcedureDispatcherComponent } from '../procedure-dispatcher/procedure-dispatcher.component';
 import { MatDialog } from '@angular/material/dialog';
 import { InboxComponent } from '../inbox.component';
+import { MatListModule } from '@angular/material/list';
 
 type Procedure = ExternalProcedure | InternalProcedure;
 
@@ -60,6 +63,7 @@ type Procedure = ExternalProcedure | InternalProcedure;
     GraphWorkflowComponent,
     ListWorkflowComponent,
     ListObservationsComponent,
+    MatListModule,
   ],
   templateUrl: './mail.component.html',
   styleUrl: './mail.component.scss',
@@ -72,6 +76,7 @@ export class MailComponent implements OnInit {
   private alertService = inject(AlertService);
   private activateRoute = inject(ActivatedRoute);
   private procedureService = inject(ProcedureService);
+  private pdfService = inject(PdfService);
   private dialog = inject(MatDialog);
 
   public mail = signal<Communication | null>(null);
@@ -79,12 +84,22 @@ export class MailComponent implements OnInit {
   public workflow = signal<Workflow[]>([]);
   public observations = signal<observationResponse[]>([]);
 
+  code = computed(() =>
+    this.procedure() ? this.procedure()?.code : 'Detalles'
+  );
+  group: GroupProcedure | null = null;
+
+  eventsSubject: Subject<StateProcedure> = new Subject<StateProcedure>();
+
   ngOnInit(): void {
     this.activateRoute.params.subscribe(({ id }) => {
       this.inboxService
         .getMail(id)
         .pipe(
-          tap((detail) => this.mail.set(detail)),
+          tap((detail) => {
+            this.mail.set(detail);
+            this.group = detail.procedure.group;
+          }),
           switchMap(({ procedure }) =>
             this.getDetail(procedure._id, procedure.group)
           )
@@ -153,17 +168,18 @@ export class MailComponent implements OnInit {
   }
 
   addObservation() {
-    this.alertService.ConfirmAlert({
-      title: `¿Observar el tramite: ${this.procedure()!.code}?`,
-      text: 'El tramite se mostrara como "OBSERVADO" hasta que usted marque como corregida la observacion',
-      callback: (descripion) => {
-        this.procedureService
-          .addObservation(this.procedure()!._id, descripion)
-          .subscribe((obs) => {
-            this.observations.update((values) => [obs, ...values]);
-          });
-      },
-    });
+    this.eventsSubject.next(StateProcedure.Observado);
+    // this.alertService.ConfirmAlert({
+    //   title: `¿Observar el tramite: ${this.procedure()!.code}?`,
+    //   text: 'El tramite se mostrara como "OBSERVADO" hasta que usted marque como corregida la observacion',
+    //   callback: (descripion) => {
+    //     this.procedureService
+    //       .addObservation(this.procedure()!._id, descripion)
+    //       .subscribe((obs) => {
+    //         this.observations.update((values) => [obs, ...values]);
+    //       });
+    //   },
+    // });
   }
 
   solveObservation(id_observation: string) {
@@ -197,6 +213,10 @@ export class MailComponent implements OnInit {
     });
   }
 
+  generateRouteMap() {
+    this.pdfService.generateRouteSheet(this.procedure()!, this.workflow());
+  }
+
   get external() {
     return this.procedure() as ExternalProcedure;
   }
@@ -209,7 +229,9 @@ export class MailComponent implements OnInit {
     return this.mail()!;
   }
 
-
+  get groupProcedure() {
+    return GroupProcedure;
+  }
 
   set inboxCache(data: any) {
     // this.cacheService.storage[InboxComponent.name] = data;

@@ -4,9 +4,8 @@
       <button mat-icon-button (click)="backLocation()">
         <mat-icon>arrow_back</mat-icon>
       </button>
-      <span>{{ detail ? detail.procedure.code : "" }}</span>
+      <span>{{ code() }}</span>
       <span class="toolbar-spacer"></span>
-
       <button mat-icon-button (click)="addObservation()">
         <mat-icon>attach_file</mat-icon>
       </button>
@@ -24,29 +23,32 @@
               {{ detail.emitter.fullname | titlecase }}
             </mat-card-title>
             <mat-card-subtitle>
-              {{ detail.emitter.jobtitle }}
+              {{ detail.emitter.jobtitle | uppercase }}
             </mat-card-subtitle>
           </mat-card-header>
         </div>
-        <span class="fs-6 p-3"
-          >{{ detail.outboundDate | date : "short" }}
-        </span>
+        <div class="p-3">
+          <span>{{ detail.outboundDate | date : "medium" }} </span>
+        </div>
       </div>
       <mat-card-content>
         <dl class="row">
           <dt class="col-sm-2">Instruccion / Proveido:</dt>
-          <dd class="col-sm-9">{{ detail.reference }}</dd>
-          <dt class="col-sm-2">Cantidad</dt>
-          <dd class="col-sm-9">
+          <dd class="col-sm-10">{{ detail.reference }}</dd>
+          <dt class="col-2">Cantidad:</dt>
+          <dd class="col-10">
             {{ detail.attachmentQuantity }}
           </dd>
-          <dt class="col-sm-2">Status</dt>
-          <dd class="col-sm-9">
-            <span [style.color]="detail.statusLabel().color">
-              {{ detail.statusLabel().label }}</span
-            >
-          </dd>
         </dl>
+        <p>Adjunto:</p>
+        <div class="attachment-list">
+          <div class="attachment">
+            <img src="../../../../../../assets/svg/pdf.svg" alt="PDF" />
+            <a (click)="generateRouteMap()" class="file-name"
+              >Hoja de ruta.pdf</a
+            >
+          </div>
+        </div>
       </mat-card-content>
       <mat-card-actions class="action-row-buttons" align="end">
         @if(detail!.status==='pending'){
@@ -65,34 +67,44 @@
         }
       </mat-card-actions>
     </mat-card>
+    } @else {
+    <!-- <mat-card class="p-4">
+      <div class="row placeholder-glow">
+        <div class="col-1">
+          <span
+            style="height: 40px; width: 40px"
+            class="placeholder col-12 placeholder-lg rounded-circle"
+          ></span>
+        </div>
+        <div class="col-11 mb-2">
+          <span class="placeholder col-10 placeholder-lg rounded"></span>
+          <span class="placeholder col-4 placeholder-lg rounded"></span>
+        </div>
+        <span class="placeholder col-7 placeholder-lg rounded mb-2"></span>
+        <span class="placeholder col-6 placeholder-lg rounded"></span>
+      </div>
+    </mat-card> -->
     }
     <mat-tab-group mat-align-tabs="center">
-      <mat-tab label="Detalle">
-        @if(procedure()){ @switch (procedure()!.group) { @case
-        ('ExternalDetail') {
-        <!-- <external-detail [procedure]="external" /> -->
-        } @case ('InternalDetail') {
+      <mat-tab label="Tramite">
+        @switch (group) { @case (groupProcedure.External) {
+        <external-detail
+          [procedure]="external"
+          [location]="[]"
+          [eventChangeState]="eventsSubject"
+        />
+        } @case (groupProcedure.Internal) {
         <internal-detail [procedure]="internal" [location]="[]" />
         } @default {
         <p>Type procedure is note defined</p>
-        } } }
+        } }
       </mat-tab>
-      @if(observations().length>0){
-      <mat-tab label="Observaciones">
-        <list-observations
-          [data]="observations()"
-          [showOptions]="true"
-          (solveObservation)="solveObservation($event)"
-        />
-      </mat-tab>
-      } @if(workflow().length > 0){
       <mat-tab label="Flujo de trabajo">
         <list-workflow [data]="workflow()" />
       </mat-tab>
       <mat-tab label="Flujo de trabajo grafico">
-        <graph-workflow [data]="workflow()" />
+        <graph-workflow [workflow]="workflow()" />
       </mat-tab>
-      }
     </mat-tab-group>
   </div>
 </div>

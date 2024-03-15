@@ -1,9 +1,10 @@
+@if (workflow().length>0) {
 <div class="areachart-wrapper dark">
   <ngx-graph
     class="chart-container"
     [zoomLevel]="1"
-    [links]="links"
-    [nodes]="nodes"
+    [links]="graph().links"
+    [nodes]="graph().nodes"
     [clusters]="clusters"
     [animate]="false"
     layout="dagreCluster"
@@ -58,12 +59,12 @@
                   {{ node.data.jobtitle ? node.data.jobtitle : "Sin cargo" }}
                 </mat-card-subtitle>
               </mat-card-header>
-              <!-- <mat-card-content>
+              <mat-card-content>
                 <button #mybtn (click)="ope(mybtn)" class="s">sii</button>
                 <p style="font-size: 12px">
                   <strong>Dependencia: </strong>{{ node.data.dependencia }}
                 </p>
-              </mat-card-content> -->
+              </mat-card-content>
             </mat-card>
           </xhtml:div>
         </svg:foreignObject>
@@ -163,3 +164,4 @@
     </mat-card-actions>
   </mat-card>
 </ng-template>
+}
