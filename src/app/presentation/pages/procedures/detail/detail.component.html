@@ -17,12 +17,13 @@
   <mat-tab-group>
     <mat-tab label="Tramite">
       @switch (group()) { @case (groupProcedure.External) {
-      <external-detail [procedure]="external" [location]="location()" />
-      } @case (groupProcedure.Internal) {
-      <internal-detail [procedure]="internal" [location]="location()" />
-      } @default {
-      <p>Type procedure is not defined</p>
-      } }
+        <external-detail [(procedure)]="external" [location]="location()" />
+        } @case (groupProcedure.Internal) {
+        <internal-detail [procedure]="internal" [location]="location()" />
+        } @default {
+        <p>Type procedure is not defined</p>
+        } 
+      }
     </mat-tab>
     <mat-tab label="Flujo de trabajo">
       <list-workflow [data]="workflow()"

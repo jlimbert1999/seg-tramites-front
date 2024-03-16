@@ -89,7 +89,7 @@
       <mat-tab label="Tramite">
         @switch (group) { @case (groupProcedure.External) {
         <external-detail
-          [procedure]="external"
+          [(procedure)]="external"
           [location]="[]"
           [eventChangeState]="eventsSubject"
         />

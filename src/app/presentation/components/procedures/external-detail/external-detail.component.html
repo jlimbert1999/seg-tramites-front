@@ -19,6 +19,8 @@
           <dt class="col-sm-4">REGISTRO:</dt>
           <dd class="col-sm-8">{{ data.startDate | date : "short" }}</dd>
 
+          <pre>{{ data.details.pin }}</pre>
+
           @if(data.endDate){
           <dt class="col-sm-4">CONCLUSION:</dt>
           <dd class="col-sm-8">{{ data.endDate | date : "short" }}</dd>

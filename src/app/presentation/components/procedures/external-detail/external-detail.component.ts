@@ -6,12 +6,17 @@ import {
   OnInit,
   inject,
   input,
+  model,
 } from '@angular/core';
 import { MatListModule } from '@angular/material/list';
 import { MatIconModule } from '@angular/material/icon';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Observable } from 'rxjs';
-import { ExternalProcedure, StateProcedure } from '../../../../domain/models';
+import {
+  ExternalProcedure,
+  Procedure,
+  StateProcedure,
+} from '../../../../domain/models';
 import { LocationComponent } from '../location/location.component';
 
 @Component({
@@ -22,7 +27,7 @@ import { LocationComponent } from '../location/location.component';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ExternalDetailComponent implements OnInit {
-  procedure = input.required<ExternalProcedure>();
+  procedure = model.required<ExternalProcedure>();
   location = input.required<any[]>();
   eventChangeState = input<Observable<StateProcedure>>();
   destroyRef = inject(DestroyRef);
@@ -33,7 +38,12 @@ export class ExternalDetailComponent implements OnInit {
       ?.pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((state) => {
         console.log(state);
-        return new ExternalProcedure({ ...this.procedure(), state: state });
+        this.procedure.set(
+          new ExternalProcedure({
+            ...this.data,
+            state: StateProcedure.Anulado,
+          })
+        );
       });
   }
 
