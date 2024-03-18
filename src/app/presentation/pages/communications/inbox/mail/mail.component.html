@@ -99,6 +99,7 @@
       <mat-tab label="Tramite">
         @switch (mail()?.procedure?.group) { @case (groupProcedure.External) {
         <external-detail [(procedure)]="external" [location]="[]" />
+        <observations [procedure]="external" [enableOptions]="true"></observations>
         } @case (groupProcedure.Internal) {
         <internal-detail [procedure]="internal" [location]="[]" />
         } @default {

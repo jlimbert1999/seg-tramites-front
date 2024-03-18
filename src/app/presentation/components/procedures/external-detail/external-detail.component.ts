@@ -3,6 +3,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   OnInit,
+  computed,
   inject,
   input,
   model,
@@ -14,6 +15,7 @@ import { LocationComponent } from '../location/location.component';
 import { ObservationsComponent } from '../observations/observations.component';
 import { ExternalProcedure, StateProcedure } from '../../../../domain/models';
 import { ProcedureService } from '../../../services';
+import { locationResponse } from '../../../../infraestructure/interfaces';
 
 @Component({
   selector: 'external-detail',
@@ -30,7 +32,11 @@ import { ProcedureService } from '../../../services';
 export class ExternalDetailComponent implements OnInit {
   private procedureService = inject(ProcedureService);
   procedure = model.required<ExternalProcedure>();
-  location = input.required<any[]>();
+  location = input.required<locationResponse[]>();
+
+  // enableOptions = computed(() => {
+  //   if(this.location.ge)
+  // });
 
   ngOnInit(): void {}
 

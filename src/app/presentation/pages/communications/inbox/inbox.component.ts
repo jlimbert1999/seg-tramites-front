@@ -147,7 +147,7 @@ export class InboxComponent implements OnInit {
 
   accept({ _id, procedure }: Communication) {
     this.alertService.QuestionAlert({
-      title: `Aceptar tramite ${procedure.code}?`,
+      title: `¿Aceptar tramite ${procedure.code}?`,
       text: 'Solo debe aceptar tramites que haya recibido en fisico',
       callback: () => {
         this.inboxService.accept(_id).subscribe((resp) => {

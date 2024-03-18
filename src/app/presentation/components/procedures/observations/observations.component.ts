@@ -2,9 +2,6 @@ import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
-  EventEmitter,
-  Input,
-  Output,
   inject,
   input,
   output,
@@ -19,8 +16,8 @@ import {
 
 import { MaterialModule } from '../../../../material.module';
 import { observationResponse } from '../../../../infraestructure/interfaces';
-import { AuthService, ProcedureService } from '../../../services';
 import { Procedure, StateProcedure } from '../../../../domain/models';
+import { AuthService, ProcedureService } from '../../../services';
 
 @Component({
   selector: 'observations',
@@ -30,12 +27,13 @@ import { Procedure, StateProcedure } from '../../../../domain/models';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ObservationsComponent {
-  private procedureService = inject(ProcedureService);
   private authService = inject(AuthService);
+  private procedureService = inject(ProcedureService);
 
   public procedure = input.required<Procedure>();
-  public enable = input<boolean>(false);
+  public enableOptions = input.required<boolean>();
   public onStateChange = output<StateProcedure>();
+
   public observations = signal<observationResponse[]>([]);
   public isFocused: boolean = false;
   public descripcion = new FormControl('', {
@@ -74,7 +72,7 @@ export class ObservationsComponent {
     // this.solveObservation.emit('');
   }
 
-  get manager() {
+  get account() {
     return this.authService.account()?.id_account;
   }
 }
