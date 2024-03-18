@@ -7,18 +7,13 @@ import {
   inject,
   signal,
 } from '@angular/core';
-import { MatToolbarModule } from '@angular/material/toolbar';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
-import { MatCardModule } from '@angular/material/card';
-import { MatTabsModule } from '@angular/material/tabs';
 import { ActivatedRoute } from '@angular/router';
 import { Subject, forkJoin, switchMap, tap } from 'rxjs';
 import {
   ExternalDetailComponent,
   GraphWorkflowComponent,
   InternalDetailComponent,
-  ListObservationsComponent,
+  ObservationsComponent,
   ListWorkflowComponent,
 } from '../../../../components';
 import {
@@ -26,7 +21,6 @@ import {
   ExternalProcedure,
   GroupProcedure,
   InternalProcedure,
-  StateProcedure,
   StatusMail,
   Workflow,
 } from '../../../../../domain/models';
@@ -37,14 +31,10 @@ import {
   PdfService,
   ProcedureService,
 } from '../../../../services';
-import {
-  observationResponse,
-  transferDetails,
-} from '../../../../../infraestructure/interfaces';
+import { transferDetails } from '../../../../../infraestructure/interfaces';
 import { ProcedureDispatcherComponent } from '../procedure-dispatcher/procedure-dispatcher.component';
 import { MatDialog } from '@angular/material/dialog';
-import { InboxComponent } from '../inbox.component';
-import { MatListModule } from '@angular/material/list';
+import { MaterialModule } from '../../../../../material.module';
 
 type Procedure = ExternalProcedure | InternalProcedure;
 
@@ -53,17 +43,12 @@ type Procedure = ExternalProcedure | InternalProcedure;
   standalone: true,
   imports: [
     CommonModule,
-    MatToolbarModule,
-    MatButtonModule,
-    MatIconModule,
-    MatCardModule,
-    MatTabsModule,
+    MaterialModule,
     ExternalDetailComponent,
     InternalDetailComponent,
     GraphWorkflowComponent,
     ListWorkflowComponent,
-    ListObservationsComponent,
-    MatListModule,
+    ObservationsComponent,
   ],
   templateUrl: './mail.component.html',
   styleUrl: './mail.component.scss',
@@ -79,17 +64,11 @@ export class MailComponent implements OnInit {
   private pdfService = inject(PdfService);
   private dialog = inject(MatDialog);
 
-  public mail = signal<Communication | null>(null);
-  public procedure = signal<Procedure | null>(null);
-  public workflow = signal<Workflow[]>([]);
-  public observations = signal<observationResponse[]>([]);
-
-  code = computed(() =>
-    this.procedure() ? this.procedure()?.code : 'Detalles'
-  );
-  group: GroupProcedure | null = null;
-
-  eventsSubject: Subject<StateProcedure> = new Subject<StateProcedure>();
+  mail = signal<Communication | null>(null);
+  procedure = signal<Procedure | null>(null);
+  workflow = signal<Workflow[]>([]);
+  location = signal<any[]>([]);
+  code = computed(() => this.mail()?.procedure.code ?? '');
 
   ngOnInit(): void {
     this.activateRoute.params.subscribe(({ id }) => {
@@ -98,7 +77,6 @@ export class MailComponent implements OnInit {
         .pipe(
           tap((detail) => {
             this.mail.set(detail);
-            this.group = detail.procedure.group;
           }),
           switchMap(({ procedure }) =>
             this.getDetail(procedure._id, procedure.group)
@@ -107,7 +85,7 @@ export class MailComponent implements OnInit {
         .subscribe((data) => {
           this.procedure.set(data[0]);
           this.workflow.set(data[1]);
-          this.observations.set(data[2]);
+          this.location.set(data[2]);
         });
     });
   }
@@ -116,7 +94,7 @@ export class MailComponent implements OnInit {
     return forkJoin([
       this.procedureService.getDetail(id_procedure, group),
       this.procedureService.getWorkflow(id_procedure),
-      this.procedureService.getObservations(id_procedure),
+      this.procedureService.getLocation(id_procedure),
     ]);
   }
 
@@ -127,10 +105,12 @@ export class MailComponent implements OnInit {
       callback: () => {
         this.inboxService.accept(this.detail._id).subscribe(() => {
           const { status, ...props } = this.mail()!;
+          const updated = new Communication({
+            ...props,
+            status: StatusMail.Received,
+          });
+          this.mail.set(updated);
           this.updateMailCache();
-          this.mail.set(
-            new Communication({ ...props, status: StatusMail.Received })
-          );
         });
       },
     });
@@ -164,43 +144,6 @@ export class MailComponent implements OnInit {
       if (!result) return;
       this.removeMailCache();
       this.backLocation();
-    });
-  }
-
-  addObservation() {
-    this.eventsSubject.next(StateProcedure.Observado);
-    // this.alertService.ConfirmAlert({
-    //   title: `¿Observar el tramite: ${this.procedure()!.code}?`,
-    //   text: 'El tramite se mostrara como "OBSERVADO" hasta que usted marque como corregida la observacion',
-    //   callback: (descripion) => {
-    //     this.procedureService
-    //       .addObservation(this.procedure()!._id, descripion)
-    //       .subscribe((obs) => {
-    //         this.observations.update((values) => [obs, ...values]);
-    //       });
-    //   },
-    // });
-  }
-
-  solveObservation(id_observation: string) {
-    this.alertService.QuestionAlert({
-      title: '¿Marcar la observacion como corregida?',
-      text: 'Si todas las observaciones son corregidas el tramite dejara de estar "OBSERVADO"',
-      callback: () => {
-        this.procedureService
-          .solveObservation(id_observation)
-          .subscribe((resp) => {
-            this.procedure.update((values) => {
-              values!.state = resp.state;
-              return values;
-            });
-            this.observations.update((values) => {
-              const index = values.findIndex((el) => el._id === id_observation);
-              values[index].isSolved = true;
-              return [...values];
-            });
-          });
-      },
     });
   }
 
@@ -246,7 +189,7 @@ export class MailComponent implements OnInit {
     // }
   }
   private updateMailCache() {
-    // if (this.inboxCache) {
+    // if (this.cacheService.load('inbox')) {
     //   const index = this.inboxCache.datasource.findIndex(
     //     (el) => el._id === this.detail._id
     //   );

@@ -102,13 +102,13 @@ export class InboxComponent implements OnInit {
 
   constructor() {
     this.destroyRef.onDestroy(() => {
-      this.savePaginationData();
+      this.saveCache();
     });
   }
   ngOnInit(): void {
     this.listenProcedureDispatches();
     this.listenCacelDispatches();
-    this.loadPaginationData();
+    this.loadCache();
   }
 
   getData(): void {
@@ -245,7 +245,7 @@ export class InboxComponent implements OnInit {
     return this.cacheService.pageOffset();
   }
 
-  private savePaginationData(): void {
+  private saveCache(): void {
     this.cacheService.resetPagination();
     const cache: CacheData = {
       datasource: this.datasource(),
@@ -256,7 +256,7 @@ export class InboxComponent implements OnInit {
     this.cacheService.save('inbox', cache);
   }
 
-  private loadPaginationData(): void {
+  private loadCache(): void {
     const cache = this.cacheService.load('inbox');
     if (!this.cacheService.keepAliveData() || !cache) {
       this.getData();

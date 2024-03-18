@@ -7,11 +7,7 @@ import {
   inject,
   signal,
 } from '@angular/core';
-import { MatToolbarModule } from '@angular/material/toolbar';
-import { MatTooltipModule } from '@angular/material/tooltip';
-import { MatButtonModule } from '@angular/material/button';
-import { MatTabsModule } from '@angular/material/tabs';
-import { MatIconModule } from '@angular/material/icon';
+
 import { ActivatedRoute } from '@angular/router';
 import { Location } from '@angular/common';
 import { forkJoin, switchMap, tap } from 'rxjs';
@@ -27,29 +23,26 @@ import {
   InternalDetailComponent,
   GraphWorkflowComponent,
   ListWorkflowComponent,
-  ListObservationsComponent,
+  ObservationsComponent,
 } from '../../../components';
 import { CacheService, PdfService, ProcedureService } from '../../../services';
 import {
   locationResponse,
   observationResponse,
 } from '../../../../infraestructure/interfaces';
+import { MaterialModule } from '../../../../material.module';
 
 @Component({
   selector: 'app-detail',
   standalone: true,
   imports: [
     CommonModule,
-    MatIconModule,
-    MatTabsModule,
-    MatButtonModule,
-    MatToolbarModule,
-    MatTooltipModule,
+    MaterialModule,
     ExternalDetailComponent,
     InternalDetailComponent,
     GraphWorkflowComponent,
     ListWorkflowComponent,
-    ListObservationsComponent,
+    ObservationsComponent,
   ],
   templateUrl: './detail.component.html',
   styleUrl: './detail.component.scss',
@@ -67,7 +60,6 @@ export class DetailComponent implements OnInit {
   public workflow = signal<Workflow[]>([]);
   public observations = signal<observationResponse[]>([]);
 
-  parentEmitter = new EventEmitter<void>();
   group = signal<GroupProcedure | null>(null);
 
   ngOnInit(): void {
@@ -78,11 +70,12 @@ export class DetailComponent implements OnInit {
       )
       .subscribe((data) => {
         this.procedure.set(data[0]);
-        this.location.set(data[1]);
-        this.workflow.set(data[2]);
+        this.workflow.set(data[1]);
+        this.location.set(data[2]);
+        this.observations.set(data[3]);
       });
   }
-  
+
   backLocation() {
     this.route.queryParams.subscribe((data) => {
       this.cacheService.pageSize.set(data['limit'] ?? 10);
@@ -94,14 +87,14 @@ export class DetailComponent implements OnInit {
 
   sheetProcedure() {
     // this.pdfService.GenerateIndexCard(this.procedure()!, this.workflow());
-    this.parentEmitter.emit();
   }
 
   private getData(id: string, group: GroupProcedure) {
     return forkJoin([
       this.procedureService.getDetail(id, group),
-      this.procedureService.getLocation(id),
       this.procedureService.getWorkflow(id),
+      this.procedureService.getLocation(id),
+      this.procedureService.getObservations(id),
     ]);
   }
 

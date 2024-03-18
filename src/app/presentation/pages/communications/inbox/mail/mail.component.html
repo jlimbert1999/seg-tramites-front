@@ -6,9 +6,25 @@
       </button>
       <span>{{ code() }}</span>
       <span class="toolbar-spacer"></span>
-      <button mat-icon-button (click)="addObservation()">
-        <mat-icon>attach_file</mat-icon>
+      @if(mail()?.status==='received'){
+      <button mat-icon-button [matMenuTriggerFor]="menu">
+        <mat-icon>more_vert</mat-icon>
       </button>
+      <mat-menu #menu="matMenu">
+        <button (click)="send()" mat-menu-item>
+          <mat-icon>send</mat-icon>
+          <span>Remitir tramite</span>
+        </button>
+        <!-- <button mat-menu-item (click)="archive(row)">
+            <mat-icon>domain_verification</mat-icon>
+            Concluir tramite
+          </button>
+          <button mat-menu-item (click)="suspend(row)">
+            <mat-icon>pause_presentation</mat-icon>
+            Suspender tramite
+          </button> -->
+      </mat-menu>
+      }
     </mat-toolbar>
   </p>
 
@@ -43,29 +59,23 @@
         <p>Adjunto:</p>
         <div class="attachment-list">
           <div class="attachment">
-            <img src="../../../../../../assets/svg/pdf.svg" alt="PDF" />
+            <img src="../../../../../../assets/svg/pdf.svg" />
             <a (click)="generateRouteMap()" class="file-name"
               >Hoja de ruta.pdf</a
             >
           </div>
         </div>
       </mat-card-content>
+      @if(mail()?.status==='pending'){
       <mat-card-actions class="action-row-buttons" align="end">
-        @if(detail!.status==='pending'){
         <button mat-raised-button color="warn" (click)="reject()">
           Rechazar
         </button>
         <button mat-raised-button color="primary" (click)="accept()">
           Aceptar
         </button>
-        } @else {
-        <div class="example-flex-container">
-          <button mat-icon-button (click)="send()">
-            <mat-icon>send</mat-icon>
-          </button>
-        </div>
-        }
       </mat-card-actions>
+      }
     </mat-card>
     } @else {
     <!-- <mat-card class="p-4">
@@ -87,12 +97,8 @@
     }
     <mat-tab-group mat-align-tabs="center">
       <mat-tab label="Tramite">
-        @switch (group) { @case (groupProcedure.External) {
-        <external-detail
-          [(procedure)]="external"
-          [location]="[]"
-          [eventChangeState]="eventsSubject"
-        />
+        @switch (mail()?.procedure?.group) { @case (groupProcedure.External) {
+        <external-detail [(procedure)]="external" [location]="[]" />
         } @case (groupProcedure.Internal) {
         <internal-detail [procedure]="internal" [location]="[]" />
         } @default {
