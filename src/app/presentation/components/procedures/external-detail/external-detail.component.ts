@@ -6,16 +6,19 @@ import {
   computed,
   inject,
   input,
-  model,
   signal,
 } from '@angular/core';
 
 import { MaterialModule } from '../../../../material.module';
-import { LocationComponent } from '../location/location.component';
-import { ObservationsComponent } from '../observations/observations.component';
-import { ExternalProcedure, StateProcedure } from '../../../../domain/models';
-import { ProcedureService } from '../../../services';
+import { LocationComponent, ObservationsComponent } from '../../index';
+import {
+  ExternalProcedure,
+  GroupProcedure,
+  StateProcedure,
+} from '../../../../domain/models';
+import { AuthService, ProcedureService } from '../../../services';
 import { locationResponse } from '../../../../infraestructure/interfaces';
+import { forkJoin } from 'rxjs';
 
 @Component({
   selector: 'external-detail',
@@ -30,32 +33,38 @@ import { locationResponse } from '../../../../infraestructure/interfaces';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ExternalDetailComponent implements OnInit {
+  private authService = inject(AuthService);
   private procedureService = inject(ProcedureService);
-  procedure = model.required<ExternalProcedure>();
-  location = input.required<locationResponse[]>();
 
-  // enableOptions = computed(() => {
-  //   if(this.location.ge)
-  // });
+  public id = input.required<string>();
+  public enableOptions = input.required<boolean>();
 
-  ngOnInit(): void {}
+  public procedure = signal<ExternalProcedure | null>(null);
+  public location = signal<locationResponse[]>([]);
+  public manager = computed(() => {
+    if (!this.enableOptions()) return undefined;
+    return this.authService.account()?.id_account;
+  });
 
-  print() {
-    this.procedure.update((val) => {
-      return new ExternalProcedure({
-        ...this.data,
-        state: StateProcedure.Observado,
-      });
+  ngOnInit(): void {
+    this.getData();
+  }
+
+  getData() {
+    forkJoin([
+      this.procedureService.getDetail(this.id(), GroupProcedure.External),
+      this.procedureService.getLocation(this.id()),
+    ]).subscribe((resp) => {
+      this.procedure.set(resp[0] as ExternalProcedure);
+      this.location.set(resp[1]);
     });
   }
 
-  set state(state: StateProcedure) {
-    this.procedure.update((values) => {
-      return new ExternalProcedure({ ...values, state: state });
-    });
+  chageStateProcedure(state: StateProcedure) {
+    this.procedure.set(new ExternalProcedure({ ...this.data, state: state }));
   }
 
   get data() {
-    return this.procedure();
+    return this.procedure()!;
   }
 }

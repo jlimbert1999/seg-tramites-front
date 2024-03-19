@@ -5,24 +5,22 @@
     </button>
     <span>Detalle</span>
     <span class="toolbar-spacer"></span>
-    <button
-      matTooltip="Generar ficha de tramite"
-      mat-icon-button
-      (click)="sheetProcedure()"
-    >
-      <mat-icon>print</mat-icon>
-    </button>
   </mat-toolbar>
 
+  @if(properties()){
   <mat-tab-group>
     <mat-tab label="Tramite">
-      @switch (group()) { @case (groupProcedure.External) {
-      <external-detail [(procedure)]="external" [location]="location()" />
-      } @case (groupProcedure.Internal) {
-      <internal-detail [procedure]="internal" [location]="location()" />
-      } @default {
-      <p>Type procedure is not defined</p>
-      } }
+      @switch (properties()?.group) {
+        @case ('ExternalDetail') {
+          <external-detail [id]="properties()!.id" [enableOptions]="false" />
+        } 
+        @case ('InternalDetail') {
+        <!-- <internal-detail [procedure]="internal" [location]="location()" /> -->
+        } 
+        @default {
+          <p>Type procedure is not defined</p>
+        } 
+      }
     </mat-tab>
     <mat-tab label="Flujo de trabajo">
       <list-workflow [data]="workflow()"
@@ -31,4 +29,5 @@
       <graph-workflow [workflow]="workflow()"
     /></mat-tab>
   </mat-tab-group>
+  }
 </div>

@@ -2,7 +2,6 @@ import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
-  EventEmitter,
   OnInit,
   inject,
   signal,
@@ -11,13 +10,7 @@ import {
 import { ActivatedRoute } from '@angular/router';
 import { Location } from '@angular/common';
 import { forkJoin, switchMap, tap } from 'rxjs';
-import {
-  ExternalProcedure,
-  GroupProcedure,
-  InternalProcedure,
-  Procedure,
-  Workflow,
-} from '../../../../domain/models';
+import { GroupProcedure, Workflow } from '../../../../domain/models';
 import {
   ExternalDetailComponent,
   InternalDetailComponent,
@@ -25,12 +18,10 @@ import {
   ListWorkflowComponent,
   ObservationsComponent,
 } from '../../../components';
-import { CacheService, PdfService, ProcedureService } from '../../../services';
-import {
-  locationResponse,
-  observationResponse,
-} from '../../../../infraestructure/interfaces';
+import { CacheService, ProcedureService } from '../../../services';
 import { MaterialModule } from '../../../../material.module';
+
+type procedureProps = { id: string; group: GroupProcedure };
 
 @Component({
   selector: 'app-detail',
@@ -53,26 +44,18 @@ export class DetailComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private cacheService = inject(CacheService);
   private procedureService = inject(ProcedureService);
-  private pdfService = inject(PdfService);
 
-  public procedure = signal<Procedure | null>(null);
-  public location = signal<locationResponse[]>([]);
+  public properties = signal<procedureProps | undefined>(undefined);
   public workflow = signal<Workflow[]>([]);
-  public observations = signal<observationResponse[]>([]);
-
-  group = signal<GroupProcedure | null>(null);
 
   ngOnInit(): void {
     this.route.params
       .pipe(
-        tap(({ group }) => this.group.set(group)),
-        switchMap(({ id, group }) => this.getData(id, group))
+        tap(({ id, group }) => this.properties.set({ id, group })),
+        switchMap(({ id }) => this.getData(id))
       )
       .subscribe((data) => {
-        this.procedure.set(data[0]);
-        this.workflow.set(data[1]);
-        this.location.set(data[2]);
-        this.observations.set(data[3]);
+        this.workflow.set(data[0]);
       });
   }
 
@@ -85,28 +68,10 @@ export class DetailComponent implements OnInit {
     });
   }
 
-  sheetProcedure() {
-    // this.pdfService.GenerateIndexCard(this.procedure()!, this.workflow());
-  }
-
-  private getData(id: string, group: GroupProcedure) {
+  private getData(id: string) {
     return forkJoin([
-      this.procedureService.getDetail(id, group),
       this.procedureService.getWorkflow(id),
       this.procedureService.getLocation(id),
-      this.procedureService.getObservations(id),
     ]);
-  }
-
-  get groupProcedure() {
-    return GroupProcedure;
-  }
-
-  get external() {
-    return this.procedure() as ExternalProcedure;
-  }
-
-  get internal() {
-    return this.procedure() as InternalProcedure;
   }
 }

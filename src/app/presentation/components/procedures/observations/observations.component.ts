@@ -16,8 +16,8 @@ import {
 
 import { MaterialModule } from '../../../../material.module';
 import { observationResponse } from '../../../../infraestructure/interfaces';
-import { Procedure, StateProcedure } from '../../../../domain/models';
-import { AuthService, ProcedureService } from '../../../services';
+import { StateProcedure } from '../../../../domain/models';
+import { ProcedureService } from '../../../services';
 
 @Component({
   selector: 'observations',
@@ -27,11 +27,10 @@ import { AuthService, ProcedureService } from '../../../services';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ObservationsComponent {
-  private authService = inject(AuthService);
   private procedureService = inject(ProcedureService);
 
-  public procedure = input.required<Procedure>();
-  public enableOptions = input.required<boolean>();
+  public procedure = input.required<string>();
+  public manager = input.required<string | undefined>();
   public onStateChange = output<StateProcedure>();
 
   public observations = signal<observationResponse[]>([]);
@@ -47,7 +46,7 @@ export class ObservationsComponent {
 
   getData() {
     this.procedureService
-      .getObservations(this.procedure()._id)
+      .getObservations(this.procedure())
       .subscribe((data) => {
         this.observations.set(data);
       });
@@ -55,7 +54,7 @@ export class ObservationsComponent {
 
   add() {
     this.procedureService
-      .addObservation(this.procedure()._id, this.descripcion.value)
+      .addObservation(this.procedure(), this.descripcion.value)
       .subscribe((obs) => {
         this.observations.update((values) => [obs, ...values]);
         this.onStateChange.emit(StateProcedure.Observado);
@@ -68,11 +67,14 @@ export class ObservationsComponent {
     this.descripcion.reset();
   }
 
-  solve() {
-    // this.solveObservation.emit('');
-  }
-
-  get account() {
-    return this.authService.account()?.id_account;
+  solve(id: string) {
+    this.procedureService.solveObservation(id).subscribe((resp) => {
+      this.observations.update((values) => {
+        const index = values.findIndex((el) => el._id === id);
+        values[index].isSolved = true;
+        return [...values];
+      });
+      this.onStateChange.emit(resp.state);
+    });
   }
 }

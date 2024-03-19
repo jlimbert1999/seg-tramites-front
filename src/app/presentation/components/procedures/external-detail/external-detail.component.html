@@ -19,8 +19,6 @@
           <dt class="col-sm-4">REGISTRO:</dt>
           <dd class="col-sm-8">{{ data.startDate | date : "short" }}</dd>
 
-          <pre>{{ data.details.pin }}</pre>
-
           @if(data.endDate){
           <dt class="col-sm-4">CONCLUSION:</dt>
           <dd class="col-sm-8">{{ data.endDate | date : "short" }}</dd>
@@ -116,18 +114,18 @@
         <location [data]="location()" />
       </div>
     </div>
-    <!-- <div class="col-12">
+    <div class="col-12">
       <div class="border border-dark rounded p-3 h-100">
         <div class="fs-6 pb-2 mb-3 text-primary border-bottom border-dark">
           OBSERVACIONES
         </div>
         <observations
-          [procedure]="procedure()"
-          (onStateChange)="state = $event"
-          [enableOptions]="true"
-        ></observations>
+          [procedure]="data._id"
+          [manager]="manager()"
+          (onStateChange)="chageStateProcedure($event)"
+        />
       </div>
-    </div> -->
+    </div>
   </div>
 </div>
 } @else {
@@ -204,5 +202,4 @@
     </div>
   </div>
 </div>
-
 }

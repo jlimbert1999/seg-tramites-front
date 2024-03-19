@@ -8,7 +8,8 @@ import {
   signal,
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Subject, forkJoin, switchMap, tap } from 'rxjs';
+import { MatDialog } from '@angular/material/dialog';
+import { switchMap, tap } from 'rxjs';
 import {
   ExternalDetailComponent,
   GraphWorkflowComponent,
@@ -18,14 +19,14 @@ import {
 } from '../../../../components';
 import {
   Communication,
-  ExternalProcedure,
   GroupProcedure,
-  InternalProcedure,
+  StateProcedure,
   StatusMail,
   Workflow,
 } from '../../../../../domain/models';
 import {
   AlertService,
+  ArchiveService,
   CacheService,
   InboxService,
   PdfService,
@@ -33,10 +34,8 @@ import {
 } from '../../../../services';
 import { transferDetails } from '../../../../../infraestructure/interfaces';
 import { ProcedureDispatcherComponent } from '../procedure-dispatcher/procedure-dispatcher.component';
-import { MatDialog } from '@angular/material/dialog';
 import { MaterialModule } from '../../../../../material.module';
-
-type Procedure = ExternalProcedure | InternalProcedure;
+import { InboxCache, InboxComponent } from '../inbox.component';
 
 @Component({
   selector: 'app-mail',
@@ -57,18 +56,17 @@ type Procedure = ExternalProcedure | InternalProcedure;
 export class MailComponent implements OnInit {
   private _location = inject(Location);
   private inboxService = inject(InboxService);
-  private cacheService: CacheService<any> = inject(CacheService);
+  private cacheService: CacheService<InboxCache> = inject(CacheService);
   private alertService = inject(AlertService);
   private activateRoute = inject(ActivatedRoute);
   private procedureService = inject(ProcedureService);
   private pdfService = inject(PdfService);
   private dialog = inject(MatDialog);
+  private archiveService = inject(ArchiveService);
 
   mail = signal<Communication | null>(null);
-  procedure = signal<Procedure | null>(null);
   workflow = signal<Workflow[]>([]);
-  location = signal<any[]>([]);
-  code = computed(() => this.mail()?.procedure.code ?? '');
+  status = computed(() => this.mail()?.status);
 
   ngOnInit(): void {
     this.activateRoute.params.subscribe(({ id }) => {
@@ -79,23 +77,13 @@ export class MailComponent implements OnInit {
             this.mail.set(detail);
           }),
           switchMap(({ procedure }) =>
-            this.getDetail(procedure._id, procedure.group)
+            this.procedureService.getWorkflow(procedure._id)
           )
         )
-        .subscribe((data) => {
-          this.procedure.set(data[0]);
-          this.workflow.set(data[1]);
-          this.location.set(data[2]);
+        .subscribe((worflow) => {
+          this.workflow.set(worflow);
         });
     });
-  }
-
-  getDetail(id_procedure: string, group: GroupProcedure) {
-    return forkJoin([
-      this.procedureService.getDetail(id_procedure, group),
-      this.procedureService.getWorkflow(id_procedure),
-      this.procedureService.getLocation(id_procedure),
-    ]);
   }
 
   accept() {
@@ -110,7 +98,7 @@ export class MailComponent implements OnInit {
             status: StatusMail.Received,
           });
           this.mail.set(updated);
-          this.updateMailCache();
+          this.updateMailCache(updated);
         });
       },
     });
@@ -147,6 +135,42 @@ export class MailComponent implements OnInit {
     });
   }
 
+  archive() {
+    this.alertService.ConfirmAlert({
+      title: `¿Concluir el tramite ${this.detail.procedure.code}?`,
+      text: 'Concluir indica que no hay más acciones pendientes',
+      callback: (description) => {
+        this.archiveService
+          .archiveCommunication(this.detail._id, {
+            description: description,
+            state: StateProcedure.Concluido,
+          })
+          .subscribe(() => {
+            this.removeMailCache();
+            this.backLocation();
+          });
+      },
+    });
+  }
+
+  suspend() {
+    this.alertService.ConfirmAlert({
+      title: `¿Suspender el tramite ${this.detail.procedure.code}?`,
+      text: 'Suspender detiene temporalmente el proceso',
+      callback: (description) => {
+        this.archiveService
+          .archiveCommunication(this.detail._id, {
+            description: description,
+            state: StateProcedure.Suspendido,
+          })
+          .subscribe(() => {
+            this.removeMailCache();
+            this.backLocation();
+          });
+      },
+    });
+  }
+
   backLocation() {
     this.activateRoute.queryParams.subscribe((data) => {
       this.cacheService.pageSize.set(data['limit'] ?? 10);
@@ -157,15 +181,11 @@ export class MailComponent implements OnInit {
   }
 
   generateRouteMap() {
-    this.pdfService.generateRouteSheet(this.procedure()!, this.workflow());
-  }
-
-  get external() {
-    return this.procedure() as ExternalProcedure;
-  }
-
-  get internal() {
-    return this.procedure() as InternalProcedure;
+    this.procedureService
+      .getDetail(this.detail.procedure._id, this.detail.procedure.group)
+      .subscribe((procedure) => {
+        this.pdfService.generateRouteSheet(procedure, this.workflow());
+      });
   }
 
   get detail() {
@@ -176,24 +196,23 @@ export class MailComponent implements OnInit {
     return GroupProcedure;
   }
 
-  set inboxCache(data: any) {
-    // this.cacheService.storage[InboxComponent.name] = data;
+  private removeMailCache() {
+    const cache = this.cacheService.load(InboxComponent.name);
+    if (!cache) return;
+    const { datasource, datasize, ...props } = cache;
+    this.cacheService.save(InboxComponent.name, {
+      ...props,
+      datasize: datasize - 1,
+      datasource: datasource.filter((el) => el._id !== this.detail._id),
+    });
   }
 
-  private removeMailCache() {
-    // if (this.inboxCache) {
-    //   this.inboxCache.datasize = this.inboxCache.datasize -= 1;
-    //   this.inboxCache.datasource = this.inboxCache.datasource.filter(
-    //     (el) => el._id !== this.detail._id
-    //   );
-    // }
-  }
-  private updateMailCache() {
-    // if (this.cacheService.load('inbox')) {
-    //   const index = this.inboxCache.datasource.findIndex(
-    //     (el) => el._id === this.detail._id
-    //   );
-    //   this.inboxCache.datasource[index].status = StatusMail.Received;
-    // }
+  private updateMailCache(mail: Communication): void {
+    const cache = this.cacheService.load(InboxComponent.name);
+    if (!cache) return;
+    const { datasource, ...props } = cache;
+    const index = datasource.findIndex((el) => el._id === this.detail._id);
+    datasource[index] = mail;
+    this.cacheService.save(InboxComponent.name, { ...props, datasource });
   }
 }

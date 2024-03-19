@@ -46,7 +46,7 @@ interface PaginationOptions {
   limit: number;
   index: number;
 }
-export interface CacheData {
+export interface InboxCache {
   datasource: Communication[];
   status?: StatusMail;
   datasize: number;
@@ -84,13 +84,12 @@ export class InboxComponent implements OnInit {
   private procedureService = inject(ProcedureService);
   private pdfService = inject(PdfService);
   private archiveService = inject(ArchiveService);
-  private cacheService: CacheService<CacheData> = inject(CacheService);
+  private cacheService: CacheService<InboxCache> = inject(CacheService);
 
   public displayedColumns: string[] = [
     'group',
     'code',
     'reference',
-    'state',
     'emitter',
     'outboundDate',
     'options',
@@ -247,17 +246,17 @@ export class InboxComponent implements OnInit {
 
   private saveCache(): void {
     this.cacheService.resetPagination();
-    const cache: CacheData = {
+    const cache: InboxCache = {
       datasource: this.datasource(),
       datasize: this.datasize(),
       text: this.term,
       status: this.status,
     };
-    this.cacheService.save('inbox', cache);
+    this.cacheService.save(InboxComponent.name, cache);
   }
 
   private loadCache(): void {
-    const cache = this.cacheService.load('inbox');
+    const cache = this.cacheService.load(InboxComponent.name);
     if (!this.cacheService.keepAliveData() || !cache) {
       this.getData();
       return;
