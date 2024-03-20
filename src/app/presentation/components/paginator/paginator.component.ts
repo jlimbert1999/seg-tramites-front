@@ -19,10 +19,10 @@ interface PageProps {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PaginatorComponent {
-  @Input() limit!: number;
-  @Input() index!: number;
-  @Input() length!: number;
-  @Input() pageSizeOptions!: number[];
+  @Input({ required: true }) limit!: number;
+  @Input({ required: true }) index!: number;
+  @Input({ required: true }) length!: number;
+  @Input({ required: true }) pageSizeOptions!: number[];
 
   @Output() onPageChage: EventEmitter<PageProps> = new EventEmitter();
 

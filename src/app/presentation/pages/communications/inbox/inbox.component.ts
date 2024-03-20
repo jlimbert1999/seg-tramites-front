@@ -7,17 +7,11 @@ import {
   inject,
   signal,
 } from '@angular/core';
-import { MatToolbarModule } from '@angular/material/toolbar';
-import { MatButtonModule } from '@angular/material/button';
-import { MatSelectModule } from '@angular/material/select';
-import { MatInputModule } from '@angular/material/input';
-import { MatTableModule } from '@angular/material/table';
-import { MatIconModule } from '@angular/material/icon';
-import { MatMenuModule } from '@angular/material/menu';
 import { MatDialog } from '@angular/material/dialog';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { forkJoin } from 'rxjs';
 import {
   AlertService,
   ArchiveService,
@@ -40,7 +34,7 @@ import {
 import { StateLabelPipe } from '../../../pipes';
 import { transferDetails } from '../../../../infraestructure/interfaces';
 import { ProcedureDispatcherComponent } from './procedure-dispatcher/procedure-dispatcher.component';
-import { forkJoin } from 'rxjs';
+import { MaterialModule } from '../../../../material.module';
 
 interface PaginationOptions {
   limit: number;
@@ -59,13 +53,7 @@ export interface InboxCache {
     FormsModule,
     CommonModule,
     RouterModule,
-    MatIconModule,
-    MatMenuModule,
-    MatTableModule,
-    MatInputModule,
-    MatSelectModule,
-    MatButtonModule,
-    MatToolbarModule,
+    MaterialModule,
     SidenavButtonComponent,
     PaginatorComponent,
     SearchInputComponent,
@@ -89,6 +77,7 @@ export class InboxComponent implements OnInit {
   public displayedColumns: string[] = [
     'group',
     'code',
+    'state',
     'reference',
     'emitter',
     'outboundDate',
@@ -106,7 +95,7 @@ export class InboxComponent implements OnInit {
   }
   ngOnInit(): void {
     this.listenProcedureDispatches();
-    this.listenCacelDispatches();
+    this.listenCancelDispatches();
     this.loadCache();
   }
 
@@ -150,8 +139,8 @@ export class InboxComponent implements OnInit {
       text: 'Solo debe aceptar tramites que haya recibido en fisico',
       callback: () => {
         this.inboxService.accept(_id).subscribe((resp) => {
+          const index = this.datasource().findIndex((el) => el._id === _id);
           this.datasource.update((values) => {
-            const index = values.findIndex((el) => el._id === _id);
             values[index].status = StatusMail.Received;
             values[index].procedure.state = resp.state;
             return [...values];
@@ -184,39 +173,26 @@ export class InboxComponent implements OnInit {
       width: '1200px',
       data: detail,
     });
-    dialogRef.afterClosed().subscribe((message) => {
+    dialogRef.afterClosed().subscribe((message: string) => {
       if (!message) return;
-      this.datasize.update((length) => (length -= 1));
-      this.datasource.update((values) => values.filter((el) => el._id !== _id));
+      this.removeItemDataSource(_id);
     });
   }
 
-  archive({ _id, procedure }: Communication) {
+  archive(
+    { _id, procedure }: Communication,
+    state: StateProcedure.Concluido | StateProcedure.Suspendido
+  ) {
     this.alertService.ConfirmAlert({
-      title: `¿Concluir el tramite ${procedure.code}?`,
-      text: 'Concluir indica que no hay más acciones pendientes',
+      title: `¿${
+        state === StateProcedure.Concluido ? 'Concluir' : 'Suspender'
+      } el tramite ${procedure.code}?`,
+      text: 'El tramite pasara a su seccion de archivos',
       callback: (description) => {
         this.archiveService
           .archiveCommunication(_id, {
             description: description,
-            state: StateProcedure.Concluido,
-          })
-          .subscribe(() => {
-            this.removeItemDataSource(_id);
-          });
-      },
-    });
-  }
-
-  suspend({ _id, procedure }: Communication) {
-    this.alertService.ConfirmAlert({
-      title: `¿Suspender el tramite ${procedure.code}?`,
-      text: 'Suspender detiene temporalmente el proceso',
-      callback: (description) => {
-        this.archiveService
-          .archiveCommunication(_id, {
-            description: description,
-            state: StateProcedure.Suspendido,
+            state: state,
           })
           .subscribe(() => {
             this.removeItemDataSource(_id);
@@ -237,11 +213,17 @@ export class InboxComponent implements OnInit {
   get index() {
     return this.cacheService.pageIndex();
   }
+
   get limit() {
     return this.cacheService.pageSize();
   }
+
   get offset() {
     return this.cacheService.pageOffset();
+  }
+
+  get StateProcedure() {
+    return StateProcedure;
   }
 
   private saveCache(): void {
@@ -252,11 +234,11 @@ export class InboxComponent implements OnInit {
       text: this.term,
       status: this.status,
     };
-    this.cacheService.save(InboxComponent.name, cache);
+    this.cacheService.save('inbox', cache);
   }
 
   private loadCache(): void {
-    const cache = this.cacheService.load(InboxComponent.name);
+    const cache = this.cacheService.load('inbox');
     if (!this.cacheService.keepAliveData() || !cache) {
       this.getData();
       return;
@@ -280,18 +262,15 @@ export class InboxComponent implements OnInit {
       });
   }
 
-  private listenCacelDispatches() {
+  private listenCancelDispatches() {
     this.socketService
       .listenCancelDispatches()
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((id) => this.removeItemDataSource(id));
   }
 
-  private removeItemDataSource(id_mail: string) {
+  private removeItemDataSource(id: string) {
     this.datasize.update((length) => (length -= 1));
-    this.datasource.update((values) => {
-      values = values.filter((el) => el._id !== id_mail);
-      return [...values];
-    });
+    this.datasource.update((values) => values.filter((el) => el._id !== id));
   }
 }

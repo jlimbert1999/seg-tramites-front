@@ -3,26 +3,20 @@ import {
   ChangeDetectionStrategy,
   Component,
   OnInit,
-  computed,
   inject,
   signal,
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
-import { switchMap, tap } from 'rxjs';
+import { forkJoin, switchMap } from 'rxjs';
 import {
   ExternalDetailComponent,
-  GraphWorkflowComponent,
   InternalDetailComponent,
-  ObservationsComponent,
-  ListWorkflowComponent,
 } from '../../../../components';
 import {
   Communication,
-  GroupProcedure,
   StateProcedure,
   StatusMail,
-  Workflow,
 } from '../../../../../domain/models';
 import {
   AlertService,
@@ -35,7 +29,7 @@ import {
 import { transferDetails } from '../../../../../infraestructure/interfaces';
 import { ProcedureDispatcherComponent } from '../procedure-dispatcher/procedure-dispatcher.component';
 import { MaterialModule } from '../../../../../material.module';
-import { InboxCache, InboxComponent } from '../inbox.component';
+import { InboxCache } from '../inbox.component';
 
 @Component({
   selector: 'app-mail',
@@ -45,45 +39,32 @@ import { InboxCache, InboxComponent } from '../inbox.component';
     MaterialModule,
     ExternalDetailComponent,
     InternalDetailComponent,
-    GraphWorkflowComponent,
-    ListWorkflowComponent,
-    ObservationsComponent,
   ],
   templateUrl: './mail.component.html',
   styleUrl: './mail.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MailComponent implements OnInit {
+  private activateRoute = inject(ActivatedRoute);
   private _location = inject(Location);
+  private dialog = inject(MatDialog);
+
   private inboxService = inject(InboxService);
+  private archiveService = inject(ArchiveService);
+  private procedureService = inject(ProcedureService);
+
   private cacheService: CacheService<InboxCache> = inject(CacheService);
   private alertService = inject(AlertService);
-  private activateRoute = inject(ActivatedRoute);
-  private procedureService = inject(ProcedureService);
   private pdfService = inject(PdfService);
-  private dialog = inject(MatDialog);
-  private archiveService = inject(ArchiveService);
 
   mail = signal<Communication | null>(null);
-  workflow = signal<Workflow[]>([]);
-  status = computed(() => this.mail()?.status);
 
   ngOnInit(): void {
-    this.activateRoute.params.subscribe(({ id }) => {
-      this.inboxService
-        .getMail(id)
-        .pipe(
-          tap((detail) => {
-            this.mail.set(detail);
-          }),
-          switchMap(({ procedure }) =>
-            this.procedureService.getWorkflow(procedure._id)
-          )
-        )
-        .subscribe((worflow) => {
-          this.workflow.set(worflow);
-        });
-    });
+    this.activateRoute.params
+      .pipe(switchMap(({ id }) => this.inboxService.getMail(id)))
+      .subscribe((resp) => {
+        this.mail.set(resp);
+      });
   }
 
   accept() {
@@ -135,33 +116,17 @@ export class MailComponent implements OnInit {
     });
   }
 
-  archive() {
+  archive(state: StateProcedure.Concluido | StateProcedure.Suspendido) {
     this.alertService.ConfirmAlert({
-      title: `¿Concluir el tramite ${this.detail.procedure.code}?`,
-      text: 'Concluir indica que no hay más acciones pendientes',
+      title: `¿${
+        state === StateProcedure.Concluido ? 'Concluir' : 'Suspender'
+      } el tramite ${this.detail.procedure.code}?`,
+      text: 'El tramite pasara a su seccion de archivos',
       callback: (description) => {
         this.archiveService
           .archiveCommunication(this.detail._id, {
             description: description,
-            state: StateProcedure.Concluido,
-          })
-          .subscribe(() => {
-            this.removeMailCache();
-            this.backLocation();
-          });
-      },
-    });
-  }
-
-  suspend() {
-    this.alertService.ConfirmAlert({
-      title: `¿Suspender el tramite ${this.detail.procedure.code}?`,
-      text: 'Suspender detiene temporalmente el proceso',
-      callback: (description) => {
-        this.archiveService
-          .archiveCommunication(this.detail._id, {
-            description: description,
-            state: StateProcedure.Suspendido,
+            state: state,
           })
           .subscribe(() => {
             this.removeMailCache();
@@ -181,26 +146,37 @@ export class MailComponent implements OnInit {
   }
 
   generateRouteMap() {
-    this.procedureService
-      .getDetail(this.detail.procedure._id, this.detail.procedure.group)
-      .subscribe((procedure) => {
-        this.pdfService.generateRouteSheet(procedure, this.workflow());
-      });
+    forkJoin([
+      this.procedureService.getDetail(
+        this.detail.procedure._id,
+        this.detail.procedure.group
+      ),
+      this.procedureService.getWorkflow(this.detail.procedure._id),
+    ]).subscribe((resp) => {
+      this.pdfService.generateRouteSheet(resp[0], resp[1]);
+    });
+  }
+
+  handleStateChange(state: StateProcedure) {
+    const { procedure, ...props } = this.detail;
+    procedure.state = state;
+    this.mail.set(new Communication({ ...props, procedure }));
+    this.updateMailCache(this.mail()!);
   }
 
   get detail() {
     return this.mail()!;
   }
 
-  get groupProcedure() {
-    return GroupProcedure;
+  get StateProcedure() {
+    return StateProcedure;
   }
 
   private removeMailCache() {
-    const cache = this.cacheService.load(InboxComponent.name);
+    const cache = this.cacheService.load('inbox');
     if (!cache) return;
     const { datasource, datasize, ...props } = cache;
-    this.cacheService.save(InboxComponent.name, {
+    this.cacheService.save('inbox', {
       ...props,
       datasize: datasize - 1,
       datasource: datasource.filter((el) => el._id !== this.detail._id),
@@ -208,11 +184,11 @@ export class MailComponent implements OnInit {
   }
 
   private updateMailCache(mail: Communication): void {
-    const cache = this.cacheService.load(InboxComponent.name);
+    const cache = this.cacheService.load('inbox');
     if (!cache) return;
     const { datasource, ...props } = cache;
     const index = datasource.findIndex((el) => el._id === this.detail._id);
     datasource[index] = mail;
-    this.cacheService.save(InboxComponent.name, { ...props, datasource });
+    this.cacheService.save('inbox', { ...props, datasource });
   }
 }

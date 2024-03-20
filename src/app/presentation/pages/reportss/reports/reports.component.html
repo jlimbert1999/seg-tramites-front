@@ -12,15 +12,14 @@
   </button>
 </mat-toolbar>
 
+<mat-tab-nav-panel #tabPanel></mat-tab-nav-panel>
+
 <mat-drawer-container class="drawer-container">
   <mat-drawer #drawer mode="side" [position]="'end'" [opened]="true">
     <mat-nav-list>
       @for (item of menu; track $index) {
       <mat-list-item [routerLink]="item.link" routerLinkActive="is-active">
         <span matListItemTitle>{{ item.label }}</span>
-        <button mat-icon-button matListItemMeta (click)="help()">
-          <mat-icon>help</mat-icon>
-        </button>
       </mat-list-item>
       }
     </mat-nav-list>

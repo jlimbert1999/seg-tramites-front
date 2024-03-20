@@ -9,16 +9,12 @@ import {
 
 import { ActivatedRoute } from '@angular/router';
 import { Location } from '@angular/common';
-import { forkJoin, switchMap, tap } from 'rxjs';
-import { GroupProcedure, Workflow } from '../../../../domain/models';
+import { GroupProcedure } from '../../../../domain/models';
 import {
   ExternalDetailComponent,
   InternalDetailComponent,
-  GraphWorkflowComponent,
-  ListWorkflowComponent,
-  ObservationsComponent,
 } from '../../../components';
-import { CacheService, ProcedureService } from '../../../services';
+import { CacheService } from '../../../services';
 import { MaterialModule } from '../../../../material.module';
 
 type procedureProps = { id: string; group: GroupProcedure };
@@ -31,9 +27,6 @@ type procedureProps = { id: string; group: GroupProcedure };
     MaterialModule,
     ExternalDetailComponent,
     InternalDetailComponent,
-    GraphWorkflowComponent,
-    ListWorkflowComponent,
-    ObservationsComponent,
   ],
   templateUrl: './detail.component.html',
   styleUrl: './detail.component.scss',
@@ -43,20 +36,13 @@ export class DetailComponent implements OnInit {
   private _location = inject(Location);
   private route = inject(ActivatedRoute);
   private cacheService = inject(CacheService);
-  private procedureService = inject(ProcedureService);
 
-  public properties = signal<procedureProps | undefined>(undefined);
-  public workflow = signal<Workflow[]>([]);
+  public properties = signal<procedureProps | null>(null);
 
   ngOnInit(): void {
-    this.route.params
-      .pipe(
-        tap(({ id, group }) => this.properties.set({ id, group })),
-        switchMap(({ id }) => this.getData(id))
-      )
-      .subscribe((data) => {
-        this.workflow.set(data[0]);
-      });
+    this.route.params.subscribe(({ id, group }) => {
+      this.properties.set({ id, group });
+    });
   }
 
   backLocation() {
@@ -66,12 +52,5 @@ export class DetailComponent implements OnInit {
       this.cacheService.keepAliveData.set(true);
       this._location.back();
     });
-  }
-
-  private getData(id: string) {
-    return forkJoin([
-      this.procedureService.getWorkflow(id),
-      this.procedureService.getLocation(id),
-    ]);
   }
 }

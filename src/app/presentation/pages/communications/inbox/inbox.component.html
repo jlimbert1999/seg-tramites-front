@@ -5,7 +5,7 @@
   </mat-toolbar>
 </p>
 
-<div class="container-fluid mb-2">
+<div class="container-fluid animate__animated animate__fadeIn animate__faster">
   <div class="row">
     <div class="col-sm-9">
       <search-input
@@ -101,11 +101,17 @@
                 <mat-icon>description</mat-icon>
                 <span>Hoja de ruta</span>
               </button>
-              <button mat-menu-item (click)="archive(row)">
+              <button
+                mat-menu-item
+                (click)="archive(row, StateProcedure.Concluido)"
+              >
                 <mat-icon>domain_verification</mat-icon>
                 Concluir tramite
               </button>
-              <button mat-menu-item (click)="suspend(row)">
+              <button
+                mat-menu-item
+                (click)="archive(row, StateProcedure.Suspendido)"
+              >
                 <mat-icon>pause_presentation</mat-icon>
                 Suspender tramite
               </button>

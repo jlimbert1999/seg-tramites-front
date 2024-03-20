@@ -6,31 +6,8 @@
       </button>
       <span>Detalle</span>
       <span class="toolbar-spacer"></span>
-
-      <button
-        mat-icon-button
-        [matMenuTriggerFor]="menu"
-        [disabled]="status() !== 'received'"
-      >
-        <mat-icon>more_vert</mat-icon>
-      </button>
-      <mat-menu #menu="matMenu">
-        <button (click)="send()" mat-menu-item>
-          <mat-icon>send</mat-icon>
-          <span>Remitir tramite</span>
-        </button>
-        <button mat-menu-item (click)="archive()">
-          <mat-icon>domain_verification</mat-icon>
-          Concluir tramite
-        </button>
-        <button mat-menu-item (click)="suspend()">
-          <mat-icon>pause_presentation</mat-icon>
-          Suspender tramite
-        </button>
-      </mat-menu>
     </mat-toolbar>
   </p>
-
   <div class="container-fluid">
     @if(mail()){
     <mat-card>
@@ -69,35 +46,49 @@
           </div>
         </div>
       </mat-card-content>
-      @if(detail.status==='pending'){
+      <mat-divider />
       <mat-card-actions class="action-row-buttons" align="end">
+        @if(detail.status==='pending'){
         <button mat-raised-button color="warn" (click)="reject()">
           Rechazar
         </button>
         <button mat-raised-button color="primary" (click)="accept()">
           Aceptar
         </button>
+        } @else {
+        <button
+          mat-icon-button
+          matTooltip="Concluir"
+          (click)="archive(StateProcedure.Concluido)"
+        >
+          <mat-icon>domain_verification</mat-icon>
+        </button>
+        <button
+          mat-icon-button
+          matTooltip="Suspender"
+          (click)="archive(StateProcedure.Suspendido)"
+        >
+          <mat-icon>pause_presentation</mat-icon>
+        </button>
+        <button mat-icon-button matTooltip="Enviar" (click)="send()">
+          <mat-icon>send</mat-icon>
+        </button>
+        }
       </mat-card-actions>
-      }
     </mat-card>
-    <mat-tab-group mat-align-tabs="center">
-      <mat-tab label="Tramite">
-        @switch (detail.procedure.group) { @case (groupProcedure.External) {
-        <external-detail [id]="detail.procedure._id" [enableOptions]="true" />
-        } @case (groupProcedure.Internal) {
-        <internal-detail [id]="detail.procedure._id" />
-        } @default {
-        <p>Type procedure is note defined</p>
-        } }
-      </mat-tab>
-      <mat-tab label="Flujo de trabajo">
-        <list-workflow [data]="workflow()" />
-      </mat-tab>
-      <mat-tab label="Flujo de trabajo grafico">
-        <graph-workflow [workflow]="workflow()" />
-      </mat-tab>
-    </mat-tab-group>
-
+    <div class="content">
+      @switch (detail.procedure.group) { @case ('ExternalDetail') {
+      <external-detail
+        [id]="detail.procedure._id"
+        [enableOptions]="true"
+        (onStateChange)="handleStateChange($event)"
+      />
+      } @case ('InternalDetail') {
+      <internal-detail [id]="detail.procedure._id" />
+      } @default {
+      <p>Type procedure is note defined</p>
+      } }
+    </div>
     } @else {
     <mat-card class="p-4">
       <div class="row placeholder-glow">

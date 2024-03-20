@@ -20,6 +20,7 @@ export class CacheService<T> {
   }
 
   save(key: string, data: T) {
+    sessionStorage.setItem(key, JSON.stringify(data));
     this.storage[key] = data;
   }
 

@@ -8,26 +8,16 @@
   </mat-toolbar>
 
   @if(properties()){
-  <mat-tab-group>
-    <mat-tab label="Tramite">
-      @switch (properties()?.group) {
-        @case ('ExternalDetail') {
-          <external-detail [id]="properties()!.id" [enableOptions]="false" />
-        } 
-        @case ('InternalDetail') {
-        <!-- <internal-detail [procedure]="internal" [location]="location()" /> -->
-        } 
-        @default {
-          <p>Type procedure is not defined</p>
-        } 
-      }
-    </mat-tab>
-    <mat-tab label="Flujo de trabajo">
-      <list-workflow [data]="workflow()"
-    /></mat-tab>
-    <mat-tab label="Flujo de trabajo grafico ">
-      <graph-workflow [workflow]="workflow()"
-    /></mat-tab>
-  </mat-tab-group>
+    @switch (properties()?.group) {
+      @case ('ExternalDetail') {
+        <external-detail [id]="properties()!.id" [enableOptions]="false" />
+      } 
+      @case ('InternalDetail') {
+        <internal-detail [id]="properties()!.id"  />
+      } 
+      @default {
+        <p>Type procedure is not defined</p>
+      } 
+    }
   }
 </div>

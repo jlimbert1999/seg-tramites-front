@@ -26,6 +26,7 @@ import {
 } from '@angular/cdk/portal';
 
 import { OverlayModule } from '@angular/cdk/overlay';
+import { MaterialModule } from '../../../../material.module';
 interface menu {
   label: string;
   link: string;
@@ -44,6 +45,7 @@ interface menu {
     MatListModule,
     OverlayModule,
     PortalModule,
+    MaterialModule,
   ],
   templateUrl: './reports.component.html',
   styleUrl: './reports.component.scss',

@@ -29,9 +29,9 @@ import { ProcedureService } from '../../../services';
 export class ObservationsComponent {
   private procedureService = inject(ProcedureService);
 
-  public procedure = input.required<string>();
-  public manager = input.required<string | undefined>();
-  public onStateChange = output<StateProcedure>();
+  procedure = input.required<string>();
+  manager = input.required<string | undefined>();
+  onStateChange = output<StateProcedure>();
 
   public observations = signal<observationResponse[]>([]);
   public isFocused: boolean = false;

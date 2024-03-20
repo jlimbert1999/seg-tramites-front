@@ -1,142 +1,153 @@
-@if(data){
-<div class="m-2 animate__animated animate__fadeIn animate__faster">
-  <div class="row g-2">
-    <div class="col-sm-3">
-      <div class="border border-dark rounded p-3">
-        <div class="fs-6 pb-2 mb-3 text-primary border-bottom border-dark">
-          PROPIEDADES TRAMITE
+<mat-tab-group>
+  <mat-tab label="Tramite">
+    @if(data){
+      <div class="m-2 animate__animated animate__fadeIn animate__faster">
+        <div class="row g-2">
+          <div class="col-sm-3">
+            <div class="border border-dark rounded p-3">
+              <div class="fs-6 pb-2 mb-3 text-primary border-bottom border-dark">
+                PROPIEDADES TRAMITE
+              </div>
+              <dl class="row">
+                <dt class="col-sm-4">ALTERNO:</dt>
+                <dd class="col-sm-8">{{ data.code }}</dd>
+      
+                <dt class="col-sm-4">CITE:</dt>
+                <dd class="col-sm-8">{{ data.citeCode }}</dd>
+      
+                <dt class="col-sm-4">ESTADO:</dt>
+                <dd class="col-sm-8">{{ data.state }}</dd>
+      
+                <dt class="col-sm-4">REGISTRO:</dt>
+                <dd class="col-sm-8">{{ data.startDate | date : "short" }}</dd>
+      
+                @if(data.endDate){
+                <dt class="col-sm-4">CONCLUSION:</dt>
+                <dd class="col-sm-8">{{ data.endDate | date : "short" }}</dd>
+                }
+              </dl>
+            </div>
+          </div>
+          <div class="col-sm-9">
+            <div class="border border-dark rounded p-3 h-100">
+              <div class="fs-6 pb-2 mb-3 text-primary border-bottom border-dark">
+                DESCRIPCION TRAMITE
+              </div>
+              <dl class="row">
+                <dt class="col-sm-2">TIPO:</dt>
+                <dd class="col-sm-10">{{ data.type | uppercase }}</dd>
+      
+                <dt class="col-sm-2">REFERENCIA:</dt>
+                <dd class="col-sm-10">{{ data.reference }}</dd>
+              </dl>
+            </div>
+          </div>
+          <div class="col-sm-6">
+            <div class="border border-dark rounded p-3">
+              <div class="fs-6 pb-2 mb-3 text-primary border-bottom border-dark">
+                REMITENTE
+              </div>
+              <dl class="row">
+                <dt class="col-sm-3">NOMBRE:</dt>
+                <dd class="col-sm-9">{{ data.details.destinatario.nombre }}</dd>
+      
+                <dt class="col-sm-3">CARGO:</dt>
+                <dd class="col-sm-9">{{ data.details.destinatario.cargo }}</dd>
+              </dl>
+            </div>
+          </div>
+          <div class="col-sm-6">
+            <div class="border border-dark rounded p-3 h-100">
+              <div class="fs-6 pb-2 mb-3 text-primary border-bottom border-dark">
+                DESTINATARIO
+              </div>
+              <dl class="row">
+                <dt class="col-sm-3">NOMBRE:</dt>
+                <dd class="col-sm-9">{{ data.details.remitente.nombre }}</dd>
+      
+                <dt class="col-sm-3">CARGO:</dt>
+                <dd class="col-sm-9">{{ data.details.remitente.cargo }}</dd>
+              </dl>
+            </div>
+          </div>
+          <div class="col-12">
+            <div class="border border-dark rounded p-3 h-100">
+              <div class="fs-6 pb-2 mb-3 text-primary border-bottom border-dark">
+                UBICACION ACTUAL
+              </div>
+              <location [data]="location()" />
+            </div>
+          </div>
         </div>
-        <dl class="row">
-          <dt class="col-sm-4">ALTERNO:</dt>
-          <dd class="col-sm-8">{{ data.code }}</dd>
-
-          <dt class="col-sm-4">CITE:</dt>
-          <dd class="col-sm-8">{{ data.citeCode }}</dd>
-
-          <dt class="col-sm-4">ESTADO:</dt>
-          <dd class="col-sm-8">{{ data.state }}</dd>
-
-          <dt class="col-sm-4">REGISTRO:</dt>
-          <dd class="col-sm-8">{{ data.startDate | date : "short" }}</dd>
-
-          @if(data.endDate){
-          <dt class="col-sm-4">CONCLUSION:</dt>
-          <dd class="col-sm-8">{{ data.endDate | date : "short" }}</dd>
-          }
-        </dl>
       </div>
-    </div>
-    <div class="col-sm-9">
-      <div class="border border-dark rounded p-3 h-100">
-        <div class="fs-6 pb-2 mb-3 text-primary border-bottom border-dark">
-          DESCRIPCION TRAMITE
+      } @else {
+      <div class="m-2">
+        <div class="row g-2">
+          <div class="col-sm-3">
+            <div class="p-4">
+              <p class="placeholder-glow">
+                <span
+                  class="placeholder rounded placeholder-lg mb-4 w-25 bg-primary"
+                ></span>
+                <span class="placeholder rounded mb-3 w-100 placeholder-lg"></span>
+                <span class="placeholder rounded mb-3 w-50 placeholder-lg"></span>
+                <span class="placeholder rounded mb-3 w-75 placeholder-sm"></span>
+              </p>
+            </div>
+          </div>
+          <div class="col-sm-9">
+            <div class="p-4">
+              <p class="placeholder-glow">
+                <span
+                  class="placeholder rounded placeholder-lg mb-4 w-25 bg-primary"
+                ></span>
+                <span class="placeholder rounded mb-3 w-100 placeholder-lg"></span>
+                <span class="placeholder rounded mb-3 w-50 placeholder"></span>
+              </p>
+            </div>
+          </div>
+          <div class="col-sm-6">
+            <div class="p-4">
+              <p class="placeholder-glow">
+                <span
+                  class="placeholder rounded mb-4 w-25 placeholder-lg bg-primary"
+                ></span>
+                <span class="placeholder rounded mb-2 w-100 placeholder-lg"></span>
+                <span class="placeholder rounded mb-2 w-75 placeholder-lg"></span>
+                <span class="placeholder rounded mb-2 w-50 placeholder-lg"></span>
+              </p>
+            </div>
+          </div>
+          <div class="col-sm-6">
+            <div class="p-4">
+              <p class="placeholder-glow">
+                <span
+                  class="placeholder rounded mb-4 w-25 placeholder-lg bg-primary"
+                ></span>
+                <span class="placeholder rounded mb-2 w-100 placeholder-lg"></span>
+                <span class="placeholder rounded mb-2 w-75 placeholder-lg"></span>
+                <span class="placeholder rounded mb-2 w-50 placeholder-lg"></span>
+              </p>
+            </div>
+          </div>
+          <div class="col-12">
+            <div class="p-4">
+              <p class="placeholder-glow">
+                <span class="placeholder rounded mb-2 w-50 placeholder-lg"></span>
+                <span class="placeholder rounded mb-2 w-75 placeholder-lg"></span>
+                <span class="placeholder rounded mb-2 w-100 placeholder-lg"></span>
+              </p>
+            </div>
+          </div>
         </div>
-        <dl class="row">
-          <dt class="col-sm-2">TIPO:</dt>
-          <dd class="col-sm-10">{{ data.type | uppercase }}</dd>
+      </div>
+      }
+  </mat-tab>
+  <mat-tab label="Flujo de trabajo">
+    <list-workflow [data]="workflow()" />
+  </mat-tab>
+  <mat-tab label="Flujo de trabajo grafico ">
+    <graph-workflow [workflow]="workflow()" />
+  </mat-tab>
+</mat-tab-group>
 
-          <dt class="col-sm-2">REFERENCIA:</dt>
-          <dd class="col-sm-10">{{ data.reference }}</dd>
-        </dl>
-      </div>
-    </div>
-    <div class="col-sm-6">
-      <div class="border border-dark rounded p-3">
-        <div class="fs-6 pb-2 mb-3 text-primary border-bottom border-dark">
-          REMITENTE
-        </div>
-        <dl class="row">
-          <dt class="col-sm-3">NOMBRE:</dt>
-          <dd class="col-sm-9">{{ data.details.destinatario.nombre }}</dd>
-
-          <dt class="col-sm-3">CARGO:</dt>
-          <dd class="col-sm-9">{{ data.details.destinatario.cargo }}</dd>
-        </dl>
-      </div>
-    </div>
-    <div class="col-sm-6">
-      <div class="border border-dark rounded p-3 h-100">
-        <div class="fs-6 pb-2 mb-3 text-primary border-bottom border-dark">
-          DESTINATARIO
-        </div>
-        <dl class="row">
-          <dt class="col-sm-3">NOMBRE:</dt>
-          <dd class="col-sm-9">{{ data.details.remitente.nombre }}</dd>
-
-          <dt class="col-sm-3">CARGO:</dt>
-          <dd class="col-sm-9">{{ data.details.remitente.cargo }}</dd>
-        </dl>
-      </div>
-    </div>
-    <div class="col-12">
-      <div class="border border-dark rounded p-3 h-100">
-        <div class="fs-6 pb-2 mb-3 text-primary border-bottom border-dark">
-          UBICACION ACTUAL
-        </div>
-        <location [data]="location()" />
-      </div>
-    </div>
-  </div>
-</div>
-} @else {
-<div class="m-2">
-  <div class="row g-2">
-    <div class="col-sm-3">
-      <div class="p-4">
-        <p class="placeholder-glow">
-          <span
-            class="placeholder rounded placeholder-lg mb-4 w-25 bg-primary"
-          ></span>
-          <span class="placeholder rounded mb-3 w-100 placeholder-lg"></span>
-          <span class="placeholder rounded mb-3 w-50 placeholder-lg"></span>
-          <span class="placeholder rounded mb-3 w-75 placeholder-sm"></span>
-        </p>
-      </div>
-    </div>
-    <div class="col-sm-9">
-      <div class="p-4">
-        <p class="placeholder-glow">
-          <span
-            class="placeholder rounded placeholder-lg mb-4 w-25 bg-primary"
-          ></span>
-          <span class="placeholder rounded mb-3 w-100 placeholder-lg"></span>
-          <span class="placeholder rounded mb-3 w-50 placeholder"></span>
-        </p>
-      </div>
-    </div>
-    <div class="col-sm-6">
-      <div class="p-4">
-        <p class="placeholder-glow">
-          <span
-            class="placeholder rounded mb-4 w-25 placeholder-lg bg-primary"
-          ></span>
-          <span class="placeholder rounded mb-2 w-100 placeholder-lg"></span>
-          <span class="placeholder rounded mb-2 w-75 placeholder-lg"></span>
-          <span class="placeholder rounded mb-2 w-50 placeholder-lg"></span>
-        </p>
-      </div>
-    </div>
-    <div class="col-sm-6">
-      <div class="p-4">
-        <p class="placeholder-glow">
-          <span
-            class="placeholder rounded mb-4 w-25 placeholder-lg bg-primary"
-          ></span>
-          <span class="placeholder rounded mb-2 w-100 placeholder-lg"></span>
-          <span class="placeholder rounded mb-2 w-75 placeholder-lg"></span>
-          <span class="placeholder rounded mb-2 w-50 placeholder-lg"></span>
-        </p>
-      </div>
-    </div>
-    <div class="col-12">
-      <div class="p-4">
-        <p class="placeholder-glow">
-          <span class="placeholder rounded mb-2 w-50 placeholder-lg"></span>
-          <span class="placeholder rounded mb-2 w-75 placeholder-lg"></span>
-          <span class="placeholder rounded mb-2 w-100 placeholder-lg"></span>
-        </p>
-      </div>
-    </div>
-  </div>
-</div>
-}
