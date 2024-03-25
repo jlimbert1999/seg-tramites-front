@@ -13,7 +13,9 @@ import { MatInputModule } from '@angular/material/input';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatTableModule } from '@angular/material/table';
 import { MatSelectModule } from '@angular/material/select';
-
+import { MatChipsModule } from '@angular/material/chips';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatDialogModule } from '@angular/material/dialog';
 @NgModule({
   declarations: [],
   imports: [],
@@ -32,6 +34,9 @@ import { MatSelectModule } from '@angular/material/select';
     MatDividerModule,
     MatTableModule,
     MatSelectModule,
+    MatChipsModule,
+    MatAutocompleteModule,
+    MatDialogModule,
   ],
 })
 export class MaterialModule {}

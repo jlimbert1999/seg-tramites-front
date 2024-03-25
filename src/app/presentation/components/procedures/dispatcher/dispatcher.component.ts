@@ -3,7 +3,9 @@ import {
   ChangeDetectionStrategy,
   Component,
   DestroyRef,
+  ElementRef,
   OnInit,
+  ViewChild,
   inject,
   signal,
 } from '@angular/core';
@@ -12,35 +14,21 @@ import {
   FormControl,
   FormGroup,
   ReactiveFormsModule,
-  UntypedFormControl,
   Validators,
 } from '@angular/forms';
-import { ReplaySubject, map, switchMap } from 'rxjs';
+import { BehaviorSubject, map, switchMap } from 'rxjs';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
-import {
-  MAT_DIALOG_DATA,
-  MatDialogModule,
-  MatDialogRef,
-} from '@angular/material/dialog';
-import { MatButtonModule } from '@angular/material/button';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatChipsModule } from '@angular/material/chips';
-import { MatIconModule } from '@angular/material/icon';
-import { MatInputModule } from '@angular/material/input';
-import { MatSelectModule } from '@angular/material/select';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
 
-import {
-  AlertService,
-  InboxService,
-  SocketService,
-} from '../../../../services';
-import { SimpleSelectSearchComponent } from '../../../../components';
+import { AlertService, InboxService, SocketService } from '../../../services';
+import { SimpleSelectSearchComponent } from '../..';
 import {
   transferDetails,
   receiver,
-} from '../../../../../infraestructure/interfaces';
+} from '../../../../infraestructure/interfaces';
+import { MaterialModule } from '../../../../material.module';
 
 interface SelectOption {
   value: string;
@@ -48,38 +36,26 @@ interface SelectOption {
 }
 
 @Component({
-  selector: 'app-procedure-dispatcher',
+  selector: 'app-dispatcher',
   standalone: true,
   imports: [
     CommonModule,
-    MatDialogModule,
-    MatButtonModule,
-    MatFormFieldModule,
-    MatInputModule,
     ReactiveFormsModule,
-    MatChipsModule,
-    MatIconModule,
-    MatSelectModule,
     NgxMatSelectSearchModule,
     SimpleSelectSearchComponent,
+    MaterialModule,
   ],
-  templateUrl: './procedure-dispatcher.component.html',
-  styleUrl: './procedure-dispatcher.component.scss',
+  templateUrl: './dispatcher.component.html',
+  styleUrl: './dispatcher.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ProcedureDispatcherComponent implements OnInit {
+export class DispatcherComponent implements OnInit {
   private fb = inject(FormBuilder);
-  private dialogRef = inject(MatDialogRef<ProcedureDispatcherComponent>);
+  private dialogRef = inject(MatDialogRef<DispatcherComponent>);
   private destroyRef = inject(DestroyRef);
   private inboxService = inject(InboxService);
   private socketService = inject(SocketService);
   private alertService = inject(AlertService);
-
-  public userCtrl = new FormControl();
-  public userFilterCtrl: UntypedFormControl = new UntypedFormControl();
-  public filteredUsers: ReplaySubject<receiver[]> = new ReplaySubject<
-    receiver[]
-  >(1);
 
   public data: transferDetails = inject(MAT_DIALOG_DATA);
   public institutions = signal<SelectOption[]>([]);
@@ -91,6 +67,32 @@ export class ProcedureDispatcherComponent implements OnInit {
     cantidad: [this.data.attachmentQuantity, Validators.required],
     numero_interno: [''],
   });
+
+  filterReceiverCtrl = new FormControl('');
+  filteredFruits = new BehaviorSubject<receiver[]>([]);
+  @ViewChild('receiverInput') fruitInput!: ElementRef<HTMLInputElement>;
+
+  constructor() {
+    this.filterReceiverCtrl.valueChanges
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((term) => this._filter(term));
+  }
+
+  remove(id: string): void {
+    this.selectedReceivers = this.selectedReceivers.filter(
+      (el) => el.id_account !== id
+    );
+  }
+
+  selected(user: receiver): void {
+    this.fruitInput.nativeElement.value = '';
+    this.filterReceiverCtrl.setValue(null);
+    const duplicante = this.selectedReceivers.some(
+      (el) => el.id_account === user.id_account
+    );
+    if (duplicante) return;
+    this.selectedReceivers.push(user);
+  }
 
   ngOnInit(): void {
     this.getInstitutions();
@@ -128,15 +130,13 @@ export class ProcedureDispatcherComponent implements OnInit {
   }
 
   getDependencies(id_institution: string) {
-    this.filteredUsers.next([]);
-    this.receivers.set([]);
     this.inboxService
       .getDependenciesInInstitution(id_institution)
       .subscribe((data) => {
         this.dependencies.set(
-          data.map((dependency) => ({
-            value: dependency._id,
-            text: dependency.nombre,
+          data.map((dep) => ({
+            value: dep._id,
+            text: dep.nombre,
           }))
         );
       });
@@ -148,12 +148,7 @@ export class ProcedureDispatcherComponent implements OnInit {
       .pipe(switchMap((data) => this.getOnlineUsers(data)))
       .subscribe((accounts) => {
         this.receivers.set(accounts);
-        this.filteredUsers.next(this.receivers().slice());
-        this.userFilterCtrl.valueChanges
-          .pipe(takeUntilDestroyed(this.destroyRef))
-          .subscribe(() => {
-            this.filterAccounts();
-          });
+        this.filteredFruits.next(accounts.slice());
       });
   }
 
@@ -171,41 +166,18 @@ export class ProcedureDispatcherComponent implements OnInit {
     );
   }
 
-  addReceiver(account: receiver) {
-    this.userCtrl.setValue(null);
-    const found = this.selectedReceivers.some(
-      (receiver) => receiver.id_account === account.id_account
-    );
-    if (found) return;
-    this.selectedReceivers.push(account);
-  }
-
-  removeReceiver(account: receiver) {
-    this.selectedReceivers = this.selectedReceivers.filter(
-      (receiver) => receiver.id_account !== account.id_account
-    );
-  }
-
-  private filterAccounts() {
-    if (!this.receivers) {
-      return;
-    }
-    let search = this.userFilterCtrl.value;
-    if (!search) {
-      this.filteredUsers.next(this.receivers());
-      return;
-    } else {
-      search = search.toLowerCase();
-    }
-    this.filteredUsers.next(
-      this.receivers().filter(
-        ({ officer }) =>
-          officer.fullname.toLowerCase().indexOf(search) > -1 ||
-          officer.jobtitle.toLowerCase().indexOf(search) > -1
-      )
-    );
-  }
   get isValidForm() {
     return this.FormEnvio.valid && this.selectedReceivers.length > 0;
+  }
+
+  private _filter(value: string | null) {
+    console.log(value);
+    if (!value) return this.filteredFruits.next(this.receivers());
+    const filtered = this.receivers().filter(
+      ({ officer: { fullname, jobtitle } }) =>
+        fullname.toLowerCase().indexOf(value) > -1 ||
+        jobtitle.toLowerCase().indexOf(value) > -1
+    );
+    this.filteredFruits.next(filtered);
   }
 }

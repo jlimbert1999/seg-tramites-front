@@ -33,7 +33,7 @@ import {
 } from '../../../../domain/models';
 import { StateLabelPipe } from '../../../pipes';
 import { transferDetails } from '../../../../infraestructure/interfaces';
-import { ProcedureDispatcherComponent } from './procedure-dispatcher/procedure-dispatcher.component';
+import { DispatcherComponent } from '../../../components/procedures/dispatcher/dispatcher.component';
 import { MaterialModule } from '../../../../material.module';
 
 interface PaginationOptions {
@@ -77,7 +77,6 @@ export class InboxComponent implements OnInit {
   public displayedColumns: string[] = [
     'group',
     'code',
-    'state',
     'reference',
     'emitter',
     'outboundDate',
@@ -169,7 +168,7 @@ export class InboxComponent implements OnInit {
       code: procedure.code,
       attachmentQuantity: attachmentQuantity,
     };
-    const dialogRef = this.dialog.open(ProcedureDispatcherComponent, {
+    const dialogRef = this.dialog.open(DispatcherComponent, {
       width: '1200px',
       data: detail,
     });
@@ -189,14 +188,9 @@ export class InboxComponent implements OnInit {
       } el tramite ${procedure.code}?`,
       text: 'El tramite pasara a su seccion de archivos',
       callback: (description) => {
-        this.archiveService
-          .archiveCommunication(_id, {
-            description: description,
-            state: state,
-          })
-          .subscribe(() => {
-            this.removeItemDataSource(_id);
-          });
+        this.archiveService.create(_id, description, state).subscribe(() => {
+          this.removeItemDataSource(_id);
+        });
       },
     });
   }

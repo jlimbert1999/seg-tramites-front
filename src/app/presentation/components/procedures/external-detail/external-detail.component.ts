@@ -14,8 +14,8 @@ import { MaterialModule } from '../../../../material.module';
 import {
   LocationComponent,
   ObservationsComponent,
-  ListWorkflowComponent,
-  GraphWorkflowComponent,
+  WorkflowListComponent,
+  WorkflowGraphComponent,
 } from '../../index';
 import {
   ExternalProcedure,
@@ -36,8 +36,8 @@ import {
     MaterialModule,
     LocationComponent,
     ObservationsComponent,
-    GraphWorkflowComponent,
-    ListWorkflowComponent,
+    WorkflowGraphComponent,
+    WorkflowListComponent,
   ],
   templateUrl: './external-detail.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,

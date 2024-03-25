@@ -17,8 +17,8 @@ import {
 } from '../../../../domain/models';
 import { forkJoin } from 'rxjs';
 import { MaterialModule } from '../../../../material.module';
-import { ListWorkflowComponent } from '../list-workflow/list-workflow.component';
-import { GraphWorkflowComponent } from '../graph-workflow/graph-workflow.component';
+import { WorkflowListComponent } from '../workflow-list/workflow-list.component';
+import { WorkflowGraphComponent } from '../workflow-graph/workflow-graph.component';
 
 @Component({
   selector: 'internal-detail',
@@ -27,8 +27,8 @@ import { GraphWorkflowComponent } from '../graph-workflow/graph-workflow.compone
     CommonModule,
     MaterialModule,
     LocationComponent,
-    ListWorkflowComponent,
-    GraphWorkflowComponent,
+    WorkflowListComponent,
+    WorkflowGraphComponent,
   ],
   templateUrl: './internal-detail.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,

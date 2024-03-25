@@ -86,34 +86,34 @@
               @if(row.status === 'pending'){
               <button (click)="accept(row)" mat-menu-item>
                 <mat-icon>done</mat-icon>
-                <span>Aceptar tramite</span>
+                <span>Aceptar</span>
               </button>
               <button (click)="reject(row)" mat-menu-item>
                 <mat-icon>block</mat-icon>
-                <span>Rechazar tramite</span>
+                <span>Rechazar</span>
               </button>
               } @else {
               <button (click)="send(row)" mat-menu-item>
                 <mat-icon>send</mat-icon>
-                <span>Remitir tramite</span>
-              </button>
-              <button (click)="generateRouteMap(row)" mat-menu-item>
-                <mat-icon>description</mat-icon>
-                <span>Hoja de ruta</span>
+                <span>Remitir</span>
               </button>
               <button
                 mat-menu-item
                 (click)="archive(row, StateProcedure.Concluido)"
               >
                 <mat-icon>domain_verification</mat-icon>
-                Concluir tramite
+                Concluir
               </button>
               <button
                 mat-menu-item
                 (click)="archive(row, StateProcedure.Suspendido)"
               >
                 <mat-icon>pause_presentation</mat-icon>
-                Suspender tramite
+                Suspender
+              </button>
+              <button (click)="generateRouteMap(row)" mat-menu-item>
+                <mat-icon>description</mat-icon>
+                <span>Hoja de ruta</span>
               </button>
               }
             </mat-menu>

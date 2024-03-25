@@ -3,13 +3,13 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { Workflow } from '../../../../domain/models';
 
 @Component({
-  selector: 'list-workflow',
+  selector: 'workflow-list',
   standalone: true,
   imports: [CommonModule],
-  templateUrl: './list-workflow.component.html',
-  styleUrl: './list-workflow.component.scss',
+  templateUrl: './workflow-list.component.html',
+  styleUrl: './workflow-list.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ListWorkflowComponent {
+export class WorkflowListComponent {
   data = input.required<Workflow[]>();
 }

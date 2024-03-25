@@ -5,10 +5,6 @@ import { environment } from '../../../../environments/environment';
 import { Communication, StateProcedure } from '../../../domain/models';
 import { communicationResponse } from '../../../infraestructure/interfaces';
 
-interface ArchiveDetail {
-  description: string;
-  state: StateProcedure.Concluido | StateProcedure.Suspendido;
-}
 @Injectable({
   providedIn: 'root',
 })
@@ -48,13 +44,17 @@ export class ArchiveService {
       );
   }
 
-  archiveCommunication(id: string, detail: ArchiveDetail) {
-    return this.http.post<{ message: string }>(
-      `${this.url}/mail/${id}`,
-      detail
-    );
+  create(
+    id: string,
+    description: string,
+    state: StateProcedure.Concluido | StateProcedure.Suspendido
+  ) {
+    return this.http.post<{ message: string }>(`${this.url}/mail/${id}`, {
+      description,
+      state,
+    });
   }
-  
+
   unarchiveCommunication(id: string) {
     return this.http.post<{ message: string }>(
       `${this.url}/mail/restore/${id}`,

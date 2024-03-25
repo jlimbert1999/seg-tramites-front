@@ -20,7 +20,7 @@ import {
   SearchInputComponent,
   SidenavButtonComponent,
 } from '../../../components';
-import { ProcedureDispatcherComponent } from '../../communications/inbox/procedure-dispatcher/procedure-dispatcher.component';
+import { DispatcherComponent } from '../../../components/procedures/dispatcher/dispatcher.component';
 import {
   ExternalService,
   CacheService,
@@ -149,7 +149,7 @@ export class ExternalsComponent {
       code: procedure.code,
       attachmentQuantity: procedure.amount,
     };
-    const dialogRef = this.dialog.open(ProcedureDispatcherComponent, {
+    const dialogRef = this.dialog.open(DispatcherComponent, {
       width: '1200px',
       data: transfer,
       disableClose: true,

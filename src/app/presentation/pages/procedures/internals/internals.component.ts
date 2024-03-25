@@ -30,7 +30,7 @@ import {
 import { InternalProcedure } from '../../../../domain/models';
 import { transferDetails } from '../../../../infraestructure/interfaces';
 import { StateLabelPipe } from '../../../pipes';
-import { ProcedureDispatcherComponent } from '../../communications/inbox/procedure-dispatcher/procedure-dispatcher.component';
+import { DispatcherComponent } from '../../../components/procedures/dispatcher/dispatcher.component';
 
 interface PaginationOptions {
   limit: number;
@@ -150,7 +150,7 @@ export class InternalsComponent {
       code: procedure.code,
       attachmentQuantity: procedure.amount,
     };
-    const dialogRef = this.dialog.open(ProcedureDispatcherComponent, {
+    const dialogRef = this.dialog.open(DispatcherComponent, {
       width: '1200px',
       data: transfer,
       disableClose: true,

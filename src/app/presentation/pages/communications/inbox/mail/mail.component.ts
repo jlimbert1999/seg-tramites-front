@@ -1,4 +1,6 @@
 import { CommonModule, Location } from '@angular/common';
+import { MatDialog } from '@angular/material/dialog';
+import { ActivatedRoute } from '@angular/router';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -6,12 +8,12 @@ import {
   inject,
   signal,
 } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { MatDialog } from '@angular/material/dialog';
+
 import { forkJoin, switchMap } from 'rxjs';
 import {
   ExternalDetailComponent,
   InternalDetailComponent,
+  DispatcherComponent,
 } from '../../../../components';
 import {
   Communication,
@@ -27,7 +29,6 @@ import {
   ProcedureService,
 } from '../../../../services';
 import { transferDetails } from '../../../../../infraestructure/interfaces';
-import { ProcedureDispatcherComponent } from '../procedure-dispatcher/procedure-dispatcher.component';
 import { MaterialModule } from '../../../../../material.module';
 import { InboxCache } from '../inbox.component';
 
@@ -45,7 +46,7 @@ import { InboxCache } from '../inbox.component';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MailComponent implements OnInit {
-  private activateRoute = inject(ActivatedRoute);
+  private route = inject(ActivatedRoute);
   private _location = inject(Location);
   private dialog = inject(MatDialog);
 
@@ -59,8 +60,10 @@ export class MailComponent implements OnInit {
 
   mail = signal<Communication | null>(null);
 
+  constructor() {}
+
   ngOnInit(): void {
-    this.activateRoute.params
+    this.route.params
       .pipe(switchMap(({ id }) => this.inboxService.getMail(id)))
       .subscribe((resp) => {
         this.mail.set(resp);
@@ -79,7 +82,7 @@ export class MailComponent implements OnInit {
             status: StatusMail.Received,
           });
           this.mail.set(updated);
-          this.updateMailCache(updated);
+          this.updateElementCache(updated);
         });
       },
     });
@@ -91,7 +94,7 @@ export class MailComponent implements OnInit {
       text: 'El tramite sera devuelto al funcionario emisor',
       callback: (descripion) => {
         this.inboxService.reject(this.detail._id, descripion).subscribe(() => {
-          this.removeMailCache();
+          this.removeElementCache();
           this.backLocation();
         });
       },
@@ -105,13 +108,13 @@ export class MailComponent implements OnInit {
       id_procedure: this.detail.procedure._id,
       attachmentQuantity: this.detail.attachmentQuantity,
     };
-    const dialogRef = this.dialog.open(ProcedureDispatcherComponent, {
+    const dialogRef = this.dialog.open(DispatcherComponent, {
       width: '1200px',
       data: detail,
     });
     dialogRef.afterClosed().subscribe((result) => {
       if (!result) return;
-      this.removeMailCache();
+      this.removeElementCache();
       this.backLocation();
     });
   }
@@ -124,12 +127,9 @@ export class MailComponent implements OnInit {
       text: 'El tramite pasara a su seccion de archivos',
       callback: (description) => {
         this.archiveService
-          .archiveCommunication(this.detail._id, {
-            description: description,
-            state: state,
-          })
+          .create(this.detail._id, description, state)
           .subscribe(() => {
-            this.removeMailCache();
+            this.removeElementCache();
             this.backLocation();
           });
       },
@@ -137,7 +137,7 @@ export class MailComponent implements OnInit {
   }
 
   backLocation() {
-    this.activateRoute.queryParams.subscribe((data) => {
+    this.route.queryParams.subscribe((data) => {
       this.cacheService.pageSize.set(data['limit'] ?? 10);
       this.cacheService.pageIndex.set(data['index'] ?? 0);
       this.cacheService.keepAliveData.set(true);
@@ -161,7 +161,7 @@ export class MailComponent implements OnInit {
     const { procedure, ...props } = this.detail;
     procedure.state = state;
     this.mail.set(new Communication({ ...props, procedure }));
-    this.updateMailCache(this.mail()!);
+    this.updateElementCache(this.detail);
   }
 
   get detail() {
@@ -172,7 +172,7 @@ export class MailComponent implements OnInit {
     return StateProcedure;
   }
 
-  private removeMailCache() {
+  private removeElementCache(): void {
     const cache = this.cacheService.load('inbox');
     if (!cache) return;
     const { datasource, datasize, ...props } = cache;
@@ -183,7 +183,7 @@ export class MailComponent implements OnInit {
     });
   }
 
-  private updateMailCache(mail: Communication): void {
+  private updateElementCache(mail: Communication): void {
     const cache = this.cacheService.load('inbox');
     if (!cache) return;
     const { datasource, ...props } = cache;
