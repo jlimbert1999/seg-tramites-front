@@ -55,6 +55,7 @@ export class ReportsComponent implements OnInit {
   private permissionMappings: Record<string, menu> = {
     applicant: { label: 'Solicitante', link: 'applicant' },
     search: { label: 'Busquedas', link: 'search' },
+    dependents: { label: 'Dependientes', link: 'dependents' },
   };
   private overlay = inject(Overlay);
   @ViewChild(CdkPortal) portal!: CdkPortal;

@@ -8,10 +8,10 @@ import {
   externalResponse,
   internalResponse,
   procedure,
+  reportUnit,
   TableProcedureData,
   typeProcedureResponse,
 } from '../../../infraestructure/interfaces';
-import { Procedure } from '../../../domain/models';
 
 interface SearchApplicantProps {
   by: 'solicitante' | 'representante';
@@ -77,13 +77,36 @@ export class ReportService {
   getUnlinkAccountData() {
     return this.http
       .get<{ account: accountResponse; inbox: communicationResponse[] }>(
-        `${this.url}/pendings`
+        `${this.url}/unlink`
       )
       .pipe(
         map((resp) => {
           return { accont: resp.account, inbox: resp.inbox };
         })
       );
+  }
+
+  getPendingsByUnit() {
+    return this.http.get<reportUnit[]>(`${this.url}/unit/pendings`).pipe(
+      map((resp) =>
+        resp.map(({ _id: { _id, funcionario }, pendings }) => ({
+          id: _id,
+          officer: funcionario
+            ? {
+                fullname: `${funcionario.nombre} ${funcionario.nombre} ${funcionario.nombre}`,
+                jobtitle: funcionario.cargo?.nombre ?? 'SIN CARGO',
+              }
+            : undefined,
+          pendings,
+        }))
+      )
+    );
+  }
+
+  getPendingsByAccount(id_account: string) {
+    return this.http.get<communicationResponse[]>(
+      `${this.url}/pending/${id_account}`
+    );
   }
 
   private removeEmptyValuesFromObject(form: Object) {

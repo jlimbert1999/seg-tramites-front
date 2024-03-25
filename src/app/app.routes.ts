@@ -12,6 +12,7 @@ import {
   isNotAuthenticatedGuard,
 } from './presentation/guards';
 import { InfoComponent } from './presentation/layouts/home/info/info.component';
+import { ReportDependentsComponent } from './presentation/pages/reportss/report-dependents/report-dependents.component';
 
 export const routes: Routes = [
   {
@@ -157,10 +158,13 @@ export const routes: Routes = [
             path: 'applicant',
             component: ReportApplicantComponent,
           },
-
           {
             path: 'search',
             component: ReportSearchComponent,
+          },
+          {
+            path: 'dependents',
+            component: ReportDependentsComponent,
           },
           {
             path: '',

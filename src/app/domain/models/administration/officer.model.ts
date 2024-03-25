@@ -11,9 +11,8 @@ interface OfficerProps {
   materno: string;
   dni: number;
   telefono: number;
-  direccion: string;
+  // direccion: string;
   activo: boolean;
-  cuenta: boolean;
   cargo?: job;
 }
 export class Officer {
@@ -26,9 +25,8 @@ export class Officer {
       materno: obj['materno'],
       dni: obj['dni'],
       telefono: obj['telefono'],
-      direccion: obj['direccion'],
+      // direccion: obj['direccion'],
       activo: obj['activo'],
-      cuenta: obj['cuenta'],
       cargo: obj['cargo'],
     });
   }
@@ -38,9 +36,8 @@ export class Officer {
   public materno: string;
   public dni: number;
   public telefono: number;
-  public direccion: string;
+  // public direccion: string;
   public activo: boolean;
-  public cuenta: boolean;
   public cargo?: job;
 
   constructor({
@@ -50,9 +47,8 @@ export class Officer {
     materno,
     dni,
     telefono,
-    direccion,
+    // direccion,
     activo,
-    cuenta,
     cargo,
   }: OfficerProps) {
     this._id = _id;
@@ -61,9 +57,8 @@ export class Officer {
     this.materno = materno;
     this.dni = dni;
     this.telefono = telefono;
-    this.direccion = direccion;
+    // this.direccion = direccion;
     this.activo = activo;
-    this.cuenta = cuenta;
     this.cargo = cargo;
   }
 

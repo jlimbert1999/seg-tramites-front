@@ -30,6 +30,7 @@ import { UnlinkSheet } from '../../helpers/pdf/unlink-form';
 import { AuthService } from './auth/auth.service';
 import { GenerateReportSheet } from '../../helpers/pdf/report-sheet';
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
+import html2canvas from 'html2canvas';
 
 interface ReportSheetProps {
   title: string;
@@ -232,7 +233,8 @@ export class PdfService {
     colums: {
       columnDef: string;
       header: string;
-    }[]
+    }[],
+    element?: HTMLElement
   ) {
     const docDefinition: TDocumentDefinitions = {
       header: {
@@ -270,7 +272,9 @@ export class PdfService {
       pageSize: 'LETTER',
       pageOrientation: 'portrait',
       pageMargins: [30, 110, 40, 30],
-      content: [GenerateReportSheet(FormQuery, results, colums)],
+      content: [
+        await GenerateReportSheet(FormQuery, results, colums, element!),
+      ],
     };
     pdfMake.createPdf(docDefinition).print();
   }

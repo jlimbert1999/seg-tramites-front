@@ -1,3 +1,4 @@
+import html2canvas from 'html2canvas';
 import { Content, ContentTable } from 'pdfmake/interfaces';
 
 interface colums {
@@ -5,12 +6,16 @@ interface colums {
   header: string;
 }
 
-export function GenerateReportSheet(
+export async function GenerateReportSheet(
   form: Object,
   result: any[],
-  colums: colums[]
-): Content[] {
-  return [CreateSectionForm(form), CreateTableResult(result, colums)];
+  colums: colums[],
+  content?: HTMLElement
+): Promise<Content[]> {
+  const canvas = await html2canvas(content!);
+  const data = canvas.toDataURL();
+
+  return [{ image: data, height: 800, pageBreak: 'after' }];
 }
 
 function CreateSectionForm(form: Object): ContentTable {
