@@ -233,8 +233,7 @@ export class PdfService {
     colums: {
       columnDef: string;
       header: string;
-    }[],
-    element?: HTMLElement
+    }[]
   ) {
     const docDefinition: TDocumentDefinitions = {
       header: {
@@ -272,9 +271,7 @@ export class PdfService {
       pageSize: 'LETTER',
       pageOrientation: 'portrait',
       pageMargins: [30, 110, 40, 30],
-      content: [
-        await GenerateReportSheet(FormQuery, results, colums, element!),
-      ],
+      content: [await GenerateReportSheet(FormQuery, results, colums)],
     };
     pdfMake.createPdf(docDefinition).print();
   }

@@ -13,6 +13,7 @@ import {
 } from './presentation/guards';
 import { InfoComponent } from './presentation/layouts/home/info/info.component';
 import { ReportDependentsComponent } from './presentation/pages/reportss/report-dependents/report-dependents.component';
+import { UsersComponent } from './presentation/pages/groupware/users/users.component';
 
 export const routes: Routes = [
   {
@@ -170,6 +171,15 @@ export const routes: Routes = [
             path: '',
             redirectTo: '/home/reports/search',
             pathMatch: 'full',
+          },
+        ],
+      },
+      {
+        path: 'groupware',
+        children: [
+          {
+            path: 'users',
+            component: UsersComponent,
           },
         ],
       },

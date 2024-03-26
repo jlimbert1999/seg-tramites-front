@@ -36,14 +36,12 @@ export class ReportDependentsComponent implements OnInit {
   }
 
   getInbox(id_acoun: string) {
-    let s = document.getElementById('test');
     this.reportService.getPendingsByAccount(id_acoun).subscribe((data) => {
       this.pdfService.GenerateReportSheet(
         'reporte',
         {},
         data,
         [{ columnDef: 'reference', header: 'Referncia' }],
-        s!
       );
     });
   }

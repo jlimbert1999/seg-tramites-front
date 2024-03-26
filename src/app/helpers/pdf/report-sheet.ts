@@ -9,13 +9,9 @@ interface colums {
 export async function GenerateReportSheet(
   form: Object,
   result: any[],
-  colums: colums[],
-  content?: HTMLElement
+  colums: colums[]
 ): Promise<Content[]> {
-  const canvas = await html2canvas(content!);
-  const data = canvas.toDataURL();
-
-  return [{ image: data, height: 800, pageBreak: 'after' }];
+  return [CreateTableResult(result, colums)];
 }
 
 function CreateSectionForm(form: Object): ContentTable {
