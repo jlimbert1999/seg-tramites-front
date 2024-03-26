@@ -1,0 +1,18 @@
+<mat-toolbar>
+  <sidenav-button />
+  <span>Groupware</span>
+  <span class="toolbar-spacer"></span>
+</mat-toolbar>
+<div>
+  @for (user of users|async; track user.id_account) {
+  <mat-list-item>
+    <img
+      matListItemAvatar
+      src="../../../../../assets/img/account.png"
+      alt="User picture"
+    />
+    <div matListItemTitle>{{ user.officer.fullname | titlecase }}</div>
+    <div matListItemLine>{{ user.officer.jobtitle }}</div>
+  </mat-list-item>
+  }
+</div>

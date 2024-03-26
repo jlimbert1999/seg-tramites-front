@@ -13,12 +13,12 @@ import {
 } from './presentation/guards';
 import { InfoComponent } from './presentation/layouts/home/info/info.component';
 import { ReportDependentsComponent } from './presentation/pages/reportss/report-dependents/report-dependents.component';
-import { UsersComponent } from './presentation/pages/groupware/users/users.component';
+import { ClientsComponent } from './presentation/pages/groupware/clients/clients.component';
 
 export const routes: Routes = [
   {
     path: 'login',
-    canActivate: [isNotAuthenticatedGuard],
+    // canActivate: [isNotAuthenticatedGuard],
     component: LoginComponent,
     title: 'Inicio de sesion',
   },
@@ -179,7 +179,7 @@ export const routes: Routes = [
         children: [
           {
             path: 'users',
-            component: UsersComponent,
+            component: ClientsComponent,
           },
         ],
       },

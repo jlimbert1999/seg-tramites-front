@@ -55,7 +55,7 @@ export class HomeComponent implements OnInit {
   private appearanceService = inject(AppearanceService);
   private socketService = inject(SocketService);
   private alertservice = inject(AlertService);
-  private detroyref = inject(DestroyRef);
+  private destroyRef = inject(DestroyRef);
   private router = inject(Router);
   private breakpointObserver = inject(BreakpointObserver);
 
@@ -65,6 +65,10 @@ export class HomeComponent implements OnInit {
     .pipe(map((result) => result.matches));
 
   constructor() {
+    this.socketService.connect();
+    this.destroyRef.onDestroy(() => {
+      this.socketService.disconnect();
+    });
     effect(() => {
       this.sidenav.toggle();
       return this.appearanceService.isSidenavToggle();
@@ -75,7 +79,7 @@ export class HomeComponent implements OnInit {
     this.socketService.listenUserConnection();
     this.socketService
       .listenProceduresDispatches()
-      .pipe(takeUntilDestroyed(this.detroyref))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((data) =>
         this.alertservice.Toast({
           title: `${data.emitter.fullname} ha enviado un tramite`,
