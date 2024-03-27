@@ -78,6 +78,17 @@ export class HomeComponent implements OnInit {
   ngOnInit(): void {
     this.socketService.listenUserConnection();
     this.socketService
+      .listExpel()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((message) => {
+        this.alertservice.Alert({
+          icon: 'info',
+          title: 'Usted ha sido expulsado',
+          text: message,
+        });
+        this.logout();
+      });
+    this.socketService
       .listenProceduresDispatches()
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((data) =>

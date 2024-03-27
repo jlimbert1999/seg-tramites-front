@@ -3,16 +3,28 @@
   <span>Groupware</span>
   <span class="toolbar-spacer"></span>
 </mat-toolbar>
-<div>
-  @for (user of users|async; track user.id_account) {
-  <mat-list-item>
-    <img
-      matListItemAvatar
-      src="../../../../../assets/img/account.png"
-      alt="User picture"
-    />
-    <div matListItemTitle>{{ user.officer.fullname | titlecase }}</div>
-    <div matListItemLine>{{ user.officer.jobtitle }}</div>
-  </mat-list-item>
-  }
+<div class="container mt-2">
+  <form>
+    <mat-form-field>
+      <mat-label>Buscar funcionario</mat-label>
+      <input
+        matInput
+        [formControl]="clientCtrl"
+        placeholder="Ingrese el nombre o cargo"
+      />
+    </mat-form-field>
+  </form>
+  <mat-list>
+    @for (user of filteredClients|async; track user.id_account) {
+    <mat-list-item>
+      <img matListItemAvatar src="../../../../../assets/img/account.png" />
+      <div matListItemTitle>{{ user.officer.fullname | titlecase }}</div>
+      <div matListItemLine>{{ user.officer.jobtitle }}</div>
+      <div matListItemLine>sesiones: {{ user.socketIds.length }}</div>
+      <button mat-icon-button matListItemMeta (click)="confirmRemove(user)">
+        <mat-icon>close</mat-icon>
+      </button>
+    </mat-list-item>
+    }
+  </mat-list>
 </div>

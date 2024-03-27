@@ -43,8 +43,6 @@
               "moment",
               "dagre",
               "webcola"
-              
-
            ]
           },
           "configurations": {

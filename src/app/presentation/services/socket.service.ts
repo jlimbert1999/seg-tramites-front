@@ -7,6 +7,7 @@ import {
   communicationResponse,
 } from '../../infraestructure/interfaces';
 import { Communication } from '../../domain/models';
+import { Alert } from '../../helpers';
 
 @Injectable({
   providedIn: 'root',
@@ -33,7 +34,8 @@ export class SocketService {
   }
 
   listenUserConnection() {
-    this.socket!.on('listar', (data: UserSocket[]) => {
+    this.socket.on('listar', (data: UserSocket[]) => {
+      console.log('new users', data);
       this.onlineUsersSubject.next(data);
     });
   }
@@ -52,5 +54,17 @@ export class SocketService {
         observable.next(id_mail);
       });
     });
+  }
+
+  listExpel(): Observable<string> {
+    return new Observable((observable) => {
+      this.socket!.on('has-expel', (message: string) => {
+        observable.next(message);
+      });
+    });
+  }
+
+  expelClient(id_account: string, message: string) {
+    this.socket.emit('expel', { id_account, message });
   }
 }
