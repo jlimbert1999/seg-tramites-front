@@ -3,7 +3,7 @@ import { Socket, io } from 'socket.io-client';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import {
-  UserSocket,
+  SocketClient,
   communicationResponse,
 } from '../../infraestructure/interfaces';
 import { Communication } from '../../domain/models';
@@ -14,9 +14,7 @@ import { Alert } from '../../helpers';
 })
 export class SocketService {
   private socket: Socket;
-  private onlineUsersSubject = new BehaviorSubject<UserSocket[]>([]);
-  public onlineUsers$ = this.onlineUsersSubject.asObservable();
-  public readonly users: UserSocket[] = [];
+  // private onlineClientSubject = new BehaviorSubject<SocketClient[]>([]);
 
   constructor() {}
 
@@ -33,11 +31,17 @@ export class SocketService {
     }
   }
 
-  listenUserConnection() {
-    this.socket.on('listar', (data: UserSocket[]) => {
-      console.log('new users', data);
-      this.onlineUsersSubject.next(data);
+  listenClientConnection(): Observable<SocketClient[]> {
+    console.log('new usr');
+    return new Observable((observable) => {
+      this.socket.on('listar', (clients: SocketClient[]) => {
+        observable.next(clients);
+      });
     });
+    // this.socket.on('listar', (clients: SocketClient[]) => {
+    //   this.onlineClientSubject.next(clients);
+    // });
+    // return this.onlineClientSubject.asObservable();
   }
 
   listenProceduresDispatches(): Observable<Communication> {
@@ -65,6 +69,6 @@ export class SocketService {
   }
 
   expelClient(id_account: string, message: string) {
-    this.socket.emit('expel', { id_account, message });
+    this.socket.emit('expel', { id_account, message: undefined });
   }
 }

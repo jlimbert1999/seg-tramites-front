@@ -8,16 +8,10 @@ import {
   effect,
   inject,
 } from '@angular/core';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatSidenav, MatSidenavModule } from '@angular/material/sidenav';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
-import { MatToolbarModule } from '@angular/material/toolbar';
-import { MatButtonModule } from '@angular/material/button';
-import { MatMenuModule } from '@angular/material/menu';
-import { MatIconModule } from '@angular/material/icon';
-import { MatListModule } from '@angular/material/list';
-import { Router, RouterModule } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { MatSidenav } from '@angular/material/sidenav';
+import { Router, RouterModule } from '@angular/router';
 import { map } from 'rxjs';
 import {
   AuthService,
@@ -29,20 +23,15 @@ import {
   SidenavButtonComponent,
   NavigationListComponent,
 } from '../../components';
+import { MaterialModule } from '../../../material.module';
 
 @Component({
   selector: 'app-home',
   standalone: true,
   imports: [
     CommonModule,
-    MatSidenavModule,
-    MatToolbarModule,
-    MatIconModule,
-    MatListModule,
-    MatButtonModule,
-    MatMenuModule,
     RouterModule,
-    MatProgressSpinnerModule,
+    MaterialModule,
     NavigationListComponent,
     SidenavButtonComponent,
   ],
@@ -76,7 +65,17 @@ export class HomeComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.socketService.listenUserConnection();
+    this.handleExpelClient();
+    this.handleCommunications();
+  }
+
+  logout() {
+    this.socketService.disconnect();
+    this.authService.logout();
+    this.router.navigate(['/login']);
+  }
+
+  private handleExpelClient(): void {
     this.socketService
       .listExpel()
       .pipe(takeUntilDestroyed(this.destroyRef))
@@ -88,6 +87,9 @@ export class HomeComponent implements OnInit {
         });
         this.logout();
       });
+  }
+
+  private handleCommunications(): void {
     this.socketService
       .listenProceduresDispatches()
       .pipe(takeUntilDestroyed(this.destroyRef))
@@ -97,12 +99,6 @@ export class HomeComponent implements OnInit {
           message: data.reference,
         })
       );
-  }
-
-  logout() {
-    this.socketService.disconnect();
-    this.authService.logout();
-    this.router.navigate(['/login']);
   }
 
   get menu() {

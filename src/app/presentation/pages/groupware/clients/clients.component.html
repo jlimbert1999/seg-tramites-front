@@ -15,7 +15,7 @@
     </mat-form-field>
   </form>
   <mat-list>
-    @for (user of filteredClients|async; track user.id_account) {
+    @for (user of filteredClients|async; track user) {
     <mat-list-item>
       <img matListItemAvatar src="../../../../../assets/img/account.png" />
       <div matListItemTitle>{{ user.officer.fullname | titlecase }}</div>

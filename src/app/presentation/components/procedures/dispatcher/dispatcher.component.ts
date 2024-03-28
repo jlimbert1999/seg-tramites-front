@@ -171,7 +171,7 @@ export class DispatcherComponent implements OnInit {
   }
 
   private getOnlineUsers(receivers: receiver[]) {
-    return this.socketService.onlineUsers$.pipe(
+    return this.socketService.listenClientConnection().pipe(
       takeUntilDestroyed(this.destroyRef),
       map((users) =>
         receivers.map((receiver) => {
