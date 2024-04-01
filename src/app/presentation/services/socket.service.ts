@@ -7,14 +7,14 @@ import {
   communicationResponse,
 } from '../../infraestructure/interfaces';
 import { Communication } from '../../domain/models';
-import { Alert } from '../../helpers';
 
 @Injectable({
   providedIn: 'root',
 })
 export class SocketService {
   private socket: Socket;
-  // private onlineClientSubject = new BehaviorSubject<SocketClient[]>([]);
+  private onlineClientsSubject = new BehaviorSubject<SocketClient[]>([]);
+  public onlineClients$ = this.onlineClientsSubject.asObservable();
 
   constructor() {}
 
@@ -31,22 +31,16 @@ export class SocketService {
     }
   }
 
-  listenClientConnection(): Observable<SocketClient[]> {
-    console.log('new usr');
-    return new Observable((observable) => {
-      this.socket.on('listar', (clients: SocketClient[]) => {
-        observable.next(clients);
-      });
+  listenClientConnection() {
+    this.socket.on('listar', (clients: SocketClient[]) => {
+      console.log('clients');
+      this.onlineClientsSubject.next(clients);
     });
-    // this.socket.on('listar', (clients: SocketClient[]) => {
-    //   this.onlineClientSubject.next(clients);
-    // });
-    // return this.onlineClientSubject.asObservable();
   }
 
   listenProceduresDispatches(): Observable<Communication> {
     return new Observable((observable) => {
-      this.socket!.on('new-mail', (data: communicationResponse) => {
+      this.socket.on('new-mail', (data: communicationResponse) => {
         observable.next(Communication.fromResponse(data));
       });
     });
@@ -54,7 +48,7 @@ export class SocketService {
 
   listenCancelDispatches(): Observable<string> {
     return new Observable((observable) => {
-      this.socket!.on('cancel-mail', (id_mail: string) => {
+      this.socket.on('cancel-mail', (id_mail: string) => {
         observable.next(id_mail);
       });
     });
@@ -62,13 +56,17 @@ export class SocketService {
 
   listExpel(): Observable<string> {
     return new Observable((observable) => {
-      this.socket!.on('has-expel', (message: string) => {
+      this.socket.on('has-expel', (message: string) => {
         observable.next(message);
       });
     });
   }
 
   expelClient(id_account: string, message: string) {
-    this.socket.emit('expel', { id_account, message: undefined });
+    this.socket.emit('expel', { id_account, message });
+  }
+
+  closeOne(name: string) {
+    this.socket.removeListener(name);
   }
 }

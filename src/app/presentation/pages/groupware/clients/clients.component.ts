@@ -6,9 +6,9 @@ import {
   OnInit,
   inject,
 } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { Observable, map, of, startWith, switchMap, tap } from 'rxjs';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Observable, combineLatest, map, startWith } from 'rxjs';
 import { MaterialModule } from '../../../../material.module';
 import { SidenavButtonComponent } from '../../../components';
 import { AlertService, SocketService } from '../../../services';
@@ -19,10 +19,10 @@ import { SocketClient } from '../../../../infraestructure/interfaces';
   standalone: true,
   imports: [
     CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
     MaterialModule,
     SidenavButtonComponent,
-    ReactiveFormsModule,
-    FormsModule,
   ],
   templateUrl: './clients.component.html',
   styleUrl: './clients.component.scss',
@@ -36,16 +36,32 @@ export class ClientsComponent implements OnInit {
   filteredClients: Observable<SocketClient[]>;
   clientCtrl = new FormControl('');
 
-  ngOnInit(): void {
-    this.filteredClients = this.clientCtrl.valueChanges.pipe(
-      takeUntilDestroyed(this.destroyRef),
-      startWith(''),
-      switchMap((term) => {
-        console.log(term);
-        return this.socketService.listenClientConnection()  
-      })
-    );
+  constructor() {
+    this.destroyRef.onDestroy(() => {
+      this.socketService.closeOne('listar');
+    });
   }
+
+  ngOnInit(): void {
+    // this.filteredClients = combineLatest([
+    //   this.socketService.listenClientConnection(),
+    //   this.clientCtrl.valueChanges.pipe(startWith('')),
+    // ]).pipe(
+    //   takeUntilDestroyed(this.destroyRef),
+    //   map(([clients, term]) => {
+    //     if (!term) return clients;
+    //     return clients.filter(({ officer: { fullname, jobtitle } }) => {
+    //       const textToSearch = term.toLowerCase();
+    //       return (
+    //         fullname.toLowerCase().includes(textToSearch) ||
+    //         jobtitle.toLowerCase().includes(textToSearch)
+    //       );
+    //     });
+    //   })
+    // );
+    this.filteredClients = this.socketService.onlineClients$;
+  }
+
   confirmRemove(client: SocketClient) {
     this.alertService.ConfirmAlert({
       title: `¿Expulsar al funcionario ${client.officer.fullname} (${client.officer.jobtitle})?`,

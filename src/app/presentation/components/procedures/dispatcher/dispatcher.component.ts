@@ -149,7 +149,7 @@ export class DispatcherComponent implements OnInit {
   getAccounts(id_dependency: string) {
     this.inboxService
       .getAccountsForSend(id_dependency)
-      .pipe(switchMap((data) => this.getOnlineUsers(data)))
+      // .pipe(switchMap((data) => this.getOnlineUsers(data)))
       .subscribe((accounts) => {
         this.receivers.set(accounts);
         this.filteredReceivers$.next(accounts);
@@ -171,16 +171,16 @@ export class DispatcherComponent implements OnInit {
   }
 
   private getOnlineUsers(receivers: receiver[]) {
-    return this.socketService.listenClientConnection().pipe(
-      takeUntilDestroyed(this.destroyRef),
-      map((users) =>
-        receivers.map((receiver) => {
-          const isOnline = users.some(
-            (user) => user.id_account === receiver.id_account
-          );
-          return { ...receiver, online: isOnline };
-        })
-      )
-    );
+    // return this.socketService.listenClientConnection().pipe(
+    //   takeUntilDestroyed(this.destroyRef),
+    //   map((users) =>
+    //     receivers.map((receiver) => {
+    //       const isOnline = users.some(
+    //         (user) => user.id_account === receiver.id_account
+    //       );
+    //       return { ...receiver, online: isOnline };
+    //     })
+    //   )
+    // );
   }
 }

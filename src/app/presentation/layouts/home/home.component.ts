@@ -54,7 +54,6 @@ export class HomeComponent implements OnInit {
     .pipe(map((result) => result.matches));
 
   constructor() {
-    this.socketService.connect();
     this.destroyRef.onDestroy(() => {
       this.socketService.disconnect();
     });
@@ -65,6 +64,8 @@ export class HomeComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.socketService.connect();
+    this.handleOnlineClients();
     this.handleExpelClient();
     this.handleCommunications();
   }
@@ -73,6 +74,10 @@ export class HomeComponent implements OnInit {
     this.socketService.disconnect();
     this.authService.logout();
     this.router.navigate(['/login']);
+  }
+
+  private handleOnlineClients(): void {
+    this.socketService.listenClientConnection();
   }
 
   private handleExpelClient(): void {
