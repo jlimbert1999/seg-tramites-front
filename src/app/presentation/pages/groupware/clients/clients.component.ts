@@ -7,8 +7,12 @@ import {
   inject,
 } from '@angular/core';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { Observable, combineLatest, map, startWith } from 'rxjs';
+import {
+  Observable,
+  map,
+  startWith,
+  switchMap,
+} from 'rxjs';
 import { MaterialModule } from '../../../../material.module';
 import { SidenavButtonComponent } from '../../../components';
 import { AlertService, SocketService } from '../../../services';
@@ -33,33 +37,16 @@ export class ClientsComponent implements OnInit {
   private alertService = inject(AlertService);
   private destroyRef = inject(DestroyRef);
 
+  filterCtrl = new FormControl('');
   filteredClients: Observable<SocketClient[]>;
-  clientCtrl = new FormControl('');
 
-  constructor() {
-    this.destroyRef.onDestroy(() => {
-      this.socketService.closeOne('listar');
-    });
-  }
+  constructor() {}
 
   ngOnInit(): void {
-    // this.filteredClients = combineLatest([
-    //   this.socketService.listenClientConnection(),
-    //   this.clientCtrl.valueChanges.pipe(startWith('')),
-    // ]).pipe(
-    //   takeUntilDestroyed(this.destroyRef),
-    //   map(([clients, term]) => {
-    //     if (!term) return clients;
-    //     return clients.filter(({ officer: { fullname, jobtitle } }) => {
-    //       const textToSearch = term.toLowerCase();
-    //       return (
-    //         fullname.toLowerCase().includes(textToSearch) ||
-    //         jobtitle.toLowerCase().includes(textToSearch)
-    //       );
-    //     });
-    //   })
-    // );
-    this.filteredClients = this.socketService.onlineClients$;
+    this.filteredClients = this.filterCtrl.valueChanges.pipe(
+      startWith(''),
+      switchMap((term) => this._filter(term))
+    );
   }
 
   confirmRemove(client: SocketClient) {
@@ -74,5 +61,20 @@ export class ClientsComponent implements OnInit {
 
   private _remove(client: SocketClient, message: string) {
     this.socketService.expelClient(client.id_account, message);
+  }
+
+  private _filter(term: string | null) {
+    return this.socketService.onlineClients$.pipe(
+      map((clients) => {
+        if (!term) return clients;
+        return clients.filter(({ officer: { fullname, jobtitle } }) => {
+          const textToSearch = term.toLowerCase();
+          return (
+            fullname.toLowerCase().includes(textToSearch) ||
+            jobtitle.toLowerCase().includes(textToSearch)
+          );
+        });
+      })
+    );
   }
 }
