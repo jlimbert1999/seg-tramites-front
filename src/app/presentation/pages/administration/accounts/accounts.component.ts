@@ -6,30 +6,20 @@ import {
   inject,
   signal,
 } from '@angular/core';
-import { MatDialog, MatDialogModule } from '@angular/material/dialog';
-import { MatSlideToggleModule } from '@angular/material/slide-toggle';
-import { MatToolbarModule } from '@angular/material/toolbar';
-import { MatButtonModule } from '@angular/material/button';
-import { MatTableModule } from '@angular/material/table';
-import { MatInputModule } from '@angular/material/input';
-import { MatIconModule } from '@angular/material/icon';
-import { MatMenuModule } from '@angular/material/menu';
+import { MatDialog } from '@angular/material/dialog';
 import { FormsModule } from '@angular/forms';
-
-import { AccountService } from './services/account.service';
 import { CreateAccountComponent } from './create-account/create-account.component';
 import { Account } from '../../../../domain/models';
 import {
   PaginatorComponent,
   SidenavButtonComponent,
   ServerSelectSearchComponent,
+  SimpleSelectSearchComponent,
 } from '../../../components';
 import { EditAccountComponent } from './edit-account/edit-account.component';
+import { AccountService } from '../../../services';
+import { MaterialModule } from '../../../../material.module';
 
-interface PageProps {
-  limit: number;
-  index: number;
-}
 interface SelectOption {
   value: string;
   text: string;
@@ -39,20 +29,15 @@ interface SelectOption {
   standalone: true,
   imports: [
     CommonModule,
-    MatSlideToggleModule,
-    MatToolbarModule,
-    MatDialogModule,
-    MatInputModule,
-    MatTableModule,
-    MatIconModule,
     FormsModule,
-    MatButtonModule,
-    MatMenuModule,
+    MaterialModule,
     PaginatorComponent,
     SidenavButtonComponent,
     ServerSelectSearchComponent,
+    SimpleSelectSearchComponent,
   ],
   templateUrl: './accounts.component.html',
+  styleUrl: './accounts.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AccountsComponent {
@@ -63,14 +48,12 @@ export class AccountsComponent {
     'login',
     'nombre',
     'dependency',
-    'activo',
     'options',
   ];
   public accounts = signal<Account[]>([]);
   public institutions = signal<SelectOption[]>([]);
-  public filteredInstitutions = signal<SelectOption[]>([]);
   public dependencies = signal<SelectOption[]>([]);
-  public filteredDependencies = signal<SelectOption[]>([]);
+
   public id_dependencia?: string;
   public text: string = '';
 
@@ -86,51 +69,24 @@ export class AccountsComponent {
 
   getInstitutions() {
     this.accountService.getInstitutions().subscribe((data) => {
-      const options = data.map((inst) => ({
-        text: inst.nombre,
-        value: inst._id,
-      }));
-      this.institutions.set(options);
-      this.filteredInstitutions.set(options);
+      this.institutions.set(
+        data.map(({ _id, nombre }) => ({
+          text: nombre,
+          value: _id,
+        }))
+      );
     });
   }
 
-  filterInstitutions(term: string) {
-    this.filteredInstitutions.set(
-      this.institutions().filter(
-        (op) => op.text.toLowerCase().indexOf(term) > -1
-      )
-    );
-  }
-
-  getDependenciesByInstitution(id_institucion: string | undefined) {
-    if (!id_institucion) {
-      this.index.set(0);
-      this.dependencies.set([]);
-      this.id_dependencia = undefined;
-      this.filteredDependencies.set([]);
-      this.getData();
-      return;
-    }
-    this.accountService
-      .getDependenciesOfInstitution(id_institucion)
-      .subscribe((data) => {
-        this.dependencies.set(
-          data.map((dependency) => ({
-            value: dependency._id,
-            text: dependency.nombre,
-          }))
-        );
-        this.filteredDependencies.set(this.dependencies());
-      });
-  }
-
-  filterDependencies(term: string) {
-    this.filteredDependencies.set(
-      this.dependencies().filter(
-        (op) => op.text.toLowerCase().indexOf(term!) > -1
-      )
-    );
+  selectInstitution(id: string | undefined) {
+    this.dependencies.set([]);
+    this.id_dependencia = undefined;
+    if (!id) return;
+    this.accountService.getDependenciesOfInstitution(id).subscribe((data) => {
+      this.dependencies.set(
+        data.map(({ _id, nombre }) => ({ value: _id, text: nombre }))
+      );
+    });
   }
 
   getData() {
@@ -159,7 +115,7 @@ export class AccountsComponent {
     this.getData();
   }
 
-  applyFilterByDependency(id_dependency?: string) {
+  applyFilterByDependency(id_dependency: string | undefined) {
     this.index.set(0);
     this.id_dependencia = id_dependency;
     this.getData();
@@ -167,18 +123,18 @@ export class AccountsComponent {
 
   add() {
     const dialogRef = this.dialog.open(CreateAccountComponent, {
-      width: '1000px',
+      maxWidth: '800px',
     });
     dialogRef.afterClosed().subscribe((result: Account) => {
       if (!result) return;
       this.accounts.update((values) => [result, ...values]);
-      this.length.update((values) => values++);
+      this.length.update((value) => (value += 1));
     });
   }
 
   edit(accont: Account) {
     const dialogRef = this.dialog.open(EditAccountComponent, {
-      width: '1200px',
+      maxWidth: '800px',
       data: accont,
     });
     dialogRef.afterClosed().subscribe((result?: Account) => {
@@ -192,14 +148,14 @@ export class AccountsComponent {
   }
 
   assign() {
-    const dialogRef = this.dialog.open(CreateAccountComponent, {
-      width: '1000px',
-    });
-    dialogRef.afterClosed().subscribe((result: Account) => {
-      if (!result) return;
-      this.accounts.update((values) => [result, ...values]);
-      this.length.update((values) => values++);
-    });
+    // const dialogRef = this.dialog.open(Assig, {
+    //   width: '1000px',
+    // });
+    // dialogRef.afterClosed().subscribe((result: Account) => {
+    //   if (!result) return;
+    //   this.accounts.update((values) => [result, ...values]);
+    //   this.length.update((values) => values++);
+    // });
   }
 
   cancelSearch() {
@@ -228,9 +184,9 @@ export class AccountsComponent {
     });
   }
 
-  onPageChage({ limit, index }: PageProps) {
-    this.limit.set(limit);
-    this.index.set(index);
+  onPageChage(params: { limit: number; index: number }) {
+    this.limit.set(params.limit);
+    this.index.set(params.index);
     this.getData();
   }
 }

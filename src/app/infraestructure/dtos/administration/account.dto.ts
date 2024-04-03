@@ -1,18 +1,18 @@
 interface AccountProps {
+  rol: string;
   login: string;
   password: string;
+  funcionario: string;
   dependencia: string;
-  rol: string;
-  funcionario?: string;
 }
 export class AccountDto {
   login: string;
   password: string;
   dependencia: string;
   rol: string;
-  funcionario?: string;
+  funcionario: string;
 
-  static FormtoModel(fomAccount: any) {
+  static toModel(fomAccount: any) {
     return new AccountDto({
       login: fomAccount['login'],
       dependencia: fomAccount['dependencia'],
@@ -21,7 +21,13 @@ export class AccountDto {
       funcionario: fomAccount['funcionario'],
     });
   }
-  constructor({ login, password, dependencia, rol, funcionario }: AccountProps) {
+  constructor({
+    login,
+    password,
+    dependencia,
+    rol,
+    funcionario,
+  }: AccountProps) {
     this.login = login;
     this.password = password;
     this.dependencia = dependencia;

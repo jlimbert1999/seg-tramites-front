@@ -96,7 +96,7 @@
             <server-select-search
               placeholder="Buscar tipo de tramite"
               [initialValue]="FormProcedure().get('type')?.value"
-              [data]="typeProcedures()"
+              [elements]="typeProcedures()"
               (onSearch)="searchTypesProcedures($event)"
               (onSelect)="setTypeProcedure($event)"
             />

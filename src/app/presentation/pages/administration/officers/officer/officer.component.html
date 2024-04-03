@@ -39,7 +39,7 @@
     @if(!FormOfficer.get('cargo')?.value){
     <div class="col-sm-12">
       <server-select-search
-        [data]="jobs()"
+        [elements]="jobs()"
         (onSearch)="searchJob($event)"
         (onSelect)="setJob($event)"
       ></server-select-search>

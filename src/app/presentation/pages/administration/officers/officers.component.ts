@@ -6,7 +6,6 @@ import {
   inject,
   signal,
 } from '@angular/core';
-import { OfficerService } from './services/officer.service';
 import { MatDialog } from '@angular/material/dialog';
 import { OfficerComponent } from './officer/officer.component';
 import { WorkHistoryComponent } from './work-history/work-history.component';
@@ -19,6 +18,7 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatButtonModule } from '@angular/material/button';
 import { Officer } from '../../../../domain/models';
 import { SidenavButtonComponent, PaginatorComponent } from '../../../components';
+import { OfficerService } from '../../../services/administration/officer.service';
 
 interface PageProps {
   limit: number;

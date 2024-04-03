@@ -13,22 +13,15 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { AccountService } from '../services/account.service';
 import {
   MAT_DIALOG_DATA,
   MatDialogModule,
   MatDialogRef,
 } from '@angular/material/dialog';
-import { AlertService, PdfService } from '../../../../services';
+import { AccountService, AlertService, PdfService } from '../../../../services';
 import { roleResponse } from '../../../../../infraestructure/interfaces';
-import { MatIconModule } from '@angular/material/icon';
-import { MatTabsModule } from '@angular/material/tabs';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatCheckboxModule } from '@angular/material/checkbox';
-import { MatSelectModule } from '@angular/material/select';
-import { MatButtonModule } from '@angular/material/button';
-import { MatInputModule } from '@angular/material/input';
 import { ServerSelectSearchComponent } from '../../../../components';
+import { MaterialModule } from '../../../../../material.module';
 interface SelectOption {
   text: string;
   value: Officer;
@@ -40,13 +33,7 @@ interface SelectOption {
     CommonModule,
     ReactiveFormsModule,
     MatDialogModule,
-    MatIconModule,
-    MatTabsModule,
-    MatFormFieldModule,
-    MatCheckboxModule,
-    MatSelectModule,
-    MatButtonModule,
-    MatInputModule,
+    MaterialModule,
     ServerSelectSearchComponent,
   ],
   templateUrl: './edit-account.component.html',
@@ -73,7 +60,7 @@ export class EditAccountComponent {
   private accountService = inject(AccountService);
   private pdfService = inject(PdfService);
 
-  public account: Account = inject(MAT_DIALOG_DATA);
+  public account = inject<Account>(MAT_DIALOG_DATA);
   public roles = signal<roleResponse[]>([]);
   public updatePassword: boolean = false;
   public officers = signal<SelectOption[]>([]);

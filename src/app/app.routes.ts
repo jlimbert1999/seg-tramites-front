@@ -77,6 +77,7 @@ export const routes: Routes = [
       },
       {
         path: 'accounts',
+        title:'Cuentas',
         loadComponent: () =>
           import(
             './presentation/pages/administration/accounts/accounts.component'

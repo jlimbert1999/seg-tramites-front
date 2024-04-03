@@ -5,14 +5,14 @@
       <div class="col-sm-4">
         <simple-select-search
           placeholder="Buscar institucion"
-          [data]="institutions()"
+          [elements]="institutions()"
           (onSelect)="getDependencies($event)"
         />
       </div>
       <div class="col-sm-8">
         <simple-select-search
           placeholder="Buscar dependencia"
-          [data]="dependencies()"
+          [elements]="dependencies()"
           (onSelect)="getAccounts($event)"
         />
       </div>

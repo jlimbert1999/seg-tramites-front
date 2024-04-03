@@ -8,7 +8,7 @@ interface officer {
   cargo?: string;
 }
 export class OfficerDto {
-  static FormtoModel(form: any) {
+  static toModel(form: any) {
     if (form['cargo'] === '') delete form['cargo'];
     return new OfficerDto({
       nombre: form['nombre'],
@@ -27,7 +27,15 @@ export class OfficerDto {
   telefono: number;
   direccion: string;
   cargo?: string;
-  constructor({ nombre, materno, paterno, dni, telefono, direccion, cargo }: officer) {
+  constructor({
+    nombre,
+    materno,
+    paterno,
+    dni,
+    telefono,
+    direccion,
+    cargo,
+  }: officer) {
     this.nombre = nombre;
     this.materno = materno;
     this.paterno = paterno;

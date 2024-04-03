@@ -1,7 +1,7 @@
 <mat-form-field>
   <mat-select
     [formControl]="bankCtrl"
-    [placeholder]="placeholder"
+    [placeholder]="placeholder()"
     (selectionChange)="selectOption($event.value)"
   >
     <mat-option>
@@ -11,8 +11,8 @@
         noEntriesFoundLabel="Sin resultados"
       ></ngx-mat-select-search>
     </mat-option>
-    @if(bankCtrl.value){
-    <mat-option>Ninguno</mat-option>
+    @if(bankCtrl.value && !isRequired()){
+      <mat-option>-- Ninguno --</mat-option>
     }
     <mat-option *ngFor="let bank of filteredBanks | async" [value]="bank.value">
       {{ bank.text }}

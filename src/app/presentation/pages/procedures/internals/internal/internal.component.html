@@ -5,7 +5,7 @@
     <simple-select-search
       placeholder="Tipo de tramite"
       [initialValue]="currentOption()"
-      [data]="typesProcedures()"
+      [elements]="typesProcedures()"
       (onSelect)="setTypeProcedure($event!)"
     />
     }

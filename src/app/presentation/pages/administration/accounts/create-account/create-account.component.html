@@ -1,7 +1,5 @@
-<h1 mat-dialog-title>REGISTRO CUENTA</h1>
+<h2 mat-dialog-title>Registro Cuenta</h2>
 <mat-dialog-content>
-  <p>{{ FormOfficer.value | json }}</p>
-  <p>{{ FormAccount.value | json }}</p>
   <ng-container>
     <mat-stepper
       headerPosition="bottom"
@@ -13,31 +11,31 @@
           <ng-template matStepLabel>Datos funcionario</ng-template>
           <div class="row">
             <div class="col-sm-4">
-              <mat-form-field appearance="fill">
+              <mat-form-field>
                 <mat-label>Nombre</mat-label>
                 <input class="uppercase" formControlName="nombre" matInput />
               </mat-form-field>
             </div>
             <div class="col-sm-4">
-              <mat-form-field appearance="fill">
+              <mat-form-field>
                 <mat-label>Apellido paterno</mat-label>
                 <input class="uppercase" formControlName="paterno" matInput />
               </mat-form-field>
             </div>
             <div class="col-sm-4">
-              <mat-form-field appearance="fill">
+              <mat-form-field>
                 <mat-label>Apellido materno</mat-label>
                 <input class="uppercase" formControlName="materno" matInput />
               </mat-form-field>
             </div>
             <div class="col-sm-4">
-              <mat-form-field appearance="fill">
+              <mat-form-field>
                 <mat-label>Dni</mat-label>
                 <input formControlName="dni" matInput />
               </mat-form-field>
             </div>
             <div class="col-sm-4">
-              <mat-form-field appearance="fill">
+              <mat-form-field>
                 <mat-label>Telefono</mat-label>
                 <input formControlName="telefono" matInput />
               </mat-form-field>
@@ -47,9 +45,10 @@
             <div class="col-sm-12">
               <server-select-search
                 placeholder="Buscar cargo"
-                [data]="jobs()"
+                [isRequired]="false"
+                [elements]="jobs()"
                 (onSearch)="searchJob($event)"
-                (onSelect)="setJob($event)"
+                (onSelect)="selectJob($event)"
               ></server-select-search>
             </div>
           </div>
@@ -62,26 +61,26 @@
             <div class="col-12">
               <simple-select-search
                 placeholder="Buscar institucion"
-                [data]="institutions()"
-                (onSelect)="getDependencies($event)"
+                [elements]="institutions()"
+                (onSelect)="selectInstitution($event)"
               ></simple-select-search>
             </div>
             <div class="col-12">
               <simple-select-search
-                placeholder="Buscar institucion"
-                [data]="dependencies()"
-                (onSelect)="setDependency($event)"
+                placeholder="Buscar dependencia"
+                [elements]="dependencies()"
+                (onSelect)="selectDependency($event)"
               ></simple-select-search>
             </div>
           </div>
           <div class="row">
-            <div class="col-4">
-              <mat-form-field appearance="fill" class="example-full-width">
+            <div class="col-md-4">
+              <mat-form-field class="example-full-width">
                 <mat-label>Login</mat-label>
                 <input formControlName="login" matInput />
               </mat-form-field>
             </div>
-            <div class="col-4">
+            <div class="col-md-4">
               <mat-form-field>
                 <mat-label>Contraseña</mat-label>
                 <input
@@ -103,8 +102,8 @@
                 </button>
               </mat-form-field>
             </div>
-            <div class="col-4">
-              <mat-form-field appearance="fill" class="example-full-width">
+            <div class="col-md-4">
+              <mat-form-field class="example-full-width">
                 <mat-label>Seleccione el rol</mat-label>
                 <mat-select formControlName="rol">
                   <mat-option *ngFor="let rol of roles()" [value]="rol._id">
@@ -120,13 +119,10 @@
   </ng-container>
 </mat-dialog-content>
 <mat-dialog-actions align="end">
-  <button mat-raised-button color="warn" mat-button mat-dialog-close>
-    Cancelar
-  </button>
+  <button mat-raised-button color="warn" mat-dialog-close>Cancelar</button>
   <button
     mat-raised-button
     color="primary"
-    mat-button
     (click)="save()"
     [disabled]="!validForms"
   >

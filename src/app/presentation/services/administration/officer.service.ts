@@ -1,10 +1,15 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, map } from 'rxjs';
-import { environment } from '../../../../../../environments/environment';
-import { Officer } from '../../../../../domain/models';
-import { OfficerDto } from '../../../../../infraestructure/dtos';
-import { jobResponse, officerResponse, workHistoryResponse } from '../../../../../infraestructure/interfaces';
+import { environment } from '../../../../environments/environment';
+import {
+  jobResponse,
+  officerResponse,
+  workHistoryResponse,
+} from '../../../infraestructure/interfaces';
+import { Officer } from '../../../domain/models';
+import { OfficerDto } from '../../../infraestructure/dtos';
+
 @Injectable({
   providedIn: 'root',
 })
@@ -54,7 +59,7 @@ export class OfficerService {
       );
   }
   add(officer: Object): Observable<Officer> {
-    const officerDto = OfficerDto.FormtoModel(officer);
+    const officerDto = OfficerDto.toModel(officer);
     return this.http
       .post<officerResponse>(`${this.url}`, officerDto)
       .pipe(map((resp) => Officer.officerFromJson(resp)));

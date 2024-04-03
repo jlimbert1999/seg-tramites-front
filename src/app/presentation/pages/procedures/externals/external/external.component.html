@@ -9,14 +9,14 @@
           <div class="col-sm-3">
             <simple-select-search
               placeholder="Segmento"
-              [data]="segments()"
+              [elements]="segments()"
               (onSelect)="getTypesProceduresBySegment($event)"
             />
           </div>
           <div class="col-sm-9">
             <simple-select-search
               placeholder="Tipo de tramite"
-              [data]="typesProcedures()"
+              [elements]="typesProcedures()"
               (onSelect)="selectTypeProcedure($event)"
             />
           </div>

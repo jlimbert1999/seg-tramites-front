@@ -7,6 +7,8 @@ export * from './appearance.service';
 export * from './auth/auth.service';
 
 export * from './administration/dependency.service';
+export * from './administration/account.service';
+export * from './administration/officer.service';
 
 export * from './procedures/external.service';
 export * from './procedures/internal.service';
@@ -17,4 +19,3 @@ export * from './communications/outbox.service';
 export * from './communications/archive.service';
 
 export * from './reports/report.service';
-

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { map } from 'rxjs';
-import { environment } from '../../../../../../environments/environment';
+import { environment } from '../../../../environments/environment';
 import {
   accountResponse,
   dependencyResponse,
@@ -9,9 +9,9 @@ import {
   jobResponse,
   officerResponse,
   roleResponse,
-} from '../../../../../infraestructure/interfaces';
-import { Account, Officer } from '../../../../../domain/models';
-import { AccountDto, OfficerDto } from '../../../../../infraestructure/dtos';
+} from '../../../infraestructure/interfaces';
+import { Account, Officer } from '../../../domain/models';
+import { AccountDto, OfficerDto } from '../../../infraestructure/dtos';
 
 interface SearchAccountsParams {
   text: string;
@@ -78,15 +78,12 @@ export class AccountService {
       fromObject: {
         ...values,
         ...(id_dependency && { id_dependency }),
-        ...(text && { text }),
       },
     });
     return this.http
       .get<{ accounts: accountResponse[]; length: number }>(
-        `${this.url}/search`,
-        {
-          params,
-        }
+        `${this.url}/search/${text}`,
+        { params }
       )
       .pipe(
         map((resp) => {
@@ -98,16 +95,16 @@ export class AccountService {
       );
   }
 
-  add(formAccount: Object, formOfficer: Object) {
-    const account = AccountDto.FormtoModel(formAccount);
-    const officer = OfficerDto.FormtoModel(formOfficer);
+  create(formAccount: Object, formOfficer: Object) {
+    const account = AccountDto.toModel(formAccount);
+    const officer = OfficerDto.toModel(formOfficer);
     return this.http
       .post<accountResponse>(`${this.url}`, { officer, account })
       .pipe(map((resp) => Account.fromJson(resp)));
   }
 
   assign(form: Object) {
-    const account = AccountDto.FormtoModel(form);
+    const account = AccountDto.toModel(form);
     return this.http
       .post<accountResponse>(`${this.url}/assign`, account)
       .pipe(map((resp) => Account.fromJson(resp)));

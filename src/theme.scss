@@ -3,7 +3,8 @@
 
 $theme: matx.define-theme((color: (theme-type: dark,
         primary: matx.$m3-azure-palette,
-      )));
+      ),
+      density: (scale: 0)));
 
 html {
   @include mat.all-component-themes($theme);

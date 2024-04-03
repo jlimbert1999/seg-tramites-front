@@ -7,6 +7,9 @@ import {
   OnDestroy,
   OnInit,
   Output,
+  effect,
+  input,
+  output,
 } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -37,22 +40,26 @@ type MatSelectSearchData<T> = {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ServerSelectSearchComponent<T> implements OnInit, OnDestroy {
+  elements = input.required<MatSelectSearchData<T>[]>();
+  placeholder = input<string>('Buscar...');
+  isRequired = input<boolean>(true);
+  onSearch = output<string>();
+  onSelect = output<T | undefined>();
+
   @Input() set initialValue(value: T) {
     this.bankCtrl.setValue(value);
   }
-  @Input() placeholder = 'Buscar....';
-  @Input({ required: true }) set data(values: MatSelectSearchData<T>[]) {
-    this.filteredBanks.next(values);
-  }
-  @Output() onSearch: EventEmitter<string> = new EventEmitter();
-  @Output() onSelect: EventEmitter<T | undefined> = new EventEmitter();
 
   public bankCtrl = new FormControl<T | null>(null);
   public bankFilterCtrl = new FormControl<string>('');
-  public filteredBanks: ReplaySubject<MatSelectSearchData<T>[]> =
-    new ReplaySubject<MatSelectSearchData<T>[]>(1);
-
+  public filteredBanks = new ReplaySubject<MatSelectSearchData<T>[]>(1);
   protected _onDestroy = new Subject<void>();
+
+  constructor() {
+    effect(() => {
+      this.filteredBanks.next(this.elements());
+    });
+  }
 
   ngOnInit(): void {
     this.bankFilterCtrl.valueChanges
@@ -66,7 +73,8 @@ export class ServerSelectSearchComponent<T> implements OnInit, OnDestroy {
       });
   }
 
-  selectOption(value: T) {
+  selectOption(value: T | undefined) {
+    if (this.isRequired() && !value) return;
     this.onSelect.emit(value);
   }
 

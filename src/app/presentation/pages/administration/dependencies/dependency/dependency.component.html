@@ -5,7 +5,7 @@
       @if(FormDependency.get('institucion')){
       <server-select-search
         [placeholder]="'Seleccione una institucion'"
-        [data]="filteredOptions()"
+        [elements]="filteredOptions()"
         (onSearch)="filterInstitutions($event)"
         (onSelect)="selectInstitution($event)"
       />
