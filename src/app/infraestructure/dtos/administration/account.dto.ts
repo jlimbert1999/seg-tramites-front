@@ -2,7 +2,7 @@ interface AccountProps {
   rol: string;
   login: string;
   password: string;
-  funcionario: string;
+  funcionario?: string;
   dependencia: string;
 }
 export class AccountDto {
@@ -10,7 +10,7 @@ export class AccountDto {
   password: string;
   dependencia: string;
   rol: string;
-  funcionario: string;
+  funcionario?: string;
 
   static toModel(fomAccount: any) {
     return new AccountDto({

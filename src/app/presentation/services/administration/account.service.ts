@@ -54,7 +54,7 @@ export class AccountService {
       );
   }
 
-  unlinkAccount(id: string) {
+  unlink(id: string) {
     return this.http.delete<{ message: string }>(`${this.url}/unlink/${id}`);
   }
 

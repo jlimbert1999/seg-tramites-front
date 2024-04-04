@@ -19,6 +19,7 @@ import {
 import { EditAccountComponent } from './edit-account/edit-account.component';
 import { AccountService } from '../../../services';
 import { MaterialModule } from '../../../../material.module';
+import { AssignAccountComponent } from './assign-account/assign-account.component';
 
 interface SelectOption {
   value: string;
@@ -132,10 +133,11 @@ export class AccountsComponent {
     });
   }
 
-  edit(accont: Account) {
+  edit(account: Account) {
     const dialogRef = this.dialog.open(EditAccountComponent, {
       maxWidth: '800px',
-      data: accont,
+      // width:'800px',
+      data: account,
     });
     dialogRef.afterClosed().subscribe((result?: Account) => {
       if (!result) return;
@@ -148,14 +150,14 @@ export class AccountsComponent {
   }
 
   assign() {
-    // const dialogRef = this.dialog.open(Assig, {
-    //   width: '1000px',
-    // });
-    // dialogRef.afterClosed().subscribe((result: Account) => {
-    //   if (!result) return;
-    //   this.accounts.update((values) => [result, ...values]);
-    //   this.length.update((values) => values++);
-    // });
+    const dialogRef = this.dialog.open(AssignAccountComponent, {
+      maxWidth: '800px',
+    });
+    dialogRef.afterClosed().subscribe((result: Account) => {
+      if (!result) return;
+      this.accounts.update((values) => [result, ...values]);
+      this.length.update((value) => (value += 1));
+    });
   }
 
   cancelSearch() {

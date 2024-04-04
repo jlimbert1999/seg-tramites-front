@@ -9,7 +9,7 @@ interface OfficerProps {
   nombre: string;
   paterno: string;
   materno: string;
-  dni: number;
+  dni: string;
   telefono: number;
   // direccion: string;
   activo: boolean;
@@ -23,7 +23,7 @@ export class Officer {
       nombre: obj['nombre'],
       paterno: obj['paterno'],
       materno: obj['materno'],
-      dni: obj['dni'],
+      dni: obj['dni'].toString(),
       telefono: obj['telefono'],
       // direccion: obj['direccion'],
       activo: obj['activo'],
@@ -34,7 +34,7 @@ export class Officer {
   public nombre: string;
   public paterno: string;
   public materno: string;
-  public dni: number;
+  public dni: string;
   public telefono: number;
   // public direccion: string;
   public activo: boolean;

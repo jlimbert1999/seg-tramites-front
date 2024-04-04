@@ -5,7 +5,7 @@ export interface officerResponse {
   nombre: string;
   paterno: string;
   materno: string;
-  dni: number;
+  dni: string;
   telefono: number;
   direccion: string;
   activo: boolean;

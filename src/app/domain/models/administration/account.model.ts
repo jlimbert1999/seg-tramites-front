@@ -20,7 +20,7 @@ export class Account {
   login: string;
   rol: string;
   activo: boolean;
-  funcionario?: any;
+  funcionario?: Officer;
   isVisible: boolean;
   dependencia: dependency;
 

@@ -38,19 +38,7 @@ interface SelectOption {
   ],
   templateUrl: './edit-account.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  styles: `.account-settings .user-profile {
-    text-align: center;
-  }
-  
-  .account-settings .user-profile .user-avatar {
-    margin: 0 0 1rem 0;
-  }
-  
-  .account-settings .user-profile .user-avatar img {
-    width: 90px;
-    height: 90px;
-    border-radius: 100px;
-  }
+  styles: `
   `,
 })
 export class EditAccountComponent {
@@ -62,9 +50,9 @@ export class EditAccountComponent {
 
   public account = inject<Account>(MAT_DIALOG_DATA);
   public roles = signal<roleResponse[]>([]);
+  public hidePassword = true;
   public updatePassword: boolean = false;
   public officers = signal<SelectOption[]>([]);
-  public currentOfficer = signal<Officer | undefined>(undefined);
   public workDetails: { label: string; value: number }[] = [];
   public FormAccount: FormGroup = this.fb.group({
     login: ['', [Validators.required, Validators.pattern(/^[a-zA-Z0-9]+$/)]],
@@ -74,22 +62,18 @@ export class EditAccountComponent {
   ngOnInit(): void {
     const { funcionario, ...props } = this.account;
     this.FormAccount.patchValue(props);
-    this.currentOfficer.set(funcionario);
     this.accountService.getRoles().subscribe((roles) => this.roles.set(roles));
   }
 
-  unlinkAccount() {
-    if (!this.account.funcionario) {
-      this.currentOfficer.set(undefined);
-      return;
-    }
+  unlink() {
     this.alertService.QuestionAlert({
-      title: `¿Desvincular cuenta de ${this.account.fullnameManager()}?`,
-      text: `La cuenta quedará deshabilitada hasta que se realice una nueva asignación.`,
+      title: `¿ DESVINCULAR CUENTA ?`,
+      text: `${this.account.funcionario?.fullname} perdera el acceso y la cuenta quedará deshabilitada hasta una asignación.`,
       callback: () => {
-        this.accountService.unlinkAccount(this.account._id).subscribe(() => {
-          delete this.account.funcionario;
-          this.currentOfficer.set(undefined);
+        this.accountService.unlink(this.account._id).subscribe(() => {
+          const { funcionario, ...props } = { ...this.account };
+          this.account = new Account({ ...props });
+          console.log(this.account);
         });
       },
     });
@@ -111,9 +95,9 @@ export class EditAccountComponent {
       'funcionario',
       new FormControl(officer._id, Validators.required)
     );
-    this.currentOfficer.set(officer);
     this.togglePassword(true);
   }
+
   save() {
     this.accountService
       .edit(this.account._id, this.FormAccount.value)
@@ -130,14 +114,14 @@ export class EditAccountComponent {
     this.updatePassword = value;
     if (!value) {
       this.FormAccount.removeControl('password');
-      return;
+    } else {
+      this.FormAccount.setControl(
+        'password',
+        new FormControl(this.account.funcionario?.dni ?? '000000', [
+          Validators.required,
+          Validators.pattern(/^[a-zA-Z0-9$]+$/),
+        ])
+      );
     }
-    this.FormAccount.setControl(
-      'password',
-      new FormControl(this.currentOfficer()?.dni ?? '', [
-        Validators.required,
-        Validators.pattern(/^[a-zA-Z0-9$]+$/),
-      ])
-    );
   }
 }
