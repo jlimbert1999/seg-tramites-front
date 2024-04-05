@@ -2,10 +2,10 @@ import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
+  effect,
   inject,
   signal,
 } from '@angular/core';
-import { Account, Officer } from '../../../../../domain/models';
 import {
   FormBuilder,
   FormControl,
@@ -18,14 +18,18 @@ import {
   MatDialogModule,
   MatDialogRef,
 } from '@angular/material/dialog';
+import { MaterialModule } from '../../../../../material.module';
 import { AccountService, AlertService, PdfService } from '../../../../services';
 import { roleResponse } from '../../../../../infraestructure/interfaces';
 import { ServerSelectSearchComponent } from '../../../../components';
-import { MaterialModule } from '../../../../../material.module';
+import { Account, Officer } from '../../../../../domain/models';
+import { generateCredentials } from '../../../../../helpers';
+
 interface SelectOption {
   text: string;
   value: Officer;
 }
+
 @Component({
   selector: 'app-edit-account',
   standalone: true,
@@ -38,8 +42,6 @@ interface SelectOption {
   ],
   templateUrl: './edit-account.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  styles: `
-  `,
 })
 export class EditAccountComponent {
   private fb = inject(FormBuilder);
@@ -48,19 +50,19 @@ export class EditAccountComponent {
   private accountService = inject(AccountService);
   private pdfService = inject(PdfService);
 
-  public account = inject<Account>(MAT_DIALOG_DATA);
+  public account = signal(inject<Account>(MAT_DIALOG_DATA));
   public roles = signal<roleResponse[]>([]);
   public hidePassword = true;
-  public updatePassword: boolean = false;
+  public updatePassword = false;
   public officers = signal<SelectOption[]>([]);
-  public workDetails: { label: string; value: number }[] = [];
   public FormAccount: FormGroup = this.fb.group({
     login: ['', [Validators.required, Validators.pattern(/^[a-zA-Z0-9]+$/)]],
     rol: ['', Validators.required],
   });
 
+
   ngOnInit(): void {
-    const { funcionario, ...props } = this.account;
+    const { funcionario, ...props } = this.account();
     this.FormAccount.patchValue(props);
     this.accountService.getRoles().subscribe((roles) => this.roles.set(roles));
   }
@@ -68,12 +70,14 @@ export class EditAccountComponent {
   unlink() {
     this.alertService.QuestionAlert({
       title: `¿ DESVINCULAR CUENTA ?`,
-      text: `${this.account.funcionario?.fullname} perdera el acceso y la cuenta quedará deshabilitada hasta una asignación.`,
+      text: `${
+        this.account().funcionario?.fullname
+      } perdera el acceso y la cuenta quedará deshabilitada hasta una asignación.`,
       callback: () => {
-        this.accountService.unlink(this.account._id).subscribe(() => {
-          const { funcionario, ...props } = { ...this.account };
-          this.account = new Account({ ...props });
-          console.log(this.account);
+        this.accountService.unlink(this.account()._id).subscribe(() => {
+          this.account.update(
+            ({ funcionario, ...props }) => new Account({ ...props })
+          );
         });
       },
     });
@@ -91,37 +95,54 @@ export class EditAccountComponent {
   }
 
   selectOfficer(officer: Officer) {
+    this.updatePassword = true;
+    this.hidePassword = false;
+    const credentials = generateCredentials({
+      name: officer.nombre,
+      middlename: officer.paterno,
+      lastname: officer.materno,
+      dni: officer.dni,
+    });
     this.FormAccount.setControl(
       'funcionario',
       new FormControl(officer._id, Validators.required)
     );
-    this.togglePassword(true);
+    this.password = credentials.password;
+    this.FormAccount.patchValue({ ...credentials });
   }
 
   save() {
     this.accountService
-      .edit(this.account._id, this.FormAccount.value)
+      .edit(this.account()._id, this.FormAccount.value)
       .subscribe((account) => {
-        const updatedPassword = this.FormAccount.get('password')?.value;
-        if (updatedPassword && this.account.funcionario) {
-          this.pdfService.createAccountSheet(account, updatedPassword);
+        this.account.set(account);
+        const passwordCtrl = this.FormAccount.get('password');
+        if (account.funcionario && passwordCtrl) {
+          this.pdfService.createAccountSheet(account, passwordCtrl?.value);
         }
         this.dialogRef.close(account);
       });
   }
+  close() {
+    this.dialogRef.close(this.account());
+  }
 
-  togglePassword(value: boolean) {
-    this.updatePassword = value;
-    if (!value) {
-      this.FormAccount.removeControl('password');
+  togglePassword(check: boolean) {
+    this.updatePassword = check;
+    if (this.updatePassword) {
+      this.password = this.account().funcionario?.dni.trim() ?? '000000';
     } else {
-      this.FormAccount.setControl(
-        'password',
-        new FormControl(this.account.funcionario?.dni ?? '000000', [
-          Validators.required,
-          Validators.pattern(/^[a-zA-Z0-9$]+$/),
-        ])
-      );
+      this.FormAccount.removeControl('password');
     }
+  }
+
+  private set password(value: string) {
+    this.FormAccount.setControl(
+      'password',
+      new FormControl(value, [
+        Validators.required,
+        Validators.pattern(/^[a-zA-Z0-9$]+$/),
+      ])
+    );
   }
 }

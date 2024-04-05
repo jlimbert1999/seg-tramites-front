@@ -5,14 +5,14 @@ import {
   inject,
   signal,
 } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-import { RoleService } from './services/role.service';
-import { RoleComponent } from './role/role.component';
 import { MatTableModule } from '@angular/material/table';
 import { MatToolbarModule } from '@angular/material/toolbar';
-import { FormsModule } from '@angular/forms';
-import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { RoleService } from './services/role.service';
+import { RoleComponent } from './role/role.component';
 import { SidenavButtonComponent } from '../../../components';
 import { roleResponse } from '../../../../infraestructure/interfaces';
 
@@ -46,15 +46,17 @@ export class RolesComponent {
       this.dataSource.set(resp.roles);
     });
   }
+
   add(): void {
     const dialogRef = this.dialog.open(RoleComponent, {
-      width: '1200px',
+      maxWidth: '1200px',
     });
     dialogRef.afterClosed().subscribe((result?: roleResponse) => {
       if (!result) return;
       this.dataSource.update((values) => [result, ...values]);
     });
   }
+
   edit(role: roleResponse) {
     const dialogRef = this.dialog.open(RoleComponent, {
       data: role,

@@ -3,7 +3,8 @@ export interface menu {
   resource: string;
   routerLink: string;
   text: string;
-  childred: submenu[];
+  childred?: submenu[];
+  actions?: string[];
 }
 
 export interface submenu {
@@ -11,4 +12,5 @@ export interface submenu {
   resource: string;
   routerLink: string;
   text: string;
+  actions: string[];
 }

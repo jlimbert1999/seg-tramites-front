@@ -18,7 +18,7 @@ import { ClientsComponent } from './presentation/pages/groupware/clients/clients
 export const routes: Routes = [
   {
     path: 'login',
-    // canActivate: [isNotAuthenticatedGuard],
+    canActivate: [isNotAuthenticatedGuard],
     component: LoginComponent,
     title: 'Inicio de sesion',
   },

@@ -136,8 +136,8 @@ export class AccountsComponent {
   edit(account: Account) {
     const dialogRef = this.dialog.open(EditAccountComponent, {
       maxWidth: '800px',
-      // width:'800px',
       data: account,
+      disableClose: true,
     });
     dialogRef.afterClosed().subscribe((result?: Account) => {
       if (!result) return;
