@@ -4,7 +4,6 @@ export interface menu {
   routerLink: string;
   text: string;
   childred?: submenu[];
-  actions?: string[];
 }
 
 export interface submenu {
@@ -12,5 +11,4 @@ export interface submenu {
   resource: string;
   routerLink: string;
   text: string;
-  actions: string[];
 }

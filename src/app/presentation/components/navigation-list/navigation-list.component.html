@@ -9,25 +9,27 @@
     </mat-expansion-panel-header>
     <mat-nav-list>
       @for (subitem of item.children; track $index) {
-      <mat-list-item
+      <a
+        mat-list-item
         [routerLink]="subitem.routerLink"
-        [routerLinkActive]="['is-active']"
-        class="item-link"
+        routerLinkActive="tonal"
+        class="sidebar-link"
       >
         <mat-icon class="icon" matListItemIcon>{{ subitem.icon }}</mat-icon>
         <div class="text" matListItemTitle>{{ subitem.text }}</div>
-      </mat-list-item>
+      </a>
       }
     </mat-nav-list>
   </mat-expansion-panel>
   } @else {
-  <mat-list-item
+  <a
+    mat-list-item
     [routerLink]="item.routerLink"
-    [routerLinkActive]="['is-active']"
-    class="item-link"
+    routerLinkActive="tonal"
+    class="sidebar-link"
   >
     <mat-icon class="icon" matListItemIcon>{{ item.icon }}</mat-icon>
     <div class="text" matListItemTitle>{{ item.text }}</div>
-  </mat-list-item>
+  </a>
   } }
 </mat-nav-list>

@@ -3,6 +3,7 @@ export enum VALID_RESOURCES {
   communication = 'communication',
   institutions = 'institutions',
   dependencies = 'dependencies',
+  groupware = 'groupware',
   external = 'external',
   internal = 'internal',
   officers = 'officers',

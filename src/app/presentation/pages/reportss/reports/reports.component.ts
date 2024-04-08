@@ -8,6 +8,7 @@ import {
   ViewChild,
   ViewContainerRef,
   inject,
+  signal,
 } from '@angular/core';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { RouterModule } from '@angular/router';
@@ -27,6 +28,8 @@ import {
 
 import { OverlayModule } from '@angular/cdk/overlay';
 import { MaterialModule } from '../../../../material.module';
+import { VALID_RESOURCES } from '../../../../infraestructure/interfaces';
+
 interface menu {
   label: string;
   link: string;
@@ -52,8 +55,8 @@ interface menu {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ReportsComponent implements OnInit {
-  private permissionMappings: Record<string, menu> = {
-    applicant: { label: 'Solicitante', link: 'applicant' },
+  private readonly permissionMappings: Record<string, menu> = {
+    applicants: { label: 'Solicitante', link: 'applicant' },
     search: { label: 'Busquedas', link: 'search' },
     dependents: { label: 'Dependientes', link: 'dependents' },
   };
@@ -65,18 +68,14 @@ export class ReportsComponent implements OnInit {
   private authService = inject(AuthService);
   private pdfService = inject(PdfService);
 
-  public menu: menu[] = [];
+  public menu = signal<menu[]>([]);
   public isOpen: boolean = false;
   private overlayRef?: OverlayRef;
 
   constructor(private _viewContainerRef: ViewContainerRef) {}
 
   ngOnInit(): void {
-    const actions = this.authService.permissions()!['reports'];
-    this.menu = actions.map((action) => ({
-      name: action,
-      ...this.permissionMappings[action],
-    }));
+    this._loadMenu();
   }
 
   help() {
@@ -92,5 +91,15 @@ export class ReportsComponent implements OnInit {
     const overlayRef = this.overlay.create(config);
     overlayRef.attach(this.portal);
     overlayRef.backdropClick().subscribe(() => overlayRef.detach());
+  }
+
+  private _loadMenu() {
+    console.log(this.authService.permissions());
+    const menu = this.authService
+      .permissions()
+      [VALID_RESOURCES.reports].map((action) => this.permissionMappings[action])
+      .filter((item) => item);
+    console.log(menu);
+    this.menu.set(menu);
   }
 }

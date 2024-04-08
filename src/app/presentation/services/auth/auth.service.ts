@@ -26,7 +26,7 @@ export class AuthService {
   public account = computed(() => this._account());
   public menu = computed(() => this._menu());
   public code = computed(() => this._code());
-  public permissions = computed(() => this._permissions());
+  public permissions = computed(() => this._permissions()!);
 
   constructor(private http: HttpClient) {}
 
@@ -36,7 +36,7 @@ export class AuthService {
       : localStorage.removeItem('login');
     return this.http
       .post<{ token: string }>(`${this.base_url}/auth`, formData)
-      .pipe(map(({ token }) => this.setAuthentication(token)));
+      .pipe(map(({ token }) => this._setAuthentication(token)));
   }
 
   logout() {
@@ -63,7 +63,7 @@ export class AuthService {
           this._menu.set(menu);
           this._code.set(code);
           this._permissions.set(permissions);
-          return this.setAuthentication(token);
+          return this._setAuthentication(token);
         }),
         catchError(() => {
           return of(false);
@@ -95,7 +95,7 @@ export class AuthService {
     });
   }
 
-  private setAuthentication(token: string): boolean {
+  private _setAuthentication(token: string): boolean {
     this._account.set(jwtDecode(token));
     localStorage.setItem('token', token);
     return true;

@@ -1,23 +1,16 @@
-<mat-toolbar color="primary">
+<mat-toolbar class="tonal">
   <sidenav-button />
   <span>Reportes</span>
   <span class="toolbar-spacer"></span>
-  <button
-    mat-icon-button
-    class="example-icon favorite-icon"
-    aria-label="Example icon-button with heart icon"
-    (click)="drawer.toggle()"
-  >
+  <button mat-icon-button (click)="drawer.toggle()">
     <mat-icon>settings</mat-icon>
   </button>
 </mat-toolbar>
 
-<mat-tab-nav-panel #tabPanel></mat-tab-nav-panel>
-
 <mat-drawer-container class="drawer-container">
   <mat-drawer #drawer mode="side" [position]="'end'" [opened]="true">
     <mat-nav-list>
-      @for (item of menu; track $index) {
+      @for (item of menu(); track $index) {
       <mat-list-item [routerLink]="item.link" routerLinkActive="is-active">
         <span matListItemTitle>{{ item.label }}</span>
       </mat-list-item>

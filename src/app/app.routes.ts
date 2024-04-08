@@ -10,10 +10,12 @@ import { PostsComponent } from './presentation/pages/groupware/posts/posts.compo
 import {
   isAuthenticatedGuard,
   isNotAuthenticatedGuard,
+  roleGuard,
 } from './presentation/guards';
 import { InfoComponent } from './presentation/layouts/home/info/info.component';
 import { ReportDependentsComponent } from './presentation/pages/reportss/report-dependents/report-dependents.component';
 import { ClientsComponent } from './presentation/pages/groupware/clients/clients.component';
+import { VALID_RESOURCES } from './infraestructure/interfaces';
 
 export const routes: Routes = [
   {
@@ -25,6 +27,7 @@ export const routes: Routes = [
   {
     path: 'home',
     canActivate: [isAuthenticatedGuard],
+    canActivateChild: [roleGuard],
     component: HomeComponent,
     title: 'Inicio',
     children: [
@@ -77,7 +80,7 @@ export const routes: Routes = [
       },
       {
         path: 'accounts',
-        title:'Cuentas',
+        title: 'Cuentas',
         loadComponent: () =>
           import(
             './presentation/pages/administration/accounts/accounts.component'
@@ -177,6 +180,7 @@ export const routes: Routes = [
       },
       {
         path: 'groupware',
+        data: { resource: VALID_RESOURCES.groupware },
         children: [
           {
             path: 'users',
