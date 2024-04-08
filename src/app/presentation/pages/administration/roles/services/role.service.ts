@@ -3,8 +3,10 @@ import { HttpClient } from '@angular/common/http';
 import { map } from 'rxjs';
 import { environment } from '../../../../../../environments/environment';
 import { RoleDto } from '../../../../../infraestructure/dtos';
-import { roleResponse, systemResource } from '../../../../../infraestructure/interfaces';
-
+import {
+  roleResponse,
+  systemResource,
+} from '../../../../../infraestructure/interfaces';
 
 @Injectable({
   providedIn: 'root',
@@ -20,7 +22,15 @@ export class RoleService {
   }
 
   getResources() {
-    return this.http.get<systemResource[]>(`${this.url}/resources`);
+    return this.http.get<systemResource[]>(`${this.url}/resources`).pipe(
+      map((resp) =>
+        resp.map(({ actions, ...props }) => ({
+          ...props,
+          actions: actions.map((acc) => ({ ...acc, isSelected: false })),
+          isSelected: false,
+        }))
+      )
+    );
   }
 
   add(name: string, systemResources: systemResource[]) {

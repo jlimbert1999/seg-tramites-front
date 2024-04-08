@@ -49,7 +49,8 @@ export class RolesComponent {
 
   add(): void {
     const dialogRef = this.dialog.open(RoleComponent, {
-      maxWidth: '1200px',
+      maxWidth: '600px',
+      width: '600px',
     });
     dialogRef.afterClosed().subscribe((result?: roleResponse) => {
       if (!result) return;
@@ -60,12 +61,13 @@ export class RolesComponent {
   edit(role: roleResponse) {
     const dialogRef = this.dialog.open(RoleComponent, {
       data: role,
-      width: '1200px',
+      maxWidth: '600px',
+      width: '600px',
     });
     dialogRef.afterClosed().subscribe((result: roleResponse) => {
       if (!result) return;
       this.dataSource.update((values) => {
-        const index = values.findIndex((value) => value._id === result._id);
+        const index = values.findIndex(({ _id }) => _id === result._id);
         values[index] = result;
         return [...values];
       });
