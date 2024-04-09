@@ -32,16 +32,10 @@ interface Menu {
     MatButtonModule,
     RouterModule,
     MatExpansionModule,
-    
   ],
   templateUrl: './navigation-list.component.html',
   styleUrl: './navigation-list.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  styles: `
-  .sidebar-link {
-    margin-bottom: 0.35rem;
-  }
-`,
 })
 export class NavigationListComponent {
   @Input({ required: true }) menu!: Menu[];

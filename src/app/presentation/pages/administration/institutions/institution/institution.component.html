@@ -1,15 +1,15 @@
-<h1 mat-dialog-title>Institucion</h1>
+<h2 mat-dialog-title>{{ institution ? "Edicion" : "Creacion" }} Institucion</h2>
 <mat-dialog-content>
   <form [formGroup]="FormInstitution">
-    <div class="row">
-      <div class="col-8">
-        <mat-form-field appearance="fill">
+    <div class="row mt-1">
+      <div class="col-md-8">
+        <mat-form-field>
           <mat-label>Nombre de la institucion</mat-label>
           <input formControlName="nombre" matInput />
         </mat-form-field>
       </div>
-      <div class="col-4">
-        <mat-form-field appearance="fill">
+      <div class="col-md-4">
+        <mat-form-field>
           <mat-label>Sigla</mat-label>
           <input formControlName="sigla" matInput />
         </mat-form-field>
@@ -18,9 +18,9 @@
   </form>
 </mat-dialog-content>
 <mat-dialog-actions align="end">
-  <button mat-flat-button color="warn" mat-dialog-close>Cancelar</button>
+  <button mat-button color="warn" mat-dialog-close>Cancelar</button>
   <button
-    mat-flat-button
+    mat-button
     color="primary"
     [disabled]="FormInstitution.invalid"
     (click)="save()"

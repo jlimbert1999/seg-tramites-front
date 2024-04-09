@@ -16,21 +16,14 @@ import {
   MatDialogModule,
   MatDialogRef,
 } from '@angular/material/dialog';
-import { MatInputModule } from '@angular/material/input';
 import { InstitutionService } from '../services/institution.service';
-import { MatButtonModule } from '@angular/material/button';
 import { institutionResponse } from '../../../../../infraestructure/interfaces';
+import { MaterialModule } from '../../../../../material.module';
 
 @Component({
   selector: 'app-institution',
   standalone: true,
-  imports: [
-    CommonModule,
-    MatDialogModule,
-    ReactiveFormsModule,
-    MatInputModule,
-    MatButtonModule,
-  ],
+  imports: [CommonModule, MatDialogModule, ReactiveFormsModule, MaterialModule],
   templateUrl: './institution.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -38,7 +31,8 @@ export class InstitutionComponent implements OnInit {
   private fb = inject(FormBuilder);
   private institutionService = inject(InstitutionService);
   private dialogRef = inject(MatDialogRef<InstitutionComponent>);
-  institution?: institutionResponse = inject(MAT_DIALOG_DATA);
+
+  institution = inject<institutionResponse | undefined>(MAT_DIALOG_DATA);
   FormInstitution: FormGroup = this.fb.group({
     nombre: ['', Validators.required],
     sigla: [

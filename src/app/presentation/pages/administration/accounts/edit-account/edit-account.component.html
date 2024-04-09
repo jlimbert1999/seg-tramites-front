@@ -34,12 +34,13 @@
     <div class="col-md-5 border rounded-2 p-3">
       <p class="fw-bold">PROPIEDADES BANDEJA</p>
       <dl class="row">
-        <dt class="col-6">RECIBIDOS:</dt>
-        <dd class="col-6">5</dd>
-        <dt class="col-6">SIN RECIBIR:</dt>
-        <dd class="col-6">10</dd>
-        <dt class="col-6">TOTAL:</dt>
-        <dd class="col-6">10</dd>
+        @for (item of communications(); track $index) {
+        <dt class="col-6">{{ item.label }}</dt>
+        <dd class="col-6">{{ item.count }}</dd>
+        }
+        @empty {
+          <p class="p-2">CARGANDO...</p>
+        }
       </dl>
     </div>
     <div class="col-md-7">

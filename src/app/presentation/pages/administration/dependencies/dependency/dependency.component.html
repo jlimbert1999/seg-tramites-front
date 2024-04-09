@@ -1,7 +1,7 @@
 <h1 mat-dialog-title>Dependencias</h1>
 <div mat-dialog-content>
   <form [formGroup]="FormDependency">
-    <div class="row">
+    <div class="row mt-1">
       @if(FormDependency.get('institucion')){
       <server-select-search
         [placeholder]="'Seleccione una institucion'"
@@ -32,9 +32,9 @@
   </form>
 </div>
 <div mat-dialog-actions align="end">
-  <button mat-flat-button color="warn" mat-dialog-close>Cancelar</button>
+  <button mat-button color="warn" mat-dialog-close>Cancelar</button>
   <button
-    mat-flat-button
+    mat-button
     color="primary"
     [disabled]="FormDependency.invalid"
     (click)="save()"

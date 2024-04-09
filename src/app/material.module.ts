@@ -19,6 +19,7 @@ import { MatStepperModule } from '@angular/material/stepper';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatTreeModule } from '@angular/material/tree';
+import { OverlayModule } from '@angular/cdk/overlay';
 import {
   MAT_FORM_FIELD_DEFAULT_OPTIONS,
   MatFormFieldModule,
@@ -55,6 +56,7 @@ import { CdkAccordionModule } from '@angular/cdk/accordion';
     MatCheckboxModule,
     MatTreeModule,
     CdkAccordionModule,
+    OverlayModule,
   ],
   providers: [
     {

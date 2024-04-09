@@ -12,7 +12,7 @@ import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatSidenav } from '@angular/material/sidenav';
 import { Router, RouterModule } from '@angular/router';
-import { map } from 'rxjs';
+import { map, shareReplay } from 'rxjs';
 import {
   AuthService,
   SocketService,
@@ -22,6 +22,7 @@ import {
 import {
   SidenavButtonComponent,
   NavigationListComponent,
+  ProfileComponent,
 } from '../../components';
 import { MaterialModule } from '../../../material.module';
 
@@ -34,6 +35,7 @@ import { MaterialModule } from '../../../material.module';
     MaterialModule,
     NavigationListComponent,
     SidenavButtonComponent,
+    ProfileComponent,
   ],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss',
@@ -48,19 +50,22 @@ export class HomeComponent implements OnInit {
   private router = inject(Router);
   private breakpointObserver = inject(BreakpointObserver);
 
+  protected detailsOpen = false;
+
   @ViewChild('snav') public sidenav!: MatSidenav;
-  public isHandset$ = this.breakpointObserver
-    .observe(Breakpoints.Handset)
-    .pipe(map((result) => result.matches));
+  public isHandset$ = this.breakpointObserver.observe(Breakpoints.Handset).pipe(
+    map((result) => result.matches),
+    shareReplay()
+  );
 
   constructor() {
     this.destroyRef.onDestroy(() => {
       this.socketService.disconnect();
     });
-    effect(() => {
-      this.sidenav.toggle();
-      return this.appearanceService.isSidenavToggle();
-    });
+    // effect(() => {
+    //   this.sidenav.toggle();
+    //   return this.appearanceService.isSidenavToggle();
+    // });
   }
 
   ngOnInit(): void {

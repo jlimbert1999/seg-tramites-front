@@ -14,3 +14,4 @@ export * from './procedures/search-input/search-input.component';
 export * from './procedures/dispatcher/dispatcher.component';
 
 export * from './reports/report-procedure-table/report-procedure-table.component';
+export * from './profile/profile.component';

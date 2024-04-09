@@ -9,9 +9,11 @@ import {
   internalResponse,
   procedure,
   reportUnit,
+  reportWorkAccount,
   TableProcedureData,
   typeProcedureResponse,
 } from '../../../infraestructure/interfaces';
+import { StatusMail } from '../../../domain/models';
 
 interface SearchApplicantProps {
   by: 'solicitante' | 'representante';
@@ -107,6 +109,26 @@ export class ReportService {
     return this.http.get<communicationResponse[]>(
       `${this.url}/pending/${id_account}`
     );
+  }
+
+  getWorkDetails(id_account: string) {
+    return this.http
+      .get<reportWorkAccount[]>(`${this.url}/communication/total/${id_account}`)
+      .pipe(
+        map((resp) => {
+          const map = {
+            [StatusMail.Received]: 'RECIBIDOS',
+            [StatusMail.Pending]: 'SIN RECIBIR',
+            [StatusMail.Archived]: 'ARCHIVADOS',
+            [StatusMail.Completed]: 'ANTENDIDOS',
+            [StatusMail.Rejected]: 'RECHAZADOS',
+          };
+          return Object.values(StatusMail).map((status) => {
+            const item = resp.find((el) => el._id === status);
+            return { label: map[status], count: item ? item.count : 0 };
+          });
+        })
+      );
   }
 
   private removeEmptyValuesFromObject(form: Object) {

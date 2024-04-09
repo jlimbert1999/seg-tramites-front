@@ -1,58 +1,60 @@
-<mat-sidenav-container class="sidenav-container">
-  <mat-sidenav
-    #snav
-    class="sinenav"
-    [autoFocus]="false"
-    [fixedInViewport]="true"
-    [mode]="(isHandset$ | async) ? 'over' : 'side'"
-    [attr.role]="(isHandset$ | async) ? 'dialog' : 'navigation'"
-  >
-    <div class="profile">
-      <!-- <img src="../../../../assets/img/account.png" alt="Profile" /> -->
-      <div>
-        <div class="fullname">
-          {{ user.officer.fullname | titlecase | slice : 0 : 20 }}
-        </div>
-        <div class="jobtitle">
-          {{ user.officer.jobtitle | slice : 0 : 18 }}
-        </div>
+<div class="example-container" [class.example-is-mobile]="isHandset$ | async">
+  <mat-toolbar color="primary" class="example-toolbar tonal">
+    <button mat-icon-button (click)="snav.toggle()">
+      <mat-icon>menu</mat-icon>
+    </button>
+    <h1 class="example-app-name">Home</h1>
+    <span class="toolbar-spacer"></span>
+    <button mat-icon-button>
+      <mat-icon>widgets</mat-icon>
+    </button>
+    <button
+      mat-icon-button
+      cdkOverlayOrigin
+      #trigger="cdkOverlayOrigin"
+      (click)="detailsOpen = !detailsOpen"
+    >
+      <mat-icon>account_circle</mat-icon>
+    </button>
+    <ng-template
+      cdkConnectedOverlay
+      [cdkConnectedOverlayOrigin]="trigger"
+      [cdkConnectedOverlayOpen]="detailsOpen"
+      (overlayOutsideClick)="detailsOpen = false"
+    >
+      <div class="overlay-menu">
+        <profile/>
       </div>
-      <button class="settings" mat-icon-button [matMenuTriggerFor]="menus">
-        <mat-icon>more_vert</mat-icon>
-      </button>
-      <mat-menu #menus="matMenu">
-        <button mat-menu-item routerLink="/home/settings">
-          <mat-icon>settings</mat-icon>
-          <span>Configuraciones</span>
-        </button>
-        <button mat-menu-item routerLink="/home/resources">
-          <mat-icon>widgets</mat-icon>
-          <span>Recursos</span>
-        </button>
-        <button mat-menu-item routerLink="/home/info">
-          <mat-icon>info</mat-icon>
-          <span>Acerca de</span>
-        </button>
-        <button mat-menu-item (click)="logout()">
-          <mat-icon>logout</mat-icon>
-          <span>Cerrar sesion</span>
-        </button>
-      </mat-menu>
-    </div>
-    <navigation-list [menu]="menu" />
-  </mat-sidenav>
-  <mat-sidenav-content>
-    @if(isLoading | async){
-    <div class="overlay">
-      <mat-spinner
-        [diameter]="100"
-        class="spinner"
-        color="primary"
-        mode="indeterminate"
-      ></mat-spinner>
-    </div>
-    }
+      
+    </ng-template>
+  </mat-toolbar>
 
-    <router-outlet></router-outlet>
-  </mat-sidenav-content>
-</mat-sidenav-container>
+  <mat-sidenav-container
+    class="example-sidenav-container"
+    [style.marginTop.px]="(isHandset$ | async) ? 56 : 0"
+  >
+    <mat-sidenav
+      #snav
+      [mode]="(isHandset$ | async) ? 'over' : 'side'"
+      [fixedInViewport]="isHandset$ | async"
+      [opened]="(isHandset$ | async) === false"
+      fixedTopGap="56"
+    >
+      <navigation-list [menu]="menu" />
+    </mat-sidenav>
+
+    <mat-sidenav-content>
+      @if(isLoading | async){
+      <div class="overlay">
+        <mat-spinner
+          [diameter]="100"
+          class="spinner"
+          color="primary"
+          mode="indeterminate"
+        ></mat-spinner>
+      </div>
+      }
+      <router-outlet />
+    </mat-sidenav-content>
+  </mat-sidenav-container>
+</div>

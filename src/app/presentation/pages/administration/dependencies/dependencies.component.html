@@ -1,15 +1,12 @@
-<p>
-  <mat-toolbar color="primary">
-    <sidenav-button />
-    <span>Dependencias</span>
-    <span class="toolbar-spacer"></span>
-    <button (click)="add()" mat-icon-button matTooltip="Crear dependencia">
-      <mat-icon>add</mat-icon>
-    </button>
-  </mat-toolbar>
-</p>
+<mat-toolbar>
+  <span>Dependencias</span>
+  <span class="toolbar-spacer"></span>
+  <button (click)="add()" mat-icon-button matTooltip="Crear dependencia">
+    <mat-icon>add</mat-icon>
+  </button>
+</mat-toolbar>
 
-<div class="container-fluid">
+<div class="container-fluid animate__animated animate__fadeIn">
   <mat-form-field>
     <mat-label>Buscar dependencia</mat-label>
     <input
@@ -60,7 +57,7 @@
             <span
               class="c-pill"
               [ngClass]="element.activo ? 'c-pill--success' : 'c-pill--danger'"
-              >{{ element.activo ? "HABILITADO" : "NO HABILITADO" }}
+              >{{ element.activo ? "Habilitado" : "Deshabilitado" }}
             </span>
           </td>
         </ng-container>

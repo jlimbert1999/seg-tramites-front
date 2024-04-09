@@ -1,44 +1,44 @@
-<h1 mat-dialog-title>Funcionario</h1>
+<h2 mat-dialog-title>{{ officer ? "Edicion" : "Creacion" }} Funcionario</h2>
 <mat-dialog-content>
   <form [formGroup]="FormOfficer">
     <div class="row">
       <div class="col-sm-4">
-        <mat-form-field appearance="fill">
+        <mat-form-field>
           <mat-label>Nombre</mat-label>
           <input class="uppercase" formControlName="nombre" matInput />
         </mat-form-field>
       </div>
       <div class="col-sm-4">
-        <mat-form-field appearance="fill">
+        <mat-form-field>
           <mat-label>Apellido paterno</mat-label>
           <input class="uppercase" formControlName="paterno" matInput />
         </mat-form-field>
       </div>
       <div class="col-sm-4">
-        <mat-form-field appearance="fill">
+        <mat-form-field>
           <mat-label>Apellido materno</mat-label>
           <input class="uppercase" formControlName="materno" matInput />
         </mat-form-field>
       </div>
       <div class="col-sm-4">
-        <mat-form-field appearance="fill">
+        <mat-form-field>
           <mat-label>Dni</mat-label>
           <input formControlName="dni" matInput />
         </mat-form-field>
       </div>
       <div class="col-sm-4">
-        <mat-form-field appearance="fill">
+        <mat-form-field>
           <mat-label>Telefono</mat-label>
           <input formControlName="telefono" matInput />
         </mat-form-field>
       </div>
-      
     </div>
   </form>
   <div class="row">
     @if(!FormOfficer.get('cargo')?.value){
     <div class="col-sm-12">
       <server-select-search
+        placeholder="Buscar cargo"
         [elements]="jobs()"
         (onSearch)="searchJob($event)"
         (onSelect)="setJob($event)"
@@ -61,9 +61,9 @@
   </div>
 </mat-dialog-content>
 <mat-dialog-actions align="end">
-  <button mat-raised-button color="warn" (click)="close()">Cancelar</button>
+  <button mat-button color="warn" (click)="close()">Cancelar</button>
   <button
-    mat-raised-button
+    mat-button
     color="primary"
     [disabled]="FormOfficer.invalid"
     (click)="save()"

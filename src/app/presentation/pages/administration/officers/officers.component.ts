@@ -9,16 +9,14 @@ import {
 import { MatDialog } from '@angular/material/dialog';
 import { OfficerComponent } from './officer/officer.component';
 import { WorkHistoryComponent } from './work-history/work-history.component';
-import { MatInputModule } from '@angular/material/input';
-import { MatTableModule } from '@angular/material/table';
-import { MatToolbarModule } from '@angular/material/toolbar';
-import { FormsModule } from '@angular/forms';
-import { MatIconModule } from '@angular/material/icon';
-import { MatMenuModule } from '@angular/material/menu';
-import { MatButtonModule } from '@angular/material/button';
 import { Officer } from '../../../../domain/models';
-import { SidenavButtonComponent, PaginatorComponent } from '../../../components';
+import {
+  SidenavButtonComponent,
+  PaginatorComponent,
+} from '../../../components';
 import { OfficerService } from '../../../services/administration/officer.service';
+import { MaterialModule } from '../../../../material.module';
+import { FormsModule } from '@angular/forms';
 
 interface PageProps {
   limit: number;
@@ -29,13 +27,8 @@ interface PageProps {
   standalone: true,
   imports: [
     CommonModule,
-    MatInputModule,
-    MatTableModule,
-    MatToolbarModule,
     FormsModule,
-    MatIconModule,
-    MatMenuModule,
-    MatButtonModule,
+    MaterialModule,
     SidenavButtonComponent,
     PaginatorComponent,
   ],
@@ -44,6 +37,9 @@ interface PageProps {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class OfficersComponent {
+  private officerService = inject(OfficerService);
+  private dialog = inject(MatDialog);
+
   public length = signal<number>(10);
   public limit = signal<number>(10);
   public index = signal<number>(0);
@@ -58,9 +54,6 @@ export class OfficersComponent {
     'options',
   ];
   public text: string = '';
-
-  private officerService = inject(OfficerService);
-  private dialog = inject(MatDialog);
 
   ngOnInit(): void {
     this.getData();
@@ -79,7 +72,7 @@ export class OfficersComponent {
 
   add() {
     const dialogRef = this.dialog.open(OfficerComponent, {
-      width: '800px',
+      maxWidth: '800px',
     });
     dialogRef.afterClosed().subscribe((result: Officer) => {
       if (!result) return;
@@ -90,7 +83,7 @@ export class OfficersComponent {
 
   edit(officer: Officer) {
     const dialogRef = this.dialog.open(OfficerComponent, {
-      width: '800px',
+      maxWidth: '800px',
       data: officer,
       disableClose: true,
       autoFocus: false,

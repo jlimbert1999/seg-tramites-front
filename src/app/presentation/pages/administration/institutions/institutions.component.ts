@@ -6,17 +6,16 @@ import {
   inject,
   signal,
 } from '@angular/core';
-import { MatDialog, MatDialogModule } from '@angular/material/dialog';
-import { MatToolbarModule } from '@angular/material/toolbar';
-import { MatButtonModule } from '@angular/material/button';
-import { MatTableModule } from '@angular/material/table';
-import { MatInputModule } from '@angular/material/input';
-import { MatIconModule } from '@angular/material/icon';
+import { MatDialog } from '@angular/material/dialog';
 import { FormsModule } from '@angular/forms';
 import { InstitutionService } from './services/institution.service';
 import { InstitutionComponent } from './institution/institution.component';
 import { institutionResponse } from '../../../../infraestructure/interfaces';
-import { SidenavButtonComponent, PaginatorComponent } from '../../../components';
+import {
+  SidenavButtonComponent,
+  PaginatorComponent,
+} from '../../../components';
+import { MaterialModule } from '../../../../material.module';
 
 interface PageProps {
   limit: number;
@@ -27,25 +26,32 @@ interface PageProps {
   standalone: true,
   imports: [
     CommonModule,
-    MatToolbarModule,
-    MatTableModule,
-    MatIconModule,
+    MaterialModule,
     SidenavButtonComponent,
-    MatDialogModule,
-    MatInputModule,
     FormsModule,
-    MatButtonModule,
     PaginatorComponent,
   ],
   templateUrl: './institutions.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  styles: `
+    td.mat-column-buttons {
+      width: 150px;
+    }
+  
+  `,
 })
 export class InstitutionsComponent {
   dialog = inject(MatDialog);
   dataSource = signal<institutionResponse[]>([]);
   institutionService = inject(InstitutionService);
+
   public text: string = '';
-  public displayedColumns: string[] = ['sigla', 'nombre', 'situacion', 'menu'];
+  public displayedColumns: string[] = [
+    'sigla',
+    'nombre',
+    'situacion',
+    'buttons',
+  ];
   public length = signal<number>(10);
   public limit = signal<number>(10);
   public index = signal<number>(0);
@@ -68,18 +74,19 @@ export class InstitutionsComponent {
 
   add() {
     const dialogRef = this.dialog.open(InstitutionComponent, {
+      maxWidth: '700px',
       width: '700px',
     });
     dialogRef.afterClosed().subscribe((result?: institutionResponse) => {
       if (!result) return;
       this.dataSource.update((values) => [result, ...values]);
-      this.length.update((value) => value++);
+      this.length.update((value) => (value += 1));
     });
   }
 
   edit(data: institutionResponse) {
     const dialogRef = this.dialog.open(InstitutionComponent, {
-      width: '700px',
+      maxWidth: '700px',
       data,
     });
     dialogRef.afterClosed().subscribe((result: institutionResponse) => {

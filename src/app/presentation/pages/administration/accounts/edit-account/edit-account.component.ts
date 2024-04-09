@@ -19,7 +19,12 @@ import {
   MatDialogRef,
 } from '@angular/material/dialog';
 import { MaterialModule } from '../../../../../material.module';
-import { AccountService, AlertService, PdfService } from '../../../../services';
+import {
+  AccountService,
+  AlertService,
+  PdfService,
+  ReportService,
+} from '../../../../services';
 import { roleResponse } from '../../../../../infraestructure/interfaces';
 import { ServerSelectSearchComponent } from '../../../../components';
 import { Account, Officer } from '../../../../../domain/models';
@@ -48,6 +53,7 @@ export class EditAccountComponent {
   private dialogRef = inject(MatDialogRef<EditAccountComponent>);
   private alertService = inject(AlertService);
   private accountService = inject(AccountService);
+  private reportService = inject(ReportService);
   private pdfService = inject(PdfService);
 
   public account = signal(inject<Account>(MAT_DIALOG_DATA));
@@ -55,16 +61,19 @@ export class EditAccountComponent {
   public hidePassword = true;
   public updatePassword = false;
   public officers = signal<SelectOption[]>([]);
+  public communications = signal<{ label: string; count: number }[]>([]);
   public FormAccount: FormGroup = this.fb.group({
     login: ['', [Validators.required, Validators.pattern(/^[a-zA-Z0-9]+$/)]],
     rol: ['', Validators.required],
   });
 
-
   ngOnInit(): void {
     const { funcionario, ...props } = this.account();
     this.FormAccount.patchValue(props);
     this.accountService.getRoles().subscribe((roles) => this.roles.set(roles));
+    this.reportService.getWorkDetails(this.account()._id).subscribe((data) => {
+      this.communications.set(data);
+    });
   }
 
   unlink() {

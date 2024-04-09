@@ -28,3 +28,4 @@ export * from './groupware/user_socket.interface';
 
 export * from './reports/report-data.interface';
 export * from './reports/report-unit.interface';
+export * from './reports/report-work-account.interface';
