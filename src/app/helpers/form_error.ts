@@ -2,9 +2,7 @@ import type { AbstractControl } from '@angular/forms';
 
 export const handleFormErrorMessages = (control: AbstractControl) => {
   if (control.hasError('required')) return 'Este campo es requerido';
-  if (control.hasError('pattern')) {
-    return 'Campo invalido';
-  }
+  if (control.hasError('pattern')) return 'Campo invalido';
   if (control.hasError('minlength')) {
     const minLengthRequired = control.getError('minlength').requiredLength;
     return `Ingrese al menos ${minLengthRequired} caracteres`;

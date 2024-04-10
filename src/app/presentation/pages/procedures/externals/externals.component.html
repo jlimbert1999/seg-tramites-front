@@ -1,13 +1,10 @@
-<p>
-  <mat-toolbar color="primary">
-    <sidenav-button />
-    <span>Externos</span>
-    <span class="toolbar-spacer"></span>
-    <button mat-icon-button (click)="add()">
-      <mat-icon>add</mat-icon>
-    </button>
-  </mat-toolbar>
-</p>
+<mat-toolbar>
+  <span>Externos</span>
+  <span class="toolbar-spacer"></span>
+  <button mat-icon-button (click)="add()" matTooltip="Crear tramite">
+    <mat-icon>add</mat-icon>
+  </button>
+</mat-toolbar>
 
 <div class="container-fluid animate__animated animate__fadeIn">
   <search-input
@@ -65,7 +62,7 @@
             >
           </td>
         </ng-container>
-        <ng-container matColumnDef="menu-options">
+        <ng-container matColumnDef="options">
           <th mat-header-cell *matHeaderCellDef></th>
           <td mat-cell *matCellDef="let row">
             <button
@@ -92,14 +89,6 @@
                 <mat-icon>send</mat-icon>
                 <span>Remitir tramite </span>
               </button>
-              <!-- <button
-                mat-menu-item
-                [disabled]="!row.canBeManaged"
-                (click)="conclude(row)"
-              >
-                <mat-icon>domain_verification</mat-icon>
-                Concluir tramite
-              </button> -->
               <button mat-menu-item (click)="generateTicket(row)">
                 <mat-icon>receipt_long</mat-icon>
                 <span>Ficha de tramite</span>

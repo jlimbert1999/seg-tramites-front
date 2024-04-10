@@ -20,13 +20,6 @@ import {
   MatDialogRef,
 } from '@angular/material/dialog';
 
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { STEPPER_GLOBAL_OPTIONS } from '@angular/cdk/stepper';
-import { MatStepperModule } from '@angular/material/stepper';
-import { MatButtonModule } from '@angular/material/button';
-import { MatSelectModule } from '@angular/material/select';
-import { MatInputModule } from '@angular/material/input';
-import { MatRadioModule } from '@angular/material/radio';
 import { ExternalProcedure } from '../../../../../domain/models';
 import { handleFormErrorMessages } from '../../../../../helpers';
 import {
@@ -35,6 +28,7 @@ import {
 } from '../../../../../infraestructure/interfaces';
 import { SimpleSelectSearchComponent } from '../../../../components';
 import { ExternalService } from '../../../../services';
+import { MaterialModule } from '../../../../../material.module';
 
 interface SelectOption {
   text: string;
@@ -51,24 +45,13 @@ interface SelectTypeProcedureOption {
   standalone: true,
   imports: [
     CommonModule,
+    FormsModule,
     ReactiveFormsModule,
     MatDialogModule,
-    MatButtonModule,
-    MatStepperModule,
-    MatFormFieldModule,
-    MatSelectModule,
-    MatInputModule,
-    FormsModule,
-    MatRadioModule,
+    MaterialModule,
     SimpleSelectSearchComponent,
   ],
   templateUrl: './external.component.html',
-  providers: [
-    {
-      provide: STEPPER_GLOBAL_OPTIONS,
-      useValue: { showError: true },
-    },
-  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ExternalComponent {
@@ -76,7 +59,7 @@ export class ExternalComponent {
   private externalService = inject(ExternalService);
   private ddialogRef = inject(MatDialogRef<ExternalComponent>);
 
-  public external?: ExternalProcedure = inject(MAT_DIALOG_DATA);
+  public external = inject<ExternalProcedure | undefined>(MAT_DIALOG_DATA);
   applicantType = signal<typeApplicant>('NATURAL');
   hasRepresentative = signal<boolean>(false);
   segments = signal<SelectOption[]>([]);
@@ -106,7 +89,7 @@ export class ExternalComponent {
       ? this.createFormRepresentative()
       : this.fb.group({})
   );
-  requirements: string[] = [];
+  requirements = signal<string[]>([]);
 
   ngOnInit(): void {
     if (this.external) {
@@ -122,31 +105,33 @@ export class ExternalComponent {
       this.hasRepresentative.set(details.representante ? true : false);
       this.FormRepresentative().patchValue(details.representante ?? {});
     } else {
-      this.externalService.getSegments().subscribe((data) => {
+      this.externalService.getSegments().subscribe((segments) => {
         this.segments.set(
-          data.map((segment) => ({ text: segment, value: segment }))
+          segments.map((segment) => ({ text: segment, value: segment }))
         );
       });
     }
   }
 
-  getTypesProceduresBySegment(segment: string) {
-    this.FormProcedure.get('segment')?.setValue(segment);
-    this.FormProcedure.get('type')?.setValue('');
-    this.requirements = [];
+  selectSegmentProcedure(segment: string) {
+    this.FormProcedure.patchValue({ segment, type: '' });
+    this.requirements.set([]);
     this.externalService
       .getTypesProceduresBySegment(segment)
-      .subscribe((data) => {
+      .subscribe((types) => {
         this.typesProcedures.set(
-          data.map((type) => ({ value: type, text: type.nombre }))
+          types.map((type) => ({ value: type, text: type.nombre }))
         );
       });
   }
+  
   selectTypeProcedure(type: typeProcedureResponse) {
-    this.FormProcedure.get('type')?.setValue(type._id);
-    this.requirements = type.requerimientos
-      .filter((requirement) => requirement.activo)
-      .map((type) => type.nombre);
+    this.FormProcedure.patchValue({ type: type._id });
+    this.requirements.set(
+      type.requerimientos
+        .filter((requirement) => requirement.activo)
+        .map((type) => type.nombre)
+    );
   }
 
   save() {
@@ -167,7 +152,7 @@ export class ExternalComponent {
           FormProcedure: this.FormProcedure.value,
           FormApplicant: this.FormApplicant().value,
           FormRepresentative: this.FormRepresentative().value,
-          Requeriments: this.requirements,
+          Requeriments: this.requirements(),
         })
         .subscribe((procedure) => {
           this.ddialogRef.close(procedure);
@@ -199,22 +184,21 @@ export class ExternalComponent {
         '',
         [
           Validators.required,
-          Validators.minLength(6),
-          Validators.maxLength(10),
-          Validators.pattern(/^[0-9]*$/),
+          Validators.minLength(7),
+          Validators.pattern('^[a-zA-Z0-9-]*$'),
         ],
       ],
       telefono: [
         '',
         [
           Validators.required,
-          Validators.minLength(8),
-          Validators.maxLength(10),
-          Validators.pattern(/^[0-9]*$/),
+          Validators.minLength(7),
+          Validators.pattern(/^[0-9-]*$/),
         ],
       ],
     });
   }
+
   private createFormApplicantNatural(): FormGroup {
     return this.fb.group({
       nombre: [
@@ -232,22 +216,21 @@ export class ExternalComponent {
         [
           Validators.required,
           Validators.minLength(6),
-          Validators.maxLength(10),
-          Validators.pattern('^[0-9]*$'),
+          Validators.pattern('^[a-zA-Z0-9-]*$'),
         ],
       ],
       telefono: [
         '',
         [
           Validators.required,
-          Validators.minLength(8),
-          Validators.maxLength(10),
-          Validators.pattern('^[0-9]*$'),
+          Validators.minLength(7),
+          Validators.pattern('^[0-9-]*$'),
         ],
       ],
       tipo: ['NATURAL'],
     });
   }
+
   private createFormApplicantJuridico(): FormGroup {
     return this.fb.group({
       nombre: ['', Validators.required],
@@ -255,9 +238,8 @@ export class ExternalComponent {
         '',
         [
           Validators.required,
-          Validators.minLength(8),
-          Validators.maxLength(10),
-          Validators.pattern('^[0-9]*$'),
+          Validators.minLength(7),
+          Validators.pattern('^[0-9-]*$'),
         ],
       ],
       tipo: ['JURIDICO'],

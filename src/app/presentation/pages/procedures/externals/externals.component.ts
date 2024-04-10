@@ -6,21 +6,15 @@ import {
   inject,
   signal,
 } from '@angular/core';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatToolbarModule } from '@angular/material/toolbar';
-import { MatButtonModule } from '@angular/material/button';
-import { MatTableModule } from '@angular/material/table';
-import { MatIconModule } from '@angular/material/icon';
-import { MatMenuModule } from '@angular/material/menu';
 import { RouterModule } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 
 import {
   PaginatorComponent,
   SearchInputComponent,
-  SidenavButtonComponent,
+  DispatcherComponent,
 } from '../../../components';
-import { DispatcherComponent } from '../../../components/procedures/dispatcher/dispatcher.component';
+
 import {
   ExternalService,
   CacheService,
@@ -31,11 +25,8 @@ import { ExternalComponent } from './external/external.component';
 import { ExternalProcedure } from '../../../../domain/models';
 import { transferDetails } from '../../../../infraestructure/interfaces';
 import { StateLabelPipe } from '../../../pipes';
+import { MaterialModule } from '../../../../material.module';
 
-interface PaginationOptions {
-  limit: number;
-  index: number;
-}
 interface CacheData {
   datasource: ExternalProcedure[];
   datasize: number;
@@ -46,17 +37,11 @@ interface CacheData {
   standalone: true,
   imports: [
     CommonModule,
-    MatFormFieldModule,
-    MatTableModule,
-    MatMenuModule,
-    MatIconModule,
     RouterModule,
-    MatToolbarModule,
     PaginatorComponent,
-    MatMenuModule,
-    MatButtonModule,
+    MaterialModule,
+    PaginatorComponent,
     SearchInputComponent,
-    SidenavButtonComponent,
     StateLabelPipe,
   ],
   templateUrl: './externals.component.html',
@@ -80,7 +65,7 @@ export class ExternalsComponent {
     'state',
     'startDate',
     'send',
-    'menu-options',
+    'options',
   ];
 
   constructor() {
@@ -111,25 +96,23 @@ export class ExternalsComponent {
 
   add() {
     const dialogRef = this.dialog.open(ExternalComponent, {
-      width: '1200px',
-      disableClose: true,
+      maxWidth: '1200px',
     });
-    dialogRef.afterClosed().subscribe((createdProcedure) => {
-      if (!createdProcedure) return;
+    dialogRef.afterClosed().subscribe((result) => {
+      if (!result) return;
       this.datasize.update((value) => (value += 1));
       this.datasource.update((values) => {
         if (values.length === this.limit) values.pop();
-        return [createdProcedure, ...values];
+        return [result, ...values];
       });
-      this.send(createdProcedure);
+      this.send(result);
     });
   }
 
   edit(procedure: ExternalProcedure) {
     const dialogRef = this.dialog.open(ExternalComponent, {
-      width: '1200px',
+      maxWidth: '1200px',
       data: procedure,
-      disableClose: true,
     });
     dialogRef.afterClosed().subscribe((updatedProcedure) => {
       if (!updatedProcedure) return;
@@ -174,28 +157,6 @@ export class ExternalsComponent {
 
   generateTicket(tramite: ExternalProcedure) {}
 
-  conclude(procedure: ExternalProcedure) {
-    // this.alertService.showConfirmAlert(
-    //   `¿Concluir el tramite ${procedure.code}?`,
-    //   'Los tramites concluidos desde su administacion no pueden ser desarchivados',
-    //   'Ingrese una referencia para concluir',
-    //   (description) => {
-    //     const archive: EventProcedureDto = {
-    //       procedure: procedure._id,
-    //       description,
-    //       stateProcedure: stateProcedure.CONCLUIDO,
-    //     };
-    //     this.dataSource.update((values) => {
-    //       const indexFound = values.findIndex(
-    //         (element) => element._id === procedure._id
-    //       );
-    //       values[indexFound].state = stateProcedure.CONCLUIDO;
-    //       return [...values];
-    //     });
-    //   }
-    // );
-  }
-
   private savePaginationData(): void {
     this.cacheService.resetPagination();
     const cache: CacheData = {
@@ -208,18 +169,15 @@ export class ExternalsComponent {
 
   private loadPaginationData(): void {
     const cache = this.cacheService.load('externals');
-    if (!this.cacheService.keepAliveData() || !cache) {
-      this.getData();
-      return;
-    }
+    if (!this.cacheService.keepAliveData() || !cache) return this.getData();
     this.datasource.set(cache.datasource);
     this.datasize.set(cache.datasize);
     this.term = cache.text;
   }
 
-  changePage({ limit, index }: PaginationOptions) {
-    this.cacheService.pageSize.set(limit);
-    this.cacheService.pageIndex.set(index);
+  changePage(params: { limit: number; index: number }) {
+    this.cacheService.pageSize.set(params.limit);
+    this.cacheService.pageIndex.set(params.index);
     this.getData();
   }
 
