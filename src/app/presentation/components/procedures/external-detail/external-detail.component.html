@@ -1,41 +1,60 @@
-<mat-tab-group>
+<mat-tab-group mat-stretch-tabs="false">
   <mat-tab label="Tramite">
     @if(data){
     <div class="m-2 animate__animated animate__fadeIn animate__faster">
       <div class="row g-2">
+        <div class="col-12">
+          <div class="d-flex align-items-center p-2">
+            <button mat-icon-button matTooltip="Imprimir" (click)="print()">
+              <mat-icon>print</mat-icon>
+            </button>
+            <div class="ms-auto">
+              @if(data.account.officer){
+              <span class="d-block fw-bold"
+                >{{ data.account.officer.fullname | titlecase }}
+              </span>
+              <small class="d-block">{{ data.account.officer.jobtitle }}</small>
+              } @else {
+              <span class="fw-bold text-danger">DESVINCULADO</span>
+              }
+            </div>
+          </div>
+        </div>
+        <div class="col-12">
+          <div class="border border-dark rounded p-3 h-100">
+            <div class="mb-3 fw-bold">UBICACION ACTUAL</div>
+            <location [data]="location()" />
+          </div>
+        </div>
         <div class="col-sm-3">
           <div class="border border-dark rounded p-3">
-            <div class="fs-6 pb-2 mb-3 text-primary border-bottom border-dark">
-              PROPIEDADES TRAMITE
-            </div>
+            <div class="mb-3 fw-bold">PROPIEDADES TRAMITE</div>
             <dl class="row">
-              <dt class="col-sm-4">ALTERNO:</dt>
-              <dd class="col-sm-8">{{ data.code }}</dd>
+              <dt class="col-md-4">ALTERNO:</dt>
+              <dd class="col-md-8">{{ data.code }}</dd>
 
-              <dt class="col-sm-4">CITE:</dt>
-              <dd class="col-sm-8">{{ data.citeCode }}</dd>
+              <dt class="col-md-4">CITE:</dt>
+              <dd class="col-md-8">{{ data.citeCode }}</dd>
 
-              <dt class="col-sm-4">PIN:</dt>
-              <dd class="col-sm-8">{{ data.details.pin }}</dd>
+              <dt class="col-md-4">PIN:</dt>
+              <dd class="col-md-8">{{ data.details.pin }}</dd>
 
-              <dt class="col-sm-4">ESTADO:</dt>
-              <dd class="col-sm-8">{{ data.state }}</dd>
+              <dt class="col-md-4">ESTADO:</dt>
+              <dd class="col-md-8">{{ data.state }}</dd>
 
-              <dt class="col-sm-4">REGISTRO:</dt>
-              <dd class="col-sm-8">{{ data.startDate | date : "short" }}</dd>
+              <dt class="col-md-4">REGISTRO:</dt>
+              <dd class="col-md-8">{{ data.startDate | date : "short" }}</dd>
 
               @if(data.endDate){
-              <dt class="col-sm-4">CONCLUSION:</dt>
-              <dd class="col-sm-8">{{ data.endDate | date : "short" }}</dd>
+              <dt class="col-md-4">CONCLUSION:</dt>
+              <dd class="col-md-8">{{ data.endDate | date : "short" }}</dd>
               }
             </dl>
           </div>
         </div>
         <div class="col-sm-9">
           <div class="border border-dark rounded p-3 h-100">
-            <div class="fs-6 pb-2 mb-3 text-primary border-bottom border-dark">
-              DESCRIPCION TRAMITE
-            </div>
+            <div class="mb-3 fw-bold">DESCRIPCION TRAMITE</div>
             <dl class="row">
               <dt class="col-sm-2">TIPO:</dt>
               <dd class="col-sm-10">{{ data.type | uppercase }}</dd>
@@ -47,9 +66,7 @@
         </div>
         <div class="col-sm-12">
           <div class="border border-dark rounded p-3">
-            <div class="fs-6 pb-2 mb-3 text-primary border-bottom border-dark">
-              REQUERIMIENTOS PRESENTADOS
-            </div>
+            <div class="mb-3 fw-bold">REQUERIMIENTOS PRESENTADOS</div>
             <ul>
               @for (item of data.details.requirements; track $index) {
               <li>{{ item }}</li>
@@ -61,27 +78,25 @@
         </div>
         <div class="col-sm-6">
           <div class="border border-dark rounded p-3">
-            <div class="fs-6 pb-2 mb-3 text-primary border-bottom border-dark">
-              SOLICITANTE
-            </div>
+            <div class="mb-3 fw-bold">SOLICITANTE</div>
             <dl class="row">
               @if(data.details.solicitante.tipo==='NATURAL'){
-              <dt class="col-sm-3">NOMBRE:</dt>
-              <dd class="col-sm-9">{{ data.fullNameApplicant }}</dd>
+              <dt class="col-md-3">NOMBRE:</dt>
+              <dd class="col-md-9">{{ data.fullNameApplicant }}</dd>
 
-              <dt class="col-sm-3">DNI:</dt>
-              <dd class="col-sm-9">{{ data.details.solicitante.dni }}</dd>
+              <dt class="col-md-3">DNI:</dt>
+              <dd class="col-md-9">{{ data.details.solicitante.dni }}</dd>
 
-              <dt class="col-sm-3">TELEFONO:</dt>
-              <dd class="col-sm-9">
+              <dt class="col-md-3">TELEFONO:</dt>
+              <dd class="col-md-9">
                 {{ data.details.solicitante.telefono }}
               </dd>
               } @else {
-              <dt class="col-sm-3">NOMBRE:</dt>
-              <dd class="col-sm-9">{{ data.fullNameApplicant }}</dd>
+              <dt class="col-md-3">NOMBRE:</dt>
+              <dd class="col-md-9">{{ data.fullNameApplicant }}</dd>
 
-              <dt class="col-sm-3">TELEFONO:</dt>
-              <dd class="col-sm-9">
+              <dt class="col-md-3">TELEFONO:</dt>
+              <dd class="col-md-9">
                 {{ data.details.solicitante.telefono }}
               </dd>
               }
@@ -90,9 +105,7 @@
         </div>
         <div class="col-sm-6">
           <div class="border border-dark rounded p-3 h-100">
-            <div class="fs-6 pb-2 mb-3 text-primary border-bottom border-dark">
-              REPRESENTANTE
-            </div>
+            <div class="mb-3 fw-bold">REPRESENTANTE</div>
             @if(data.details.representante){
             <dl class="row">
               <dt class="col-sm-3">NOMBRE:</dt>
@@ -113,17 +126,7 @@
         </div>
         <div class="col-12">
           <div class="border border-dark rounded p-3 h-100">
-            <div class="fs-6 pb-2 mb-3 text-primary border-bottom border-dark">
-              UBICACION ACTUAL
-            </div>
-            <location [data]="location()" />
-          </div>
-        </div>
-        <div class="col-12">
-          <div class="border border-dark rounded p-3 h-100">
-            <div class="fs-6 pb-2 mb-3 text-primary border-bottom border-dark">
-              OBSERVACIONES
-            </div>
+            <div class="mb-3 fw-bold">OBSERVACIONES</div>
             <observations
               [procedure]="data._id"
               [manager]="manager()"
@@ -139,9 +142,7 @@
         <div class="col-sm-3">
           <div class="p-4">
             <p class="placeholder-glow">
-              <span
-                class="placeholder rounded placeholder-lg mb-4 w-25 bg-primary"
-              ></span>
+              <span class="placeholder rounded placeholder-lg mb-4 w-25"></span>
               <span
                 class="placeholder rounded mb-3 w-100 placeholder-lg"
               ></span>
@@ -153,9 +154,7 @@
         <div class="col-sm-9">
           <div class="p-4">
             <p class="placeholder-glow">
-              <span
-                class="placeholder rounded placeholder-lg mb-4 w-25 bg-primary"
-              ></span>
+              <span class="placeholder rounded placeholder-lg mb-4 w-25"></span>
               <span
                 class="placeholder rounded mb-3 w-100 placeholder-lg"
               ></span>
@@ -166,9 +165,7 @@
         <div class="col-sm-12">
           <div class="p-4">
             <p class="placeholder-glow">
-              <span
-                class="placeholder rounded mb-4 w-25 placeholder-lg bg-primary"
-              ></span>
+              <span class="placeholder rounded mb-4 w-25 placeholder-lg"></span>
               <span
                 class="placeholder rounded mb-3 w-100 placeholder-lg"
               ></span>
@@ -183,9 +180,7 @@
         <div class="col-sm-6">
           <div class="p-4">
             <p class="placeholder-glow">
-              <span
-                class="placeholder rounded mb-4 w-25 placeholder-lg bg-primary"
-              ></span>
+              <span class="placeholder rounded mb-4 w-25 placeholder-lg"></span>
               <span
                 class="placeholder rounded mb-2 w-100 placeholder-lg"
               ></span>
@@ -197,9 +192,7 @@
         <div class="col-sm-6">
           <div class="p-4">
             <p class="placeholder-glow">
-              <span
-                class="placeholder rounded mb-4 w-25 placeholder-lg bg-primary"
-              ></span>
+              <span class="placeholder rounded mb-4 w-25 placeholder-lg"></span>
               <span
                 class="placeholder rounded mb-2 w-100 placeholder-lg"
               ></span>
@@ -223,10 +216,12 @@
     </div>
     }
   </mat-tab>
+  @if(workflow().length>0){
   <mat-tab label="Flujo de trabajo">
     <workflow-list [data]="workflow()" />
   </mat-tab>
-  <mat-tab label="Flujo de trabajo grafico ">
+  <mat-tab label="Flujo de trabajo grafico">
     <workflow-graph [workflow]="workflow()" />
   </mat-tab>
+  }
 </mat-tab-group>

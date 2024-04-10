@@ -18,16 +18,19 @@ import {
 } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { BehaviorSubject, filter, map, switchMap } from 'rxjs';
-import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
+import { BehaviorSubject, Observable, filter, map, switchMap } from 'rxjs';
 
 import { AlertService, InboxService, SocketService } from '../../../services';
 import { SimpleSelectSearchComponent } from '../../../components';
-import {
-  transferDetails,
-  receiver,
-} from '../../../../infraestructure/interfaces';
+import { receiver } from '../../../../infraestructure/interfaces';
 import { MaterialModule } from '../../../../material.module';
+
+export interface TransferDetails {
+  id_mail?: string;
+  code: string;
+  id_procedure: string;
+  attachmentQuantity: string;
+}
 
 interface SelectOption {
   value: string;
@@ -41,7 +44,6 @@ interface SelectOption {
     CommonModule,
     MaterialModule,
     ReactiveFormsModule,
-    NgxMatSelectSearchModule,
     SimpleSelectSearchComponent,
   ],
   templateUrl: './dispatcher.component.html',
@@ -56,7 +58,7 @@ export class DispatcherComponent implements OnInit {
   private inboxService = inject(InboxService);
   private socketService = inject(SocketService);
 
-  public data: transferDetails = inject(MAT_DIALOG_DATA);
+  public data: TransferDetails = inject(MAT_DIALOG_DATA);
   public institutions = signal<SelectOption[]>([]);
   public dependencies = signal<SelectOption[]>([]);
 
@@ -124,12 +126,12 @@ export class DispatcherComponent implements OnInit {
   }
 
   getInstitutions() {
+    this.dependencies.set([]);
     this.receivers.set([]);
     this.filteredReceivers$.next([]);
-    this.dependencies.set([]);
-    this.inboxService.getInstitucions().subscribe((data) => {
+    this.inboxService.getInstitucions().subscribe((resp) => {
       this.institutions.set(
-        data.map(({ _id, nombre }) => ({ value: _id, text: nombre }))
+        resp.map(({ _id, nombre }) => ({ value: _id, text: nombre }))
       );
     });
   }
@@ -149,7 +151,7 @@ export class DispatcherComponent implements OnInit {
   getAccounts(id_dependency: string) {
     this.inboxService
       .getAccountsForSend(id_dependency)
-      // .pipe(switchMap((data) => this.getOnlineUsers(data)))
+      .pipe(switchMap((receivers) => this._checkOnlineClients(receivers)))
       .subscribe((accounts) => {
         this.receivers.set(accounts);
         this.filteredReceivers$.next(accounts);
@@ -170,17 +172,17 @@ export class DispatcherComponent implements OnInit {
     this.filteredReceivers$.next(filtered);
   }
 
-  private getOnlineUsers(receivers: receiver[]) {
-    // return this.socketService.listenClientConnection().pipe(
-    //   takeUntilDestroyed(this.destroyRef),
-    //   map((users) =>
-    //     receivers.map((receiver) => {
-    //       const isOnline = users.some(
-    //         (user) => user.id_account === receiver.id_account
-    //       );
-    //       return { ...receiver, online: isOnline };
-    //     })
-    //   )
-    // );
+  private _checkOnlineClients(receivers: receiver[]): Observable<receiver[]> {
+    return this.socketService.onlineClients$.pipe(
+      takeUntilDestroyed(this.destroyRef),
+      map((clients) =>
+        receivers.map((receiver) => {
+          const isOnline = clients.some(
+            ({ id_account }) => id_account === receiver.id_account
+          );
+          return { ...receiver, online: isOnline };
+        })
+      )
+    );
   }
 }

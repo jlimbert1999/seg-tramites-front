@@ -8,7 +8,7 @@ import {
   signal,
 } from '@angular/core';
 import { LocationComponent } from '../location/location.component';
-import { ProcedureService } from '../../../services';
+import { PdfService, ProcedureService } from '../../../services';
 import { locationResponse } from '../../../../infraestructure/interfaces';
 import {
   GroupProcedure,
@@ -35,8 +35,9 @@ import { WorkflowGraphComponent } from '../workflow-graph/workflow-graph.compone
 })
 export class InternalDetailComponent implements OnInit {
   private procedureService = inject(ProcedureService);
-  id = input.required<string>();
-
+  private pdfService = inject(PdfService);
+  
+  public readonly id = input.required<string>();
   public procedure = signal<InternalProcedure | null>(null);
   public location = signal<locationResponse[]>([]);
   public workflow = signal<Workflow[]>([]);
@@ -54,5 +55,9 @@ export class InternalDetailComponent implements OnInit {
   }
   get data() {
     return this.procedure()!;
+  }
+
+  print() {
+    this.pdfService.GenerateIndexCard(this.data, this.workflow());
   }
 }

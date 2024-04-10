@@ -13,5 +13,5 @@ import { locationResponse } from '../../../../infraestructure/interfaces';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LocationComponent {
-  data = input<locationResponse[]>();
+  data = input.required<locationResponse[]>();
 }

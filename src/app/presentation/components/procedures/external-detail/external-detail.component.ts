@@ -23,10 +23,8 @@ import {
   StateProcedure,
   Workflow,
 } from '../../../../domain/models';
-import { AuthService, ProcedureService } from '../../../services';
-import {
-  locationResponse,
-} from '../../../../infraestructure/interfaces';
+import { AuthService, PdfService, ProcedureService } from '../../../services';
+import { locationResponse } from '../../../../infraestructure/interfaces';
 
 @Component({
   selector: 'external-detail',
@@ -45,8 +43,9 @@ import {
 export class ExternalDetailComponent implements OnInit {
   private authService = inject(AuthService);
   private procedureService = inject(ProcedureService);
+  private pdfService = inject(PdfService);
 
-  id = input.required<string>();
+  public readonly id = input.required<string>();
   enableOptions = input.required<boolean>();
   onStateChange = output<StateProcedure>();
 
@@ -81,5 +80,9 @@ export class ExternalDetailComponent implements OnInit {
 
   get data() {
     return this.procedure()!;
+  }
+
+  print() {
+    this.pdfService.GenerateIndexCard(this.procedure()!, this.workflow());
   }
 }

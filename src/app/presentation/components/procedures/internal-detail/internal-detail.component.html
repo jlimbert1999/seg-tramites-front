@@ -1,11 +1,36 @@
-<mat-tab-group>
+<mat-tab-group mat-stretch-tabs="false">
   <mat-tab label="Tramite">
     @if(data){
       <div class="m-2 animate__animated animate__fadeIn animate__faster">
         <div class="row g-2">
+          <div class="col-12">
+            <div class="d-flex align-items-center p-2">
+              <button mat-icon-button matTooltip="Imprimir" (click)="print()">
+                <mat-icon>print</mat-icon>
+              </button>
+              <div class="ms-auto">
+                @if(data.account.officer){
+                <span class="d-block fw-bold"
+                  >{{ data.account.officer.fullname | titlecase }}
+                </span>
+                <small class="d-block">{{ data.account.officer.jobtitle }}</small>
+                } @else {
+                <span class="fw-bold text-danger">DESVINCULADO</span>
+                }
+              </div>
+            </div>
+          </div>
+          <div class="col-12">
+            <div class="border border-dark rounded p-3 h-100">
+              <div class="mb-3 fw-bold">
+                UBICACION ACTUAL
+              </div>
+              <location [data]="location()" />
+            </div>
+          </div>
           <div class="col-sm-3">
             <div class="border border-dark rounded p-3">
-              <div class="fs-6 pb-2 mb-3 text-primary border-bottom border-dark">
+              <div class="mb-3 fw-bold">
                 PROPIEDADES TRAMITE
               </div>
               <dl class="row">
@@ -30,7 +55,7 @@
           </div>
           <div class="col-sm-9">
             <div class="border border-dark rounded p-3 h-100">
-              <div class="fs-6 pb-2 mb-3 text-primary border-bottom border-dark">
+              <div class="mb-3 fw-bold">
                 DESCRIPCION TRAMITE
               </div>
               <dl class="row">
@@ -44,7 +69,7 @@
           </div>
           <div class="col-sm-6">
             <div class="border border-dark rounded p-3">
-              <div class="fs-6 pb-2 mb-3 text-primary border-bottom border-dark">
+              <div class="mb-3 fw-bold">
                 REMITENTE
               </div>
               <dl class="row">
@@ -58,7 +83,7 @@
           </div>
           <div class="col-sm-6">
             <div class="border border-dark rounded p-3 h-100">
-              <div class="fs-6 pb-2 mb-3 text-primary border-bottom border-dark">
+              <div class="mb-3 fw-bold">
                 DESTINATARIO
               </div>
               <dl class="row">
@@ -70,14 +95,6 @@
               </dl>
             </div>
           </div>
-          <div class="col-12">
-            <div class="border border-dark rounded p-3 h-100">
-              <div class="fs-6 pb-2 mb-3 text-primary border-bottom border-dark">
-                UBICACION ACTUAL
-              </div>
-              <location [data]="location()" />
-            </div>
-          </div>
         </div>
       </div>
       } @else {
@@ -87,7 +104,7 @@
             <div class="p-4">
               <p class="placeholder-glow">
                 <span
-                  class="placeholder rounded placeholder-lg mb-4 w-25 bg-primary"
+                  class="placeholder rounded placeholder-lg mb-4 w-25"
                 ></span>
                 <span class="placeholder rounded mb-3 w-100 placeholder-lg"></span>
                 <span class="placeholder rounded mb-3 w-50 placeholder-lg"></span>
@@ -99,7 +116,7 @@
             <div class="p-4">
               <p class="placeholder-glow">
                 <span
-                  class="placeholder rounded placeholder-lg mb-4 w-25 bg-primary"
+                  class="placeholder rounded placeholder-lg mb-4 w-25"
                 ></span>
                 <span class="placeholder rounded mb-3 w-100 placeholder-lg"></span>
                 <span class="placeholder rounded mb-3 w-50 placeholder"></span>
@@ -110,7 +127,7 @@
             <div class="p-4">
               <p class="placeholder-glow">
                 <span
-                  class="placeholder rounded mb-4 w-25 placeholder-lg bg-primary"
+                  class="placeholder rounded mb-4 w-25 placeholder-lg"
                 ></span>
                 <span class="placeholder rounded mb-2 w-100 placeholder-lg"></span>
                 <span class="placeholder rounded mb-2 w-75 placeholder-lg"></span>
@@ -122,7 +139,7 @@
             <div class="p-4">
               <p class="placeholder-glow">
                 <span
-                  class="placeholder rounded mb-4 w-25 placeholder-lg bg-primary"
+                  class="placeholder rounded mb-4 w-25 placeholder-lg"
                 ></span>
                 <span class="placeholder rounded mb-2 w-100 placeholder-lg"></span>
                 <span class="placeholder rounded mb-2 w-75 placeholder-lg"></span>

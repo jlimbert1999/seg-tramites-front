@@ -1,4 +1,4 @@
-<h2 mat-dialog-title>Remision tramite</h2>
+<h2 mat-dialog-title>Remision Tramite</h2>
 <mat-dialog-content>
   <form [formGroup]="FormEnvio">
     <div class="row">
@@ -39,7 +39,7 @@
             }
           </mat-chip-grid>
           <input
-            placeholder="Nombre / Cargo"
+            placeholder="Agregar destinatario..."
             #receiverInput
             [formControl]="filterReceiverCtrl"
             [matChipInputFor]="chipGrid"
@@ -70,7 +70,7 @@
       </div>
     </div>
     <dl class="row">
-      <dt class="col-sm-2">Tramite:</dt>
+      <dt class="col-sm-2">TRAMITE:</dt>
       <dd class="col-sm-10">{{ data.code }}</dd>
     </dl>
     <div class="row">
@@ -103,9 +103,9 @@
   </form>
 </mat-dialog-content>
 <mat-dialog-actions align="end">
-  <button mat-raised-button color="warn" mat-dialog-close>Cancelar</button>
+  <button mat-button color="warn" mat-dialog-close>Cancelar</button>
   <button
-    mat-raised-button
+    mat-button
     color="primary"
     [disabled]="!isValidForm"
     (click)="showConfirmSend()"

@@ -30,14 +30,9 @@ import { SimpleSelectSearchComponent } from '../../../../components';
 import { ExternalService } from '../../../../services';
 import { MaterialModule } from '../../../../../material.module';
 
-interface SelectOption {
+interface SelectOption<T> {
   text: string;
-  value: string;
-}
-
-interface SelectTypeProcedureOption {
-  text: string;
-  value: typeProcedureResponse;
+  value: T;
 }
 
 @Component({
@@ -60,10 +55,10 @@ export class ExternalComponent {
   private ddialogRef = inject(MatDialogRef<ExternalComponent>);
 
   public external = inject<ExternalProcedure | undefined>(MAT_DIALOG_DATA);
-  applicantType = signal<typeApplicant>('NATURAL');
-  hasRepresentative = signal<boolean>(false);
-  segments = signal<SelectOption[]>([]);
-  typesProcedures = signal<SelectTypeProcedureOption[]>([]);
+  public applicantType = signal<typeApplicant>('NATURAL');
+  public hasRepresentative = signal<boolean>(false);
+  public segments = signal<SelectOption<string>[]>([]);
+  public typesProcedures = signal<SelectOption<typeProcedureResponse>[]>([]);
 
   readonly documents: string[] = [
     'Carnet de identidad',
@@ -124,7 +119,7 @@ export class ExternalComponent {
         );
       });
   }
-  
+
   selectTypeProcedure(type: typeProcedureResponse) {
     this.FormProcedure.patchValue({ type: type._id });
     this.requirements.set(

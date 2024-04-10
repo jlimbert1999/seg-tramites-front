@@ -13,6 +13,7 @@ import {
   PaginatorComponent,
   SearchInputComponent,
   DispatcherComponent,
+  TransferDetails,
 } from '../../../components';
 
 import {
@@ -21,11 +22,10 @@ import {
   ProcedureService,
   PdfService,
 } from '../../../services';
+import { MaterialModule } from '../../../../material.module';
 import { ExternalComponent } from './external/external.component';
 import { ExternalProcedure } from '../../../../domain/models';
-import { transferDetails } from '../../../../infraestructure/interfaces';
 import { StateLabelPipe } from '../../../pipes';
-import { MaterialModule } from '../../../../material.module';
 
 interface CacheData {
   datasource: ExternalProcedure[];
@@ -38,8 +38,8 @@ interface CacheData {
   imports: [
     CommonModule,
     RouterModule,
-    PaginatorComponent,
     MaterialModule,
+    PaginatorComponent,
     PaginatorComponent,
     SearchInputComponent,
     StateLabelPipe,
@@ -96,7 +96,7 @@ export class ExternalsComponent {
 
   add() {
     const dialogRef = this.dialog.open(ExternalComponent, {
-      maxWidth: '1200px',
+      maxWidth: '1000px',
     });
     dialogRef.afterClosed().subscribe((result) => {
       if (!result) return;
@@ -111,28 +111,27 @@ export class ExternalsComponent {
 
   edit(procedure: ExternalProcedure) {
     const dialogRef = this.dialog.open(ExternalComponent, {
-      maxWidth: '1200px',
+      maxWidth: '1000px',
       data: procedure,
     });
-    dialogRef.afterClosed().subscribe((updatedProcedure) => {
-      if (!updatedProcedure) return;
+    dialogRef.afterClosed().subscribe((result) => {
+      if (!result) return;
       this.datasource.update((values) => {
-        const indexFound = values.findIndex(
-          (element) => element._id === updatedProcedure._id
-        );
-        values[indexFound] = updatedProcedure;
+        const indexFound = values.findIndex(({ _id }) => _id === result._id);
+        values[indexFound] = result;
         return [...values];
       });
     });
   }
 
   send(procedure: ExternalProcedure) {
-    const transfer: transferDetails = {
+    const transfer: TransferDetails = {
       id_procedure: procedure._id,
       code: procedure.code,
       attachmentQuantity: procedure.amount,
     };
     const dialogRef = this.dialog.open(DispatcherComponent, {
+      maxWidth: '1200px',
       width: '1200px',
       data: transfer,
       disableClose: true,
@@ -167,18 +166,18 @@ export class ExternalsComponent {
     this.cacheService.save('externals', cache);
   }
 
+  changePage(params: { limit: number; index: number }) {
+    this.cacheService.pageSize.set(params.limit);
+    this.cacheService.pageIndex.set(params.index);
+    this.getData();
+  }
+
   private loadPaginationData(): void {
     const cache = this.cacheService.load('externals');
     if (!this.cacheService.keepAliveData() || !cache) return this.getData();
     this.datasource.set(cache.datasource);
     this.datasize.set(cache.datasize);
     this.term = cache.text;
-  }
-
-  changePage(params: { limit: number; index: number }) {
-    this.cacheService.pageSize.set(params.limit);
-    this.cacheService.pageIndex.set(params.index);
-    this.getData();
   }
 
   get index() {

@@ -2,21 +2,20 @@
   {{ external ? "Edicion" : "Creacion" }} Tramite Externo
 </h2>
 <mat-dialog-content>
-  <pre>{{ FormProcedure.value | json }}</pre>
   <mat-stepper headerPosition="bottom" #stepper>
     <mat-step [stepControl]="FormProcedure" errorMessage="Campos incorrectos">
       <form [formGroup]="FormProcedure">
         <ng-template matStepLabel>Detalles tramite</ng-template>
         <div class="row gy-2">
           @if (!external) {
-          <div class="col-sm-3">
+          <div class="col-md-3">
             <simple-select-search
               placeholder="Segmento"
               [elements]="segments()"
               (onSelect)="selectSegmentProcedure($event)"
             />
           </div>
-          <div class="col-sm-9">
+          <div class="col-md-9">
             <simple-select-search
               placeholder="Tipo de tramite"
               [elements]="typesProcedures()"
@@ -24,7 +23,7 @@
             />
           </div>
           }
-          <div class="col-sm-6">
+          <div class="col-md-6">
             <mat-form-field>
               <mat-label>Referencia del tramite</mat-label>
               <textarea matInput formControlName="reference"></textarea>
@@ -35,7 +34,7 @@
               }
             </mat-form-field>
           </div>
-          <div class="col-sm-3">
+          <div class="col-md-3">
             <mat-form-field>
               <mat-label>Cant. Hojas / Anexos</mat-label>
               <input type="text" matInput formControlName="amount" />
@@ -46,46 +45,24 @@
               }
             </mat-form-field>
           </div>
-          <div class="col-sm-3">
+          <div class="col-md-3">
             <mat-form-field>
               <mat-label>CITE</mat-label>
               <input type="text" matInput formControlName="cite" />
             </mat-form-field>
           </div>
           <div class="col-12">
-            <ol>
+            @if(FormProcedure.get('type')?.value){
+            <ul>
               @for (requirement of requirements(); track $index) {
-              <li class="list-group-item">
-                {{ requirement }}
-              </li>
+              <li>{{ requirement }}</li>
               }@empty {
-              <div class="alert alert-primary" role="alert">
-                El tramite no tiene requerimientos
-              </div>
+              <li>SIN REQUISITOS</li>
               }
-            </ol>
+            </ul>
+            }
           </div>
         </div>
-
-        <!-- @if(!external){
-        <div class="row mt-2">
-          @if (FormProcedure.get('type')?.value !== '') {
-          <h4>Requerimientos</h4>
-          <hr />
-          <ol class="list-group list-group-numbered bg-transparent">
-            @for (requirement of requirements; track $index) {
-            <li class="list-group-item">
-              {{ requirement }}
-            </li>
-            }@empty {
-            <div class="alert alert-primary" role="alert">
-              El tramite no tiene requerimientos
-            </div>
-            }
-          </ol>
-          }
-        </div>
-        } -->
       </form>
     </mat-step>
     <mat-step [stepControl]="FormApplicant()" errorMessage="Campos incorrectos">
@@ -103,7 +80,7 @@
       </mat-form-field>
       }
       <form [formGroup]="FormApplicant()">
-        <div class="row gy-5">
+        <div class="row gy-2">
           @if(applicantType()==='NATURAL'){
           <div class="col-sm-4">
             <mat-form-field>
@@ -281,13 +258,8 @@
   </mat-stepper>
 </mat-dialog-content>
 <mat-dialog-actions align="end">
-  <button mat-raised-button mat-dialog-close color="warn">Cancelar</button>
-  <button
-    mat-raised-button
-    color="primary"
-    [disabled]="!validForms"
-    (click)="save()"
-  >
+  <button mat-button mat-dialog-close color="warn">Cancelar</button>
+  <button mat-button color="primary" [disabled]="!validForms" (click)="save()">
     Guardar
   </button>
 </mat-dialog-actions>

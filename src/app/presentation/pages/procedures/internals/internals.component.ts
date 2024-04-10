@@ -6,19 +6,13 @@ import {
   inject,
   signal,
 } from '@angular/core';
-import { MatButtonModule } from '@angular/material/button';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatIconModule } from '@angular/material/icon';
-import { MatMenuModule } from '@angular/material/menu';
-import { MatTableModule } from '@angular/material/table';
-import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatDialog } from '@angular/material/dialog';
 import { RouterModule } from '@angular/router';
 
 import {
   PaginatorComponent,
   SearchInputComponent,
-  SidenavButtonComponent,
+  DispatcherComponent,
 } from '../../../components';
 import { InternalComponent } from './internal/internal.component';
 import {
@@ -30,12 +24,8 @@ import {
 import { InternalProcedure } from '../../../../domain/models';
 import { transferDetails } from '../../../../infraestructure/interfaces';
 import { StateLabelPipe } from '../../../pipes';
-import { DispatcherComponent } from '../../../components/procedures/dispatcher/dispatcher.component';
+import { MaterialModule } from '../../../../material.module';
 
-interface PaginationOptions {
-  limit: number;
-  index: number;
-}
 interface CacheData {
   results: InternalProcedure[];
   length: number;
@@ -46,17 +36,10 @@ interface CacheData {
   standalone: true,
   imports: [
     CommonModule,
-    MatFormFieldModule,
-    MatTableModule,
-    MatMenuModule,
-    MatIconModule,
     RouterModule,
-    MatToolbarModule,
+    MaterialModule,
     PaginatorComponent,
-    MatMenuModule,
-    MatButtonModule,
     SearchInputComponent,
-    SidenavButtonComponent,
     SearchInputComponent,
     StateLabelPipe,
   ],
@@ -113,8 +96,7 @@ export class InternalsComponent {
 
   add() {
     const dialogRef = this.dialog.open(InternalComponent, {
-      width: '1000px',
-      disableClose: true,
+      maxWidth: '1000px',
     });
     dialogRef.afterClosed().subscribe((procedure) => {
       if (!procedure) return;
@@ -129,16 +111,14 @@ export class InternalsComponent {
 
   edit(procedure: InternalProcedure) {
     const dialogRef = this.dialog.open(InternalComponent, {
-      width: '1000px',
+      maxWidth: '1000px',
       data: procedure,
     });
-    dialogRef.afterClosed().subscribe((updatedProcedure) => {
-      if (!updatedProcedure) return;
+    dialogRef.afterClosed().subscribe((procedure) => {
+      if (!procedure) return;
       this.datasource.update((values) => {
-        const index = values.findIndex(
-          (element) => element._id === updatedProcedure._id
-        );
-        values[index] = updatedProcedure;
+        const index = values.findIndex(({ _id }) => _id === procedure._id);
+        values[index] = procedure;
         return [...values];
       });
     });
@@ -151,17 +131,15 @@ export class InternalsComponent {
       attachmentQuantity: procedure.amount,
     };
     const dialogRef = this.dialog.open(DispatcherComponent, {
+      maxWidth: '1200px',
       width: '1200px',
       data: transfer,
-      disableClose: true,
     });
     dialogRef.afterClosed().subscribe((message) => {
       if (!message) return;
       this.datasource.update((values) => {
-        const indexFound = values.findIndex(
-          (element) => element._id === procedure._id
-        );
-        values[indexFound].isSend = true;
+        const index = values.findIndex(({ _id }) => _id === procedure._id);
+        values[index].isSend = true;
         return [...values];
       });
     });
@@ -172,8 +150,6 @@ export class InternalsComponent {
       this.pdfService.generateRouteSheet(procedure, workflow);
     });
   }
-
-  conclude(procedure: InternalProcedure) {}
 
   private savePaginationData(): void {
     this.cacheService.resetPagination();
@@ -196,9 +172,9 @@ export class InternalsComponent {
     this.term = cacheData.term;
   }
 
-  changePage({ limit, index }: PaginationOptions) {
-    this.cacheService.pageSize.set(limit);
-    this.cacheService.pageIndex.set(index);
+  changePage(params: { limit: number; index: number }) {
+    this.cacheService.pageSize.set(params.limit);
+    this.cacheService.pageIndex.set(params.index);
     this.getData();
   }
 

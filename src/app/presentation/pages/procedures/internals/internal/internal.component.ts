@@ -13,18 +13,7 @@ import {
   Validators,
   AbstractControl,
 } from '@angular/forms';
-import { MatButtonModule } from '@angular/material/button';
-import {
-  MAT_DIALOG_DATA,
-  MatDialogModule,
-  MatDialogRef,
-} from '@angular/material/dialog';
-import { MatAutocompleteModule } from '@angular/material/autocomplete';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatStepperModule } from '@angular/material/stepper';
-import { MatSelectModule } from '@angular/material/select';
-import { MatRadioModule } from '@angular/material/radio';
-import { MatInputModule } from '@angular/material/input';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Observable, debounceTime, filter, startWith, switchMap } from 'rxjs';
 
 import { InternalProcedure, Officer } from '../../../../../domain/models';
@@ -32,6 +21,7 @@ import { handleFormErrorMessages } from '../../../../../helpers';
 import { typeProcedureResponse } from '../../../../../infraestructure/interfaces';
 import { SimpleSelectSearchComponent } from '../../../../components';
 import { AuthService, InternalService } from '../../../../services';
+import { MaterialModule } from '../../../../../material.module';
 
 interface SelectOption {
   value: typeProcedureResponse;
@@ -42,16 +32,9 @@ interface SelectOption {
   standalone: true,
   imports: [
     CommonModule,
-    ReactiveFormsModule,
-    MatDialogModule,
-    MatButtonModule,
-    MatStepperModule,
-    MatFormFieldModule,
-    MatSelectModule,
-    MatInputModule,
     FormsModule,
-    MatRadioModule,
-    MatAutocompleteModule,
+    ReactiveFormsModule,
+    MaterialModule,
     SimpleSelectSearchComponent,
   ],
   templateUrl: './internal.component.html',
@@ -83,7 +66,6 @@ export class InternalComponent {
       this.authService.account()?.officer.jobtitle,
       Validators.required,
     ],
-    //  TODO CODE OF DEPENDENCY
     cite: [this.authService.code()],
   });
 

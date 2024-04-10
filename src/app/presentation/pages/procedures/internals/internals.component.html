@@ -1,15 +1,12 @@
-<p>
-  <mat-toolbar color="primary">
-    <sidenav-button />
-    <span>Internos</span>
-    <span class="toolbar-spacer"></span>
-    <button mat-icon-button (click)="add()">
-      <mat-icon>add</mat-icon>
-    </button>
-  </mat-toolbar>
-</p>
+<mat-toolbar>
+  <span>Internos</span>
+  <span class="toolbar-spacer"></span>
+  <button mat-icon-button (click)="add()">
+    <mat-icon>add</mat-icon>
+  </button>
+</mat-toolbar>
 
-<div class="container-fluid">
+<div class="container-fluid animate__animated animate__fadeIn animate__faster">
   <search-input
     placeholder="Alterno / Referencia"
     [initialValue]="term"
@@ -93,14 +90,6 @@
                 <mat-icon>send</mat-icon>
                 <span>Remitir tramite</span>
               </button>
-              <!-- <button
-                mat-menu-item
-                [disabled]="!row.canBeManaged"
-                (click)="conclude(row)"
-              >
-                <mat-icon>domain_verification</mat-icon>
-                <span>Concluir tramite</span>
-              </button> -->
               <button mat-menu-item (click)="generateRouteMap(row)">
                 <mat-icon>feed</mat-icon>
                 <span>Hoja de ruta</span>

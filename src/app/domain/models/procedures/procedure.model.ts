@@ -97,8 +97,7 @@ export abstract class Procedure {
   }
 
   get isEditable(): boolean {
-    if (this.state !== 'INSCRITO') return false;
-    return true;
+    return this.state === 'INSCRITO'
   }
 
   get canBeManaged() {
