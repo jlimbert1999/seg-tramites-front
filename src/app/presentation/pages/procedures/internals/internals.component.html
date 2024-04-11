@@ -84,7 +84,7 @@
               </button>
               <button
                 mat-menu-item
-                [disabled]="!row.canBeManaged"
+                [disabled]="row.isSend"
                 (click)="send(row)"
               >
                 <mat-icon>send</mat-icon>

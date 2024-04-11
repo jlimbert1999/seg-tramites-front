@@ -1,10 +1,10 @@
 <mat-accordion>
   <mat-expansion-panel expanded="true">
     <mat-expansion-panel-header>
-      <mat-panel-title>BUSQUEDA</mat-panel-title>
+      <mat-panel-title>PROPIEDADES TRAMITE</mat-panel-title>
     </mat-expansion-panel-header>
     <div class="d-flex align-items-center p-2">
-      <div class="flex-grow-1">Parametros busqueda</div>
+      <div class="flex-grow-1">TIPO BUSQUEDA:</div>
       <div>
         <mat-button-toggle-group
           (change)="selectSearchMode($event.value)"
@@ -133,9 +133,9 @@
     </div>
 
     <mat-action-row>
-      <button mat-flat-button (click)="clear()">Limpiar</button>
+      <button mat-button (click)="clear()">Limpiar</button>
       <button
-        mat-flat-button
+        mat-button
         color="primary"
         [disabled]="FormProcedure().invalid"
         (click)="generate()"
