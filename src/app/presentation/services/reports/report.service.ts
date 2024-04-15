@@ -1,6 +1,6 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { map } from 'rxjs';
+import { Observable, map } from 'rxjs';
 import { environment } from '../../../../environments/environment';
 import {
   accountResponse,
@@ -41,7 +41,10 @@ export class ReportService {
     form,
     limit,
     offset,
-  }: SearchApplicantProps) {
+  }: SearchApplicantProps): Observable<{
+    procedures: TableProcedureData[];
+    length: number;
+  }> {
     const params = new HttpParams({ fromObject: { limit, offset } });
     const properties = this.removeEmptyValuesFromObject(form);
     return this.http
@@ -52,7 +55,12 @@ export class ReportService {
       )
       .pipe(
         map((resp) => ({
-          procedures: this.responseToInterface(resp.procedures),
+          procedures: resp.procedures.map(
+            ({ details: { solicitante }, ...props }) => ({
+              ...props,
+              applicant: `${solicitante.nombre} ${solicitante.paterno} ${solicitante.materno}`,
+            })
+          ),
           length: resp.length,
         }))
       );
@@ -140,11 +148,11 @@ export class ReportService {
   private responseToInterface(procedures: procedure[]): TableProcedureData[] {
     return procedures.map(
       ({ _id, group, reference, startDate, code, state }) => ({
-        id_procedure: _id,
+        _id: _id,
         group: group,
         state: state,
         reference: reference,
-        date: startDate,
+        startDate: startDate,
         code: code,
       })
     );

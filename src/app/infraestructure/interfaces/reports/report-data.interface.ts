@@ -5,11 +5,11 @@ export interface TableProcedureColums {
   header: string;
 }
 export interface TableProcedureData {
-  id_procedure: string;
+  _id: string;
   group: GroupProcedure;
   state: StateProcedure;
   reference: string;
-  date: string;
+  startDate: string;
   code: string;
   applicant?: string;
 }

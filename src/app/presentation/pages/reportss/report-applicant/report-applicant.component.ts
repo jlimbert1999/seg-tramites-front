@@ -14,13 +14,6 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { MatExpansionModule } from '@angular/material/expansion';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatIconModule } from '@angular/material/icon';
-import { MatRadioModule } from '@angular/material/radio';
-import { MatSelectModule } from '@angular/material/select';
-import { MatButtonModule } from '@angular/material/button';
-import { MatInputModule } from '@angular/material/input';
 import { CacheService, PdfService, ReportService } from '../../../services';
 import {
   PaginatorComponent,
@@ -30,11 +23,8 @@ import {
   TableProcedureColums,
   TableProcedureData,
 } from '../../../../infraestructure/interfaces';
+import { MaterialModule } from '../../../../material.module';
 
-interface PaginationOptions {
-  limit: number;
-  index: number;
-}
 type validReportType = 'solicitante' | 'representante';
 type typeApplicant = 'NATURAL' | 'JURIDICO';
 
@@ -53,13 +43,7 @@ interface CacheData {
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
-    MatExpansionModule,
-    MatRadioModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatSelectModule,
-    MatIconModule,
-    MatButtonModule,
+    MaterialModule,
     ReportProcedureTableComponent,
     PaginatorComponent,
   ],
@@ -88,12 +72,9 @@ export class ReportApplicantComponent {
     { columnDef: 'code', header: 'Alterno' },
     { columnDef: 'reference', header: 'Referencia' },
     { columnDef: 'state', header: 'Estado' },
-    { columnDef: 'date', header: 'Fecha' },
+    { columnDef: 'startDate', header: 'Fecha' },
+    { columnDef: 'applicant', header: 'Solicitante' },
   ];
-
-  private mapProertyrs: Record<string, string> = {
-    nombre: 'NOmbre',
-  };
 
   constructor() {
     inject(DestroyRef).onDestroy(() => {
@@ -140,9 +121,9 @@ export class ReportApplicantComponent {
       });
   }
 
-  changePage({ limit, index }: PaginationOptions) {
-    this.cacheService.pageSize.set(limit);
-    this.cacheService.pageIndex.set(index);
+  changePage(params: { limit: number; index: number }) {
+    this.cacheService.pageSize.set(params.limit);
+    this.cacheService.pageIndex.set(params.index);
     this.getData();
   }
 
@@ -154,12 +135,12 @@ export class ReportApplicantComponent {
   }
 
   print() {
-    this.pdfService.GenerateReportSheet(
-      'un reporte',
-      this.FormApplicant().value,
-      this.datasource(),
-      this.displaycolums
-    );
+    this.pdfService.GenerateReportSheet({
+      title: 'Reporte solicitante',
+      manager: 'ds',
+      results: this.datasource().map(el=>[el]),
+      columns: this.displaycolums,
+    });
   }
 
   private FormByApplicatNatural(): FormGroup {

@@ -1,7 +1,7 @@
 <mat-accordion>
   <mat-expansion-panel expanded="true">
     <mat-expansion-panel-header>
-      <mat-panel-title>DATOS SOLICITANTE / REPRESENTANTE </mat-panel-title>
+      <mat-panel-title>PROPIEDADES SOLICITANTE </mat-panel-title>
     </mat-expansion-panel-header>
     <div class="row">
       <div class="col-sm-3">
@@ -89,10 +89,9 @@
       <button mat-icon-button (click)="print()">
         <mat-icon>print</mat-icon>
       </button>
-      <button mat-flat-button (click)="clear()">Limpiar</button>
+      <button mat-button (click)="clear()">Limpiar</button>
       <button
-        mat-flat-button
-        color="primary"
+        mat-button
         [disabled]="FormApplicant().invalid"
         (click)="generate()"
       >

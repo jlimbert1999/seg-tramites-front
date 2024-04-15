@@ -81,11 +81,7 @@
                 <mat-icon>edit</mat-icon>
                 <span>Editar tramite</span>
               </button>
-              <button
-                mat-menu-item
-                [disabled]="row.isSend"
-                (click)="send(row)"
-              >
+              <button mat-menu-item [disabled]="row.isSend" (click)="send(row)">
                 <mat-icon>send</mat-icon>
                 <span>Remitir tramite </span>
               </button>

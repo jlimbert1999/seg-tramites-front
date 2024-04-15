@@ -1,13 +1,10 @@
+<mat-toolbar>
+  <button mat-icon-button (click)="backLocation()">
+    <mat-icon>arrow_back</mat-icon>
+  </button>
+  <span class="ms-2">Detalle</span>
+</mat-toolbar>
 <div class="animate__animated animate__fadeInLeft animate__faster">
-  <p>
-    <mat-toolbar color="primary">
-      <button mat-icon-button (click)="backLocation()">
-        <mat-icon>arrow_back</mat-icon>
-      </button>
-      <span>Detalle</span>
-      <span class="toolbar-spacer"></span>
-    </mat-toolbar>
-  </p>
   <div class="container-fluid">
     @if(mail()){
     <mat-card>
@@ -46,7 +43,6 @@
           </div>
         </div>
       </mat-card-content>
-      <mat-divider />
       <mat-card-actions class="action-row-buttons" align="end">
         @if(detail.status==='pending'){
         <button mat-raised-button color="warn" (click)="reject()">

@@ -64,7 +64,6 @@ export class ExternalsComponent {
     'applicant',
     'state',
     'startDate',
-    'send',
     'options',
   ];
 
@@ -97,6 +96,7 @@ export class ExternalsComponent {
   add() {
     const dialogRef = this.dialog.open(ExternalComponent, {
       maxWidth: '1000px',
+      width: '1000px',
     });
     dialogRef.afterClosed().subscribe((result) => {
       if (!result) return;
@@ -112,6 +112,7 @@ export class ExternalsComponent {
   edit(procedure: ExternalProcedure) {
     const dialogRef = this.dialog.open(ExternalComponent, {
       maxWidth: '1000px',
+      width: '1000px',
       data: procedure,
     });
     dialogRef.afterClosed().subscribe((result) => {
@@ -139,10 +140,8 @@ export class ExternalsComponent {
     dialogRef.afterClosed().subscribe((message) => {
       if (!message) return;
       this.datasource.update((values) => {
-        const indexFound = values.findIndex(
-          (element) => element._id === procedure._id
-        );
-        values[indexFound].isSend = true;
+        const index = values.findIndex(({ _id }) => _id === procedure._id);
+        values[index].isSend = true;
         return [...values];
       });
     });
@@ -156,6 +155,12 @@ export class ExternalsComponent {
 
   generateTicket(tramite: ExternalProcedure) {}
 
+  changePage(params: { limit: number; index: number }) {
+    this.cacheService.pageSize.set(params.limit);
+    this.cacheService.pageIndex.set(params.index);
+    this.getData();
+  }
+
   private savePaginationData(): void {
     this.cacheService.resetPagination();
     const cache: CacheData = {
@@ -164,12 +169,6 @@ export class ExternalsComponent {
       text: this.term,
     };
     this.cacheService.save('externals', cache);
-  }
-
-  changePage(params: { limit: number; index: number }) {
-    this.cacheService.pageSize.set(params.limit);
-    this.cacheService.pageIndex.set(params.index);
-    this.getData();
   }
 
   private loadPaginationData(): void {

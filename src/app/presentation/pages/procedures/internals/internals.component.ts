@@ -60,7 +60,6 @@ export class InternalsComponent {
     'applicant',
     'state',
     'startDate',
-    'send',
     'options',
   ];
   datasource = signal<InternalProcedure[]>([]);

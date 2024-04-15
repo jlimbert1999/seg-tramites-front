@@ -28,15 +28,30 @@ import {
 } from '../../helpers';
 import { UnlinkSheet } from '../../helpers/pdf/unlink-form';
 import { AuthService } from './auth/auth.service';
-import { GenerateReportSheet } from '../../helpers/pdf/report-sheet';
+import { createReportSheet } from '../../helpers/pdf/report-sheet';
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
-import html2canvas from 'html2canvas';
 
 interface ReportSheetProps {
   title: string;
   FormQuery: Object;
   results: TableProcedureData[];
   colums: TableProcedureColums[];
+}
+
+interface SheetProps {
+  title: string;
+  manager: string;
+  results: Object[];
+  columns: columns[];
+}
+
+interface results {
+  [key: string]: string | number | boolean;
+}
+
+interface columns {
+  columnDef: keyof results;
+  header: string;
 }
 
 @Injectable({
@@ -226,53 +241,8 @@ export class PdfService {
     pdfMake.createPdf(docDefinition).print();
   }
 
-  async GenerateReportSheet(
-    title: string,
-    FormQuery: Object,
-    results: Object[],
-    colums: {
-      columnDef: string;
-      header: string;
-    }[]
-  ) {
-    const docDefinition: TDocumentDefinitions = {
-      header: {
-        columns: [
-          {
-            width: 100,
-            image: await convertImageABase64(
-              '../../../assets/img/gams/escudo_alcaldia.png'
-            ),
-          },
-          {
-            width: '*',
-            text: [`\n${title}`],
-            bold: true,
-            fontSize: 16,
-          },
-          {
-            width: 100,
-            text: `${new Date().toLocaleString()}`,
-            fontSize: 10,
-            bold: true,
-            alignment: 'left',
-          },
-        ],
-        alignment: 'center',
-        margin: [10, 10, 10, 10],
-      },
-      footer: {
-        margin: [10, 0, 10, 0],
-        fontSize: 8,
-        text: `Generado por: ${this.authService.account()?.officer.fullname} (${
-          this.authService.account()?.officer.jobtitle
-        })`,
-      },
-      pageSize: 'LETTER',
-      pageOrientation: 'portrait',
-      pageMargins: [30, 110, 40, 30],
-      content: [await GenerateReportSheet(FormQuery, results, colums)],
-    };
-    pdfMake.createPdf(docDefinition).print();
+  async GenerateReportSheet(props: SheetProps) {
+    // const sheet = await createReportSheet(props);
+    // pdfMake.createPdf(sheet).print();
   }
 }

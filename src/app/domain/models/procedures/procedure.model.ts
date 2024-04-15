@@ -100,10 +100,5 @@ export abstract class Procedure {
     return this.state === 'INSCRITO'
   }
 
-  get canBeManaged() {
-    if (this.isSend) return false;
-    return true;
-  }
-
   abstract originDetails(): OriginDetails;
 }
