@@ -1,44 +1,37 @@
-import {
-  Content,
-  ContentTable,
-  TDocumentDefinitions,
-} from 'pdfmake/interfaces';
+import { Content, TDocumentDefinitions } from 'pdfmake/interfaces';
 import { convertImageABase64 } from '../image_base64';
+import {
+  ReportColumns,
+  ReportResults,
+  ReportSheetProps,
+} from '../../domain/interfaces';
 
-interface SheetProps {
-  title: string;
-  manager: string;
-  results: results[];
-  columns: columns[];
-}
-interface results {
-  [key: string]: string | number | boolean;
-}
-interface columns {
-  columnDef: keyof results;
-  header: string;
-}
+const translateFields: Record<string, string> = {
+  dni: 'CI',
+  code: 'CODIGO',
+};
 
 export async function createReportSheet(
-  props: SheetProps
+  props: ReportSheetProps,
+  manager: string
 ): Promise<TDocumentDefinitions> {
-  const docDefinition: TDocumentDefinitions = {
+  return {
     header: {
       columns: [
         {
-          width: 100,
+          width: 120,
           image: await convertImageABase64(
             '../../../assets/img/gams/logo_alcaldia.jpeg'
           ),
         },
         {
           width: '*',
-          text: [`\n${props.title}`],
+          text: [`\n${props.title}`.toUpperCase()],
           bold: true,
-          fontSize: 16,
+          fontSize: 14,
         },
         {
-          width: 100,
+          width: 120,
           text: `${new Date().toLocaleString()}`,
           fontSize: 10,
           bold: true,
@@ -51,46 +44,81 @@ export async function createReportSheet(
     footer: {
       margin: [10, 0, 10, 0],
       fontSize: 8,
-      text: `Generado por: ${props.manager}`,
+      text: `Generado por: ${manager}`,
     },
     pageSize: 'LETTER',
-    pageOrientation: 'portrait',
-    pageMargins: [30, 110, 40, 30],
-    content: [generateSectionResults(props.results, props.columns)],
+    pageOrientation: 'landscape',
+    pageMargins: [30, 80, 40, 30],
+    content: [
+      generateSectionParameters(props.parameters),
+      generateSectionResults(props.results, props.columns),
+    ],
   };
-  return docDefinition;
 }
 
-// export async function GenerateReportSheet(
-//   form: Object,
-//   result: any[],
-//   colums: columns[]
-// ): Promise<Content[]> {
-//   return [CreateTableResult(result, colums)];
-// }
-
-// function CreateSectionForm(form: Object): ContentTable {
-//   return {
-//     fontSize: 7,
-//     table: {
-//       body: Object.entries(form).map((field) => [field[0], field[1]]),
-//     },
-//   };
-// }
-
 function generateSectionResults(
-  results: results[],
-  colums: columns[]
-): ContentTable {
+  results: ReportResults[],
+  colums: ReportColumns[]
+): Content {
+  if (results.length === 0) {
+    return { text: 'NO SE ENCONTRARON RESULTADOS', alignment: 'center' };
+  }
   return {
-    fontSize: 7,
+    fontSize: 8,
+    layout: 'lightHorizontalLines',
     table: {
+      headerRows: 2,
+      widths: colums.map((column) => {
+        switch (column.columnDef) {
+          case 'code':
+            return 100;
+          case 'state':
+            return 50;
+          default:
+            return '*';
+        }
+      }),
       body: [
-        [...colums.map((colum) => colum.header)],
+        [
+          ...colums.map((colum) => ({
+            text: colum.header.toUpperCase(),
+            bold: true,
+          })),
+        ],
         ...results.map((field) => {
           return colums.map((colum) => [field[colum.columnDef]]);
         }),
       ],
     },
   };
+}
+
+function generateSectionParameters(params: Object | undefined): Content {
+  if (!params) return [];
+  const fields = Object.entries(translateProperties(params)).filter(
+    ([, value]) => value
+  );
+  return {
+    marginBottom: 20,
+    fontSize: 9,
+    layout: 'headerLineOnly',
+    table: {
+      headerRows: 1,
+      widths: [100, '*'],
+      body: [
+        [{ text: 'PARAMETROS BUSQUEDA', bold: true, colSpan: 2 }, ''],
+        ...(fields.length > 0
+          ? fields.map(([key, value]) => [key.toUpperCase(), value])
+          : [[{ text: 'Sin parametros', colSpan: 2 }, '']]),
+      ],
+    },
+  };
+}
+
+function translateProperties(params: Object): Object {
+  const result = Object.entries(params).reduce((acc, [key, value]) => {
+    if (translateFields[key]) return { [translateFields[key]]: value, ...acc };
+    return { [key]: value, ...acc };
+  }, {});
+  return result;
 }

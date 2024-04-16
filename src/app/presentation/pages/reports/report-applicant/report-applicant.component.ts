@@ -72,8 +72,8 @@ export class ReportApplicantComponent {
     { columnDef: 'code', header: 'Alterno' },
     { columnDef: 'reference', header: 'Referencia' },
     { columnDef: 'state', header: 'Estado' },
-    { columnDef: 'startDate', header: 'Fecha' },
     { columnDef: 'applicant', header: 'Solicitante' },
+    { columnDef: 'startDate', header: 'Fecha' },
   ];
 
   constructor() {
@@ -137,9 +137,9 @@ export class ReportApplicantComponent {
   print() {
     this.pdfService.GenerateReportSheet({
       title: 'Reporte solicitante',
-      manager: 'ds',
-      results: this.datasource().map(el=>[el]),
+      results: this.datasource(),
       columns: this.displaycolums,
+      parameters: this.FormApplicant().value,
     });
   }
 

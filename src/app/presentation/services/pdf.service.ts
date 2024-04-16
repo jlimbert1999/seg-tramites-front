@@ -1,4 +1,8 @@
 import { Injectable, inject } from '@angular/core';
+import { TDocumentDefinitions } from 'pdfmake/interfaces';
+import pdfMake from 'pdfmake/build/pdfmake';
+import pdfFonts from 'pdfmake/build/vfs_fonts';
+pdfMake.vfs = pdfFonts.pdfMake.vfs;
 import {
   Account,
   ExternalProcedure,
@@ -9,10 +13,6 @@ import {
   Workflow,
 } from '../../domain/models';
 
-import { TDocumentDefinitions } from 'pdfmake/interfaces';
-
-import pdfMake from 'pdfmake/build/pdfmake';
-import pdfFonts from 'pdfmake/build/vfs_fonts';
 import { CreateRouteMap } from '../../helpers/pdf/route-map';
 import {
   TableProcedureColums,
@@ -29,36 +29,13 @@ import {
 import { UnlinkSheet } from '../../helpers/pdf/unlink-form';
 import { AuthService } from './auth/auth.service';
 import { createReportSheet } from '../../helpers/pdf/report-sheet';
-pdfMake.vfs = pdfFonts.pdfMake.vfs;
-
-interface ReportSheetProps {
-  title: string;
-  FormQuery: Object;
-  results: TableProcedureData[];
-  colums: TableProcedureColums[];
-}
-
-interface SheetProps {
-  title: string;
-  manager: string;
-  results: Object[];
-  columns: columns[];
-}
-
-interface results {
-  [key: string]: string | number | boolean;
-}
-
-interface columns {
-  columnDef: keyof results;
-  header: string;
-}
+import { ReportSheetProps } from '../../domain/interfaces';
 
 @Injectable({
   providedIn: 'root',
 })
 export class PdfService {
-  private authService = inject(AuthService);
+  private readonly authService = inject(AuthService);
   async generateRouteSheet(procedure: Procedure, workflow: Workflow[]) {
     workflow = workflow
       .map(({ dispatches, ...values }) => ({
@@ -241,8 +218,12 @@ export class PdfService {
     pdfMake.createPdf(docDefinition).print();
   }
 
-  async GenerateReportSheet(props: SheetProps) {
-    // const sheet = await createReportSheet(props);
-    // pdfMake.createPdf(sheet).print();
+  async GenerateReportSheet(props: ReportSheetProps) {
+    const sheet = await createReportSheet(props, this.manager);
+    pdfMake.createPdf(sheet).print();
+  }
+
+  private get manager() {
+    return this.authService.account()?.officer.fullname ?? 'Desvinculado';
   }
 }

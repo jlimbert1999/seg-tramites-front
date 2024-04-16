@@ -1,11 +1,10 @@
 import { Routes } from '@angular/router';
 import { LoginComponent } from './presentation/layouts/login/login.component';
 import { HomeComponent } from './presentation/layouts/home/home.component';
-import { ReportsComponent } from './presentation/pages/reportss/reports/reports.component';
-import { ReportApplicantComponent } from './presentation/pages/reportss/report-applicant/report-applicant.component';
+import { ReportApplicantComponent } from './presentation/pages/reports/report-applicant/report-applicant.component';
 import { MainComponent } from './presentation/layouts/home/main/main.component';
 import { DetailComponent } from './presentation/pages/procedures/detail/detail.component';
-import { ReportSearchComponent } from './presentation/pages/reportss/report-search/report-search.component';
+import { ReportSearchComponent } from './presentation/pages/reports/report-search/report-search.component';
 import { PostsComponent } from './presentation/pages/groupware/posts/posts.component';
 import {
   isAuthenticatedGuard,
@@ -13,9 +12,10 @@ import {
   roleGuard,
 } from './presentation/guards';
 import { InfoComponent } from './presentation/layouts/home/info/info.component';
-import { ReportDependentsComponent } from './presentation/pages/reportss/report-dependents/report-dependents.component';
+import { ReportDependentsComponent } from './presentation/pages/reports/report-dependents/report-dependents.component';
 import { ClientsComponent } from './presentation/pages/groupware/clients/clients.component';
 import { VALID_RESOURCES } from './infraestructure/interfaces';
+import { ReportsComponent } from './presentation/pages/reports/reports.component';
 
 export const routes: Routes = [
   {

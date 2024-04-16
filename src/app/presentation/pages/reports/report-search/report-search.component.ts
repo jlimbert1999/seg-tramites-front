@@ -7,33 +7,28 @@ import {
   inject,
   signal,
 } from '@angular/core';
-import { MatButtonToggleModule } from '@angular/material/button-toggle';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatSelectModule } from '@angular/material/select';
 import {
   FormBuilder,
-  FormControl,
   FormGroup,
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
 
-import { MatIconModule } from '@angular/material/icon';
-import { MatInputModule } from '@angular/material/input';
-import { MatButtonModule } from '@angular/material/button';
-import { MatNativeDateModule } from '@angular/material/core';
-import { MatExpansionModule } from '@angular/material/expansion';
 import {
   PaginatorComponent,
   ReportProcedureTableComponent,
   ServerSelectSearchComponent,
 } from '../../../components';
-import { CacheService, ReportService } from '../../../services';
-import { GroupProcedure, StateProcedure } from '../../../../domain/models';
-import { TableProcedureData } from '../../../../infraestructure/interfaces';
+import { CacheService, PdfService, ReportService } from '../../../services';
+import { StateProcedure } from '../../../../domain/models';
+import {
+  TableProcedureColums,
+  TableProcedureData,
+} from '../../../../infraestructure/interfaces';
+import { MaterialModule } from '../../../../material.module';
 
 type SearchMode = 'simple' | 'advanced';
+
 interface CacheData {
   form: Object;
   types: SelectOptiom[];
@@ -41,16 +36,11 @@ interface CacheData {
   size: number;
   searchMode: SearchMode;
 }
-interface SelectOptiom {
-  text: string;
-  value: string;
-}
 interface PaginationOptions {
   limit: number;
   index: number;
 }
-
-interface SelectOption {
+interface SelectOptiom {
   text: string;
   value: string;
 }
@@ -59,20 +49,11 @@ interface SelectOption {
   selector: 'app-report-search',
   standalone: true,
   imports: [
-    CommonModule,
-    MatButtonToggleModule,
-    MatDatepickerModule,
     ReactiveFormsModule,
-    MatFormFieldModule,
-    MatFormFieldModule,
-    MatSelectModule,
-    MatButtonModule,
-    MatInputModule,
-    MatIconModule,
-    MatNativeDateModule,
-    ReportProcedureTableComponent,
+    CommonModule,
+    MaterialModule,
     PaginatorComponent,
-    MatExpansionModule,
+    ReportProcedureTableComponent,
     ServerSelectSearchComponent,
   ],
   templateUrl: './report-search.component.html',
@@ -81,6 +62,7 @@ interface SelectOption {
 export class ReportSearchComponent {
   private fb = inject(FormBuilder);
   private reportService = inject(ReportService);
+  private pdfService = inject(PdfService);
   private cacheService: CacheService<CacheData> = inject(CacheService);
 
   public searchMode = signal<SearchMode>('simple');
@@ -92,11 +74,11 @@ export class ReportSearchComponent {
   });
   public datasource = signal<TableProcedureData[]>([]);
   public datasize = signal<number>(0);
-  public displaycolums = [
+  public displaycolums: TableProcedureColums[] = [
     { columnDef: 'code', header: 'Alterno' },
     { columnDef: 'reference', header: 'Referencia' },
     { columnDef: 'state', header: 'Estado' },
-    { columnDef: 'date', header: 'Fecha' },
+    { columnDef: 'startDate', header: 'Fecha' },
   ];
 
   constructor() {
@@ -123,9 +105,8 @@ export class ReportSearchComponent {
   }
 
   generate() {
-    const isFormEmpty = Object.values(this.FormProcedure().value).every(
-      (val) => val === ''
-    );
+    const { end, group, ...props } = this.FormProcedure().value;
+    const isFormEmpty = Object.values(props).every((val) => val === '' || !val);
     if (isFormEmpty) return;
     this.cacheService.pageIndex.set(0);
     this.getData();
@@ -138,14 +119,18 @@ export class ReportSearchComponent {
     this.typeProcedures.set([]);
   }
 
+  print() {
+    this.pdfService.GenerateReportSheet({
+      title: 'Reporte busqueda',
+      results: this.datasource(),
+      columns: this.displaycolums,
+      parameters: this.FormProcedure().value,
+    });
+  }
+
   searchTypesProcedures(term: string) {
-    if (!this.FormProcedure().get('group')?.value) return;
-    const group =
-      this.FormProcedure().get('group')?.value === GroupProcedure.External
-        ? 'EXTERNO'
-        : 'INTERNO';
     this.reportService
-      .getTypeProceduresByText(term, group)
+      .getTypeProceduresByText(term, this.FormProcedure().get('group')?.value)
       .subscribe((types) => {
         this.typeProcedures.set(
           types.map((el) => ({ value: el._id, text: el.nombre }))
@@ -153,12 +138,8 @@ export class ReportSearchComponent {
       });
   }
 
-  setTypeProcedure(id_type: string | undefined) {
-    if (!id_type) {
-      this.FormProcedure().removeControl('type');
-      return;
-    }
-    this.FormProcedure().setControl('type', new FormControl(id_type));
+  setTypeProcedure(id_type: string = '') {
+    this.FormProcedure().get('type')?.setValue(id_type);
   }
 
   changePage({ limit, index }: PaginationOptions) {
@@ -172,7 +153,7 @@ export class ReportSearchComponent {
   }
 
   changeGroupProcedure() {
-    this.FormProcedure().get('type')?.setValue('');
+    this.FormProcedure().patchValue({ type: '' });
     this.typeProcedures.set([]);
   }
 
@@ -192,10 +173,10 @@ export class ReportSearchComponent {
     const cacheData = this.cacheService.load('report-search');
     if (!this.cacheService.keepAliveData() || !cacheData) return;
     this.searchMode.set(cacheData.searchMode);
-    this.FormProcedure().patchValue(cacheData.form);
     this.typeProcedures.set(cacheData.types);
     this.datasource.set(cacheData.data);
     this.datasize.set(cacheData.size);
+    this.FormProcedure().patchValue(cacheData.form);
   }
 
   private createSimpleForm(): FormGroup {
@@ -219,7 +200,7 @@ export class ReportSearchComponent {
     });
   }
 
-  get statesProcedure() {
+  get states() {
     return Object.values(StateProcedure);
   }
 

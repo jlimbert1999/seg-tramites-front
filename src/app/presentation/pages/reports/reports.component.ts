@@ -3,15 +3,13 @@ import {
   ChangeDetectionStrategy,
   Component,
   OnInit,
-  ViewContainerRef,
   inject,
   signal,
 } from '@angular/core';
 import { RouterModule } from '@angular/router';
-
-import { AuthService } from '../../../services';
-import { MaterialModule } from '../../../../material.module';
-import { VALID_RESOURCES } from '../../../../infraestructure/interfaces';
+import { MaterialModule } from '../../../material.module';
+import { AuthService } from '../../services';
+import { VALID_RESOURCES } from '../../../infraestructure/interfaces';
 
 interface menu {
   label: string;
@@ -27,6 +25,7 @@ interface menu {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ReportsComponent implements OnInit {
+  private readonly authService = inject(AuthService);
   private readonly permissionMappings: Record<string, menu> = {
     applicants: {
       label: 'Solicitante',
@@ -44,12 +43,9 @@ export class ReportsComponent implements OnInit {
       description: 'Listado de unidad',
     },
   };
-
-  private authService = inject(AuthService);
-
   public menu = signal<menu[]>([]);
 
-  constructor(private _viewContainerRef: ViewContainerRef) {}
+  constructor() {}
 
   ngOnInit(): void {
     this._loadMenu();

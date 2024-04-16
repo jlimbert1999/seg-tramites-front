@@ -13,7 +13,7 @@ import {
   TableProcedureData,
   typeProcedureResponse,
 } from '../../../infraestructure/interfaces';
-import { StatusMail } from '../../../domain/models';
+import { GroupProcedure, StatusMail } from '../../../domain/models';
 
 interface SearchApplicantProps {
   by: 'solicitante' | 'representante';
@@ -26,13 +26,18 @@ interface SearchApplicantProps {
   providedIn: 'root',
 })
 export class ReportService {
-  url = `${environment.base_url}/reports`;
+  private readonly url = `${environment.base_url}/reports`;
 
   constructor(private http: HttpClient) {}
 
-  getTypeProceduresByText(term: string, group: 'INTERNO' | 'EXTERNO') {
+  getTypeProceduresByText(term: string, type?: GroupProcedure) {
+    const mapGroup = {
+      [GroupProcedure.External]: 'EXTERNO',
+      [GroupProcedure.Internal]: 'INTERNO',
+    };
     return this.http.get<typeProcedureResponse[]>(
-      `${this.url}/types-procedures/${group}/${term}`
+      `${this.url}/types-procedures/${term}`,
+      { ...(type && { params: { type: mapGroup[type] } }) }
     );
   }
 
@@ -41,10 +46,7 @@ export class ReportService {
     form,
     limit,
     offset,
-  }: SearchApplicantProps): Observable<{
-    procedures: TableProcedureData[];
-    length: number;
-  }> {
+  }: SearchApplicantProps) {
     const params = new HttpParams({ fromObject: { limit, offset } });
     const properties = this.removeEmptyValuesFromObject(form);
     return this.http
@@ -58,7 +60,13 @@ export class ReportService {
           procedures: resp.procedures.map(
             ({ details: { solicitante }, ...props }) => ({
               ...props,
-              applicant: `${solicitante.nombre} ${solicitante.paterno} ${solicitante.materno}`,
+              applicant: [
+                solicitante.nombre,
+                solicitante.paterno,
+                solicitante.materno,
+              ]
+                .filter(Boolean)
+                .join(' '),
             })
           ),
           length: resp.length,

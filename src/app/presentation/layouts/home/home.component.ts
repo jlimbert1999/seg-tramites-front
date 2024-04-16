@@ -42,10 +42,10 @@ import { MaterialModule } from '../../../material.module';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HomeComponent implements OnInit {
-  private authService = inject(AuthService);
   private appearanceService = inject(AppearanceService);
   private socketService = inject(SocketService);
   private alertservice = inject(AlertService);
+  private authService = inject(AuthService);
   private destroyRef = inject(DestroyRef);
   private router = inject(Router);
   private breakpointObserver = inject(BreakpointObserver);

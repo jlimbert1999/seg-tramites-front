@@ -24,8 +24,8 @@
               <mat-label>Grupo</mat-label>
               <mat-select formControlName="group">
                 <mat-option> - </mat-option>
-                <mat-option value="ExternalDetail"> EXTERNOS</mat-option>
-                <mat-option value="InternalDetail"> INTERNOS</mat-option>
+                <mat-option value="ExternalDetail">EXTERNOS</mat-option>
+                <mat-option value="InternalDetail">INTERNOS</mat-option>
               </mat-select>
             </mat-form-field>
           </div>
@@ -58,7 +58,9 @@
             <mat-form-field>
               <mat-label>Estado:</mat-label>
               <mat-select formControlName="state">
-                @for (state of statesProcedure; track $index) {
+                <mat-option> ---- </mat-option>
+
+                @for (state of states; track $index) {
                 <mat-option [value]="state">{{ state }}</mat-option>
                 }
               </mat-select>
@@ -95,6 +97,7 @@
           <div class="col-sm-7">
             <server-select-search
               placeholder="Buscar tipo de tramite"
+              [isRequired]="false"
               [initialValue]="FormProcedure().get('type')?.value"
               [elements]="typeProcedures()"
               (onSearch)="searchTypesProcedures($event)"
@@ -133,6 +136,9 @@
     </div>
 
     <mat-action-row>
+      <button mat-icon-button (click)="print()">
+        <mat-icon>print</mat-icon>
+      </button>
       <button mat-button (click)="clear()">Limpiar</button>
       <button
         mat-button
