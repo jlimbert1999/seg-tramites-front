@@ -36,10 +36,7 @@ interface CacheData {
   size: number;
   searchMode: SearchMode;
 }
-interface PaginationOptions {
-  limit: number;
-  index: number;
-}
+
 interface SelectOptiom {
   text: string;
   value: string;
@@ -124,7 +121,6 @@ export class ReportSearchComponent {
       title: 'Reporte busqueda',
       results: this.datasource(),
       columns: this.displaycolums,
-      parameters: this.FormProcedure().value,
     });
   }
 
@@ -142,9 +138,9 @@ export class ReportSearchComponent {
     this.FormProcedure().get('type')?.setValue(id_type);
   }
 
-  changePage({ limit, index }: PaginationOptions) {
-    this.cacheService.pageSize.set(limit);
-    this.cacheService.pageIndex.set(index);
+  changePage(params: { limit: number; index: number }) {
+    this.cacheService.pageSize.set(params.limit);
+    this.cacheService.pageIndex.set(params.index);
     this.getData();
   }
 

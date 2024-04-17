@@ -1,6 +1,9 @@
+import { Overlay } from '@angular/cdk/overlay';
+import { ComponentPortal } from '@angular/cdk/portal';
 import { DOCUMENT } from '@angular/common';
 import { Inject, Injectable, effect, signal } from '@angular/core';
 import { Subject } from 'rxjs';
+import { LoaderComponent } from '../components/loader/loader.component';
 
 @Injectable({
   providedIn: 'root',
@@ -10,7 +13,19 @@ export class AppearanceService {
   public isDarkTheme = signal<boolean>(false);
   public isSidenavToggle = signal(true);
 
-  constructor(@Inject(DOCUMENT) private document: Document) {
+  private readonly overlayRef = this.overlay.create({
+    hasBackdrop: true,
+    positionStrategy: this.overlay
+      .position()
+      .global()
+      .centerHorizontally()
+      .centerVertically(),
+  });
+
+  constructor(
+    @Inject(DOCUMENT) private document: Document,
+    private overlay: Overlay
+  ) {
     effect(() => {
       if (this.isDarkTheme()) {
         this.document.body.classList.add('dark-theme');
@@ -28,10 +43,11 @@ export class AppearanceService {
   }
 
   public showLoading(): void {
-    this.isLoading.next(true);
+    if (this.overlayRef.hasAttached()) return;
+    this.overlayRef.attach(new ComponentPortal(LoaderComponent));
   }
 
   public hideLoading(): void {
-    this.isLoading.next(false);
+    this.overlayRef.detach();
   }
 }

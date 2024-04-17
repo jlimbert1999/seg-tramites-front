@@ -1,6 +1,8 @@
+import { StatusMail } from '../../../domain/models';
+
 export interface reportUnit {
   _id: ID;
-  pendings: number;
+  details: details[];
 }
 
 interface ID {
@@ -17,4 +19,9 @@ interface Funcionario {
 
 interface Cargo {
   nombre: string;
+}
+
+interface details {
+  status: StatusMail;
+  total: number;
 }

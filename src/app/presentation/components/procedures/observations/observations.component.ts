@@ -4,6 +4,7 @@ import {
   Component,
   inject,
   input,
+  model,
   output,
   signal,
 } from '@angular/core';
@@ -14,8 +15,8 @@ import {
   Validators,
 } from '@angular/forms';
 
-import { MaterialModule } from '../../../../material.module';
 import { observationResponse } from '../../../../infraestructure/interfaces';
+import { MaterialModule } from '../../../../material.module';
 import { StateProcedure } from '../../../../domain/models';
 import { ProcedureService } from '../../../services';
 
@@ -27,39 +28,28 @@ import { ProcedureService } from '../../../services';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ObservationsComponent {
-  private procedureService = inject(ProcedureService);
+  private readonly procedureService = inject(ProcedureService);
 
-  procedure = input.required<string>();
   manager = input.required<string | undefined>();
   onStateChange = output<StateProcedure>();
 
-  public observations = signal<observationResponse[]>([]);
+  public observations = model.required<observationResponse[]>();
   public isFocused: boolean = false;
   public descripcion = new FormControl('', {
     nonNullable: true,
     validators: [Validators.required],
   });
 
-  ngOnInit(): void {
-    this.getData();
-  }
-
-  getData() {
-    this.procedureService
-      .getObservations(this.procedure())
-      .subscribe((data) => {
-        this.observations.set(data);
-      });
-  }
+  ngOnInit(): void {}
 
   add() {
-    this.procedureService
-      .addObservation(this.procedure(), this.descripcion.value)
-      .subscribe((obs) => {
-        this.observations.update((values) => [obs, ...values]);
-        this.onStateChange.emit(StateProcedure.Observado);
-        this.removeFocus();
-      });
+    // this.procedureService
+    //   .addObservation(this.procedure(), this.descripcion.value)
+    //   .subscribe((obs) => {
+    //     this.observations.update((values) => [obs, ...values]);
+    //     this.onStateChange.emit(StateProcedure.Observado);
+    //     this.removeFocus();
+    //   });
   }
 
   removeFocus() {

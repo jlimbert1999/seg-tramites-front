@@ -69,7 +69,7 @@
             <div class="mb-3 fw-bold">REQUERIMIENTOS PRESENTADOS</div>
             <ul>
               @for (item of data.details.requirements; track $index) {
-              <li>{{ item }}</li>
+              <li>{{ item | json }}</li>
               } @empty {
               <li>NO SE PRESENTARON REQUERIMIENTOS</li>
               }
@@ -127,11 +127,11 @@
         <div class="col-12">
           <div class="border border-dark rounded p-3 h-100">
             <div class="mb-3 fw-bold">OBSERVACIONES</div>
-            <observations
-              [procedure]="data._id"
+            <!-- <observations
+              [observations]="observations()"
               [manager]="manager()"
-              (onStateChange)="changeStateProcedure($event)"
-            />
+              (onStateChange)="changeState($event)"
+            /> -->
           </div>
         </div>
       </div>

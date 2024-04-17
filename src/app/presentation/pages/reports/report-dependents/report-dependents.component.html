@@ -1,23 +1,51 @@
 <div class="container">
-  <mat-list id="test">
-    <div mat-subheader>Dependientes</div>
-    @for (dependent of dependents(); track dependent.id) {
-    @if(dependent.officer){
-    <mat-list-item>
-      <mat-icon matListItemIcon>account_circle</mat-icon>
-      <div matListItemTitle>{{ dependent.officer.fullname | titlecase }}</div>
-      <div matListItemLine>{{ dependent.officer.jobtitle }}</div>
-      <div matListItemLine>Pendientes: {{ dependent.pendings }}</div>
-      <button matListItemMeta mat-icon-button (click)="getInbox(dependent.id)">
-        <mat-icon>print</mat-icon>
-      </button>
-    </mat-list-item>
-    } @else {
-    <mat-list-item style="background-color: #f5cac3">
-      <mat-icon matListItemIcon>account_circle</mat-icon>
-      <div matListItemTitle>DESVINCULADO</div>
-      <div matListItemLine>----</div>
-    </mat-list-item>
-    } }
-  </mat-list>
+  <table cdk-table [dataSource]="dataSource()">
+    <ng-container cdkColumnDef="officer">
+      <th cdk-header-cell *cdkHeaderCellDef>Funcionario</th>
+      <td cdk-cell *cdkCellDef="let element" class="py-2">
+        @if(element.officer){
+        <span class="d-block"> {{ element.officer.fullname | titlecase }}</span>
+        <span class="d-block">{{
+          element.officer.jobtitle ?? "Sin cargo"
+        }}</span>
+
+        } @else {
+        <span class="text-danger">DESVINCULADO</span>
+        }
+      </td>
+    </ng-container>
+    <ng-container cdkColumnDef="pending">
+      <th cdk-header-cell *cdkHeaderCellDef>Sin recibir</th>
+      <td cdk-cell *cdkCellDef="let element" class="py-2">
+        {{ element.details.pending }}
+      </td>
+    </ng-container>
+    <ng-container cdkColumnDef="received">
+      <th cdk-header-cell *cdkHeaderCellDef>Recibidos</th>
+      <td cdk-cell *cdkCellDef="let element" class="py-2">
+        {{ element.details.received }}
+      </td>
+    </ng-container>
+    <ng-container cdkColumnDef="rejected">
+      <th cdk-header-cell *cdkHeaderCellDef>Rechazados</th>
+      <td cdk-cell *cdkCellDef="let element" class="py-2">
+        {{ element.details.rejected }}
+      </td>
+    </ng-container>
+    <ng-container cdkColumnDef="archived">
+      <th cdk-header-cell *cdkHeaderCellDef>Archivados</th>
+      <td cdk-cell *cdkCellDef="let element" class="py-2">
+        {{ element.details.archived }}
+      </td>
+    </ng-container>
+    <ng-container cdkColumnDef="completed">
+      <th cdk-header-cell *cdkHeaderCellDef>Enviados</th>
+      <td cdk-cell *cdkCellDef="let element" class="py-2">
+        {{ element.details.completed }}
+      </td>
+    </ng-container>
+
+    <tr cdk-header-row *cdkHeaderRowDef="displayedColumns"></tr>
+    <tr cdk-row *cdkRowDef="let row; columns: displayedColumns"></tr>
+  </table>
 </div>

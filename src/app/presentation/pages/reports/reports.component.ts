@@ -7,8 +7,8 @@ import {
   signal,
 } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { MaterialModule } from '../../../material.module';
 import { AuthService } from '../../services';
+import { MaterialModule } from '../../../material.module';
 import { VALID_RESOURCES } from '../../../infraestructure/interfaces';
 
 interface menu {
@@ -27,15 +27,15 @@ interface menu {
 export class ReportsComponent implements OnInit {
   private readonly authService = inject(AuthService);
   private readonly permissionMappings: Record<string, menu> = {
-    applicants: {
-      label: 'Solicitante',
-      link: 'applicant',
-      description: 'Buscar por contribuyente',
-    },
     search: {
       label: 'Busquedas',
       link: 'search',
       description: 'Buscar cualquier tramite',
+    },
+    applicants: {
+      label: 'Solicitante',
+      link: 'applicant',
+      description: 'Buscar por contribuyente',
     },
     dependents: {
       label: 'Dependientes',

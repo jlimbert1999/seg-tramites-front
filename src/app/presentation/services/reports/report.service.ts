@@ -107,15 +107,18 @@ export class ReportService {
   getPendingsByUnit() {
     return this.http.get<reportUnit[]>(`${this.url}/unit/pendings`).pipe(
       map((resp) =>
-        resp.map(({ _id: { _id, funcionario }, pendings }) => ({
+        resp.map(({ _id: { _id, funcionario }, details }) => ({
           id: _id,
           officer: funcionario
             ? {
-                fullname: `${funcionario.nombre} ${funcionario.nombre} ${funcionario.nombre}`,
+                fullname: `${funcionario.nombre} ${funcionario.paterno} ${funcionario.materno}`,
                 jobtitle: funcionario.cargo?.nombre ?? 'SIN CARGO',
               }
             : undefined,
-          pendings,
+          details: Object.values(StatusMail).reduce((acc, curr) => {
+            const status = details.find((el) => el.status === curr);
+            return { [curr]: status?.total ?? 0, ...acc };
+          }, {}),
         }))
       )
     );

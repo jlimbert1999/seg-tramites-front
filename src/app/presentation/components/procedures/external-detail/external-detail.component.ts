@@ -24,7 +24,10 @@ import {
   Workflow,
 } from '../../../../domain/models';
 import { AuthService, PdfService, ProcedureService } from '../../../services';
-import { locationResponse } from '../../../../infraestructure/interfaces';
+import {
+  locationResponse,
+  observationResponse,
+} from '../../../../infraestructure/interfaces';
 
 @Component({
   selector: 'external-detail',
@@ -46,12 +49,13 @@ export class ExternalDetailComponent implements OnInit {
   private pdfService = inject(PdfService);
 
   public readonly id = input.required<string>();
-  enableOptions = input.required<boolean>();
+  public enableOptions = input.required<boolean>();
   onStateChange = output<StateProcedure>();
 
   public procedure = signal<ExternalProcedure | null>(null);
   public workflow = signal<Workflow[]>([]);
   public location = signal<locationResponse[]>([]);
+  public observations = signal<observationResponse[]>([]);
   public manager = computed(() => {
     if (!this.enableOptions()) return undefined;
     return this.authService.account()?.id_account;
@@ -66,10 +70,12 @@ export class ExternalDetailComponent implements OnInit {
       this.procedureService.getDetail(this.id(), GroupProcedure.External),
       this.procedureService.getLocation(this.id()),
       this.procedureService.getWorkflow(this.id()),
+      this.procedureService.getObservations(this.id()),
     ]).subscribe((resp) => {
       this.procedure.set(resp[0] as ExternalProcedure);
       this.location.set(resp[1]);
       this.workflow.set(resp[2]);
+      this.observations.set(resp[3])
     });
   }
 

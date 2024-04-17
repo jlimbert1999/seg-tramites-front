@@ -24,6 +24,7 @@ import { OverlayModule } from '@angular/cdk/overlay';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatDatepickerModule } from '@angular/material/datepicker';
+import { CdkTableModule } from '@angular/cdk/table';
 
 import {
   MAT_FORM_FIELD_DEFAULT_OPTIONS,
@@ -67,6 +68,7 @@ import { provideNativeDateAdapter } from '@angular/material/core';
     MatExpansionModule,
     MatButtonToggleModule,
     MatDatepickerModule,
+    CdkTableModule,
   ],
   providers: [
     {

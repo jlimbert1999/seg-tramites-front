@@ -23,9 +23,8 @@
       (overlayOutsideClick)="detailsOpen = false"
     >
       <div class="overlay-menu">
-        <profile/>
+        <profile />
       </div>
-      
     </ng-template>
   </mat-toolbar>
 
@@ -44,16 +43,6 @@
     </mat-sidenav>
 
     <mat-sidenav-content>
-      @if(isLoading | async){
-      <div class="overlay">
-        <mat-spinner
-          [diameter]="100"
-          class="spinner"
-          color="primary"
-          mode="indeterminate"
-        ></mat-spinner>
-      </div>
-      }
       <router-outlet />
     </mat-sidenav-content>
   </mat-sidenav-container>

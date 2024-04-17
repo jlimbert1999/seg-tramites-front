@@ -8,6 +8,7 @@ import {
 } from '@angular/core';
 import { MaterialModule } from '../../../../material.module';
 import { PdfService, ReportService } from '../../../services';
+import { StatusMail } from '../../../../domain/models';
 interface dependents {
   id: string;
   officer?: {
@@ -29,9 +30,20 @@ export class ReportDependentsComponent implements OnInit {
 
   dependents = signal<dependents[]>([]);
 
+  displayedColumns: string[] = [
+    'officer',
+    'pending',
+    'received',
+    'rejected',
+    'completed',
+    'archived',
+  ];
+  dataSource = signal<any[]>([]);
   ngOnInit(): void {
     this.reportService.getPendingsByUnit().subscribe((data) => {
-      this.dependents.set(data);
+      this.dataSource.set(data);
+      console.log(data);
+      // this.dependents.set(data);
     });
   }
 
