@@ -1,6 +1,6 @@
+import { DOCUMENT } from '@angular/common';
 import { Overlay } from '@angular/cdk/overlay';
 import { ComponentPortal } from '@angular/cdk/portal';
-import { DOCUMENT } from '@angular/common';
 import { Inject, Injectable, effect, signal } from '@angular/core';
 import { Subject } from 'rxjs';
 import { LoaderComponent } from '../components/loader/loader.component';

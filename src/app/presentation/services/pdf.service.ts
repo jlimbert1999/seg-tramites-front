@@ -15,8 +15,6 @@ import {
 
 import { CreateRouteMap } from '../../helpers/pdf/route-map';
 import {
-  TableProcedureColums,
-  TableProcedureData,
   accountResponse,
   communicationResponse,
 } from '../../infraestructure/interfaces';

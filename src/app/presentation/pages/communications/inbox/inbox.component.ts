@@ -36,14 +36,10 @@ import { transferDetails } from '../../../../infraestructure/interfaces';
 import { DispatcherComponent } from '../../../components/procedures/dispatcher/dispatcher.component';
 import { MaterialModule } from '../../../../material.module';
 
-interface PaginationOptions {
-  limit: number;
-  index: number;
-}
 export interface InboxCache {
   datasource: Communication[];
-  status?: StatusMail;
   datasize: number;
+  status?: StatusMail;
   text: string;
 }
 @Component({
@@ -54,9 +50,9 @@ export interface InboxCache {
     CommonModule,
     RouterModule,
     MaterialModule,
-    SidenavButtonComponent,
     PaginatorComponent,
     SearchInputComponent,
+    SidenavButtonComponent,
     StateLabelPipe,
   ],
   templateUrl: './inbox.component.html',
@@ -126,9 +122,9 @@ export class InboxComponent implements OnInit {
     this.getData();
   }
 
-  changePage({ limit, index }: PaginationOptions) {
-    this.cacheService.pageSize.set(limit);
-    this.cacheService.pageIndex.set(index);
+  changePage(params: { limit: number; index: number }) {
+    this.cacheService.pageSize.set(params.limit);
+    this.cacheService.pageIndex.set(params.index);
     this.getData();
   }
 
@@ -138,8 +134,8 @@ export class InboxComponent implements OnInit {
       text: 'Solo debe aceptar tramites que haya recibido en fisico',
       callback: () => {
         this.inboxService.accept(_id).subscribe((resp) => {
-          const index = this.datasource().findIndex((el) => el._id === _id);
           this.datasource.update((values) => {
+            const index = values.findIndex((el) => el._id === _id);
             values[index].status = StatusMail.Received;
             values[index].procedure.state = resp.state;
             return [...values];

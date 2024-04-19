@@ -119,7 +119,7 @@ export const routes: Routes = [
       },
       {
         path: 'inbox/:id',
-        title: 'Detalle',
+        title: 'Detalle - Envio',
         loadComponent: () =>
           import(
             './presentation/pages/communications/inbox/mail/mail.component'

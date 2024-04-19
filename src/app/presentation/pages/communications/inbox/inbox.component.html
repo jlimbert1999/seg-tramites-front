@@ -35,12 +35,12 @@
         </ng-container>
         <ng-container matColumnDef="code">
           <th mat-header-cell *matHeaderCellDef>Alterno</th>
-          <td mat-cell *matCellDef="let row">
+          <td mat-cell *matCellDef="let mail">
             <a
-              [routerLink]="['/home/inbox', row._id]"
+              [routerLink]="['/home/inbox', mail._id]"
               [queryParams]="{limit, index}"
             >
-              {{ row.procedure.code }}
+              {{ mail.procedure.code }}
             </a>
           </td>
         </ng-container>

@@ -112,10 +112,9 @@ export class InboxService {
       undefined
     );
   }
-  reject(id_mail: string, rejectionReason: string) {
+  reject(id_mail: string, description: string) {
     return this.http.put<{ message: string }>(`${this.url}/reject/${id_mail}`, {
-      rejectionReason,
+      description,
     });
   }
-
 }

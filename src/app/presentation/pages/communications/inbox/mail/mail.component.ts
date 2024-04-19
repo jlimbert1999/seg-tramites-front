@@ -75,14 +75,16 @@ export class MailComponent implements OnInit {
       title: `¿Aceptar tramite ${this.detail.procedure.code}?`,
       text: 'Solo debe aceptar tramites que haya recibido en fisico',
       callback: () => {
-        this.inboxService.accept(this.detail._id).subscribe(() => {
-          const { status, ...props } = this.mail()!;
-          const updated = new Communication({
-            ...props,
-            status: StatusMail.Received,
-          });
-          this.mail.set(updated);
-          this.updateElementCache(updated);
+        this.inboxService.accept(this.detail._id).subscribe((resp) => {
+          const { procedure } = this.detail;
+          procedure.state = resp.state;
+          this.mail.set(
+            this.detail.copyWith({
+              status: StatusMail.Received,
+              procedure: procedure,
+            })
+          );
+          this.updateElementCache();
         });
       },
     });
@@ -152,8 +154,8 @@ export class MailComponent implements OnInit {
         this.detail.procedure.group
       ),
       this.procedureService.getWorkflow(this.detail.procedure._id),
-    ]).subscribe((resp) => {
-      this.pdfService.generateRouteSheet(resp[0], resp[1]);
+    ]).subscribe(([procedure, workflow]) => {
+      this.pdfService.generateRouteSheet(procedure, workflow);
     });
   }
 
@@ -161,15 +163,6 @@ export class MailComponent implements OnInit {
     const { procedure, ...props } = this.detail;
     procedure.state = state;
     this.mail.set(new Communication({ ...props, procedure }));
-    this.updateElementCache(this.detail);
-  }
-
-  get detail() {
-    return this.mail()!;
-  }
-
-  get StateProcedure() {
-    return StateProcedure;
   }
 
   private removeElementCache(): void {
@@ -183,12 +176,20 @@ export class MailComponent implements OnInit {
     });
   }
 
-  private updateElementCache(mail: Communication): void {
+  private updateElementCache(): void {
     const cache = this.cacheService.load('inbox');
     if (!cache) return;
     const { datasource, ...props } = cache;
     const index = datasource.findIndex((el) => el._id === this.detail._id);
-    datasource[index] = mail;
+    datasource[index] = this.detail;
     this.cacheService.save('inbox', { ...props, datasource });
+  }
+
+  get detail() {
+    return this.mail()!;
+  }
+
+  get StateProcedure() {
+    return StateProcedure;
   }
 }

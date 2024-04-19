@@ -68,6 +68,14 @@ export class Communication {
       status: response.status,
     });
   }
+  public copyWith(modifyObject: {
+    [P in keyof this]?: this[P];
+  }): Communication {
+    return Object.assign(Object.create(Communication.prototype), {
+      ...this,
+      ...modifyObject,
+    });
+  }
 
   constructor({
     _id,
