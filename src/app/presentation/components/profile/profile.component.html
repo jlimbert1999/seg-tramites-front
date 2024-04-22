@@ -3,8 +3,8 @@
     <img src="../../../../assets/img/account.png" style="height: 40px" />
   </div>
   <div class="flex-grow-1 ms-3">
-    <span class="d-block fw-bold">Jose Limbert Flores Suarez</span>
-    <span class="d-block">Tec. desarrollo</span>
+    <span class="d-block fw-bold">{{ officer?.fullname }}</span>
+    <span class="d-block">{{ officer?.jobtitle ?? "SIN CARGO" }}</span>
   </div>
 </div>
 
@@ -13,34 +13,9 @@
     <mat-icon matListItemIcon>settings</mat-icon>
     <div matListItemTitle>Configuraciones</div>
   </a>
-  <a mat-list-item href="...">Usuarios</a>
-  <a mat-list-item href="...">Usuarios</a>
-  <a mat-list-item href="...">Usuarios</a>
+  <a mat-list-item (click)="logout()">
+    <mat-icon matListItemIcon>logout</mat-icon>
+    <div matListItemTitle>Cerrar sesion</div>
+  </a>
 </mat-nav-list>
-<mat-action-list>
-  <button mat-list-item>Save</button>
-  <button mat-list-item>Undo</button>
-</mat-action-list>
-<mat-list>
-  <div mat-subheader>Folders</div>
-  <mat-list-item>
-    <mat-icon matListItemIcon>folder</mat-icon>
-    <div matListItemTitle>folder</div>
-    <div matListItemLine>Opcion nro 1</div>
-  </mat-list-item>
-  <mat-list-item>
-    <mat-icon matListItemIcon>folder</mat-icon>
-    <div matListItemTitle>folder</div>
-    <div matListItemLine>Opcion nro 1</div>
-  </mat-list-item>
-  <mat-list-item>
-    <mat-icon matListItemIcon>folder</mat-icon>
-    <div matListItemTitle>folder</div>
-    <div matListItemLine>Opcion nro 1</div>
-  </mat-list-item>
-  <mat-list-item>
-    <mat-icon matListItemIcon>folder</mat-icon>
-    <div matListItemTitle>folder</div>
-    <div matListItemLine>Opcion nro 1</div>
-  </mat-list-item>
-</mat-list>
+<button mat-stroked-button (click)="close()">Cerrar</button>

@@ -33,7 +33,6 @@ export class SocketService {
 
   listenClientConnection() {
     this.socket.on('listar', (clients: SocketClient[]) => {
-      console.log('clients');
       this.onlineClientsSubject.next(clients);
     });
   }

@@ -167,7 +167,12 @@ function CreateLocationSection(workflow: Workflow[]): Content {
   if (location.length === 0)
     location.push([{ text: 'SIN REGISTRO', colSpan: 3 }]);
   return [
-    { text: 'UBICACION TRAMITE', alignment: 'left', bold: true },
+    {
+      text: 'UBICACION TRAMITE',
+      alignment: 'left',
+      bold: true,
+      pageBreak: 'before',
+    },
     {
       fontSize: 10,
       margin: [0, 5, 0, 20],
@@ -247,7 +252,7 @@ function CreateExternalSection(procedure: ExternalProcedure): Content {
     {
       ul:
         procedure.details.requirements.length > 0
-          ? [procedure.details.requirements]
+          ? [...procedure.details.requirements]
           : ['SIN REQUERIMIENTOS'],
     },
   ];

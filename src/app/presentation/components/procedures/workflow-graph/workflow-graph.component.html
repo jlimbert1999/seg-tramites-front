@@ -47,7 +47,7 @@
     </ng-template>
     <ng-template #nodeTemplate let-node>
       <svg:g class="node">
-        <svg:foreignObject width="500" height="150">
+        <svg:foreignObject width="500" height="100">
           <xhtml:div class="cardContainer">
             <mat-card class="example-card">
               <mat-card-header>
@@ -59,12 +59,12 @@
                   {{ node.data.jobtitle ? node.data.jobtitle : "Sin cargo" }}
                 </mat-card-subtitle>
               </mat-card-header>
-              <mat-card-content>
+              <!-- <mat-card-content>
                 <button #mybtn (click)="ope(mybtn)" class="s">sii</button>
                 <p style="font-size: 12px">
                   <strong>Dependencia: </strong>{{ node.data.dependencia }}
                 </p>
-              </mat-card-content>
+              </mat-card-content> -->
             </mat-card>
           </xhtml:div>
         </svg:foreignObject>
@@ -96,72 +96,4 @@
     </ng-template>
   </ngx-graph>
 </div>
-<ng-template #myTemplate cdkConnectedOverlay>
-  <mat-card class="example-card">
-    <mat-card-header>
-      <div mat-card-avatar class="example-header-image"></div>
-      <mat-card-title>Shiba Inu</mat-card-title>
-      <mat-card-subtitle>Dog Breed</mat-card-subtitle>
-    </mat-card-header>
-    <mat-card-content>
-      <p>
-        The Shiba Inu is the smallest of the six original and distinct spitz
-        breeds of dog from Japan. A small, agile dog that copes very well with
-        mountainous terrain, the Shiba Inu was originally bred for hunting.
-      </p>
-      <p>
-        Est proident occaecat commodo reprehenderit dolor nostrud aute cupidatat
-        nulla officia amet ea. Elit deserunt id incididunt labore excepteur
-        excepteur dolore duis. Aute Lorem consectetur consectetur ipsum culpa
-        occaecat non cillum Lorem aute aliquip ad anim. Quis deserunt occaecat
-        consequat cillum labore ex ea non do fugiat esse non. Cupidatat ad sit
-        sunt est dolore occaecat quis ad irure. Aute dolor tempor veniam
-        exercitation proident qui consequat. Eu amet cillum sit elit excepteur
-        non aliquip aliqua nulla pariatur. Ea occaecat eu est voluptate eu
-        veniam nostrud voluptate occaecat elit. Culpa nulla eiusmod amet
-        adipisicing in adipisicing enim. Consequat sint dolore adipisicing elit
-        sit do ad ad. Eu voluptate excepteur labore irure. Laborum magna et aute
-        anim amet ipsum aute. Minim officia ipsum sint enim mollit. Duis in
-        dolor et voluptate magna laborum laboris excepteur eu anim Lorem eu.
-        Nostrud veniam consectetur exercitation qui amet eu duis quis sit. Est
-        dolore occaecat magna amet ex ut ullamco do. Ullamco ipsum eiusmod irure
-        sunt. Aliquip dolor quis consectetur excepteur minim duis reprehenderit
-        veniam exercitation ut. Sit enim aliqua adipisicing anim. Exercitation
-        reprehenderit nulla consectetur aliqua quis cillum. Pariatur minim ad
-        dolore laboris commodo duis et cillum id fugiat minim deserunt labore
-        do. Laborum eiusmod sunt anim voluptate elit incididunt proident aute
-        nulla qui cillum dolore. Laborum cillum dolore fugiat nulla Lorem est.
-        Duis voluptate ea elit exercitation. Eiusmod aliquip Lorem dolore non et
-        nulla deserunt in aliqua aliqua aliquip id. Qui anim laborum eu cillum
-        labore officia Lorem velit cupidatat incididunt ut. Cupidatat minim
-        eiusmod mollit aliqua aliqua. Non duis velit est fugiat incididunt
-        Lorem. Eiusmod nulla Lorem sunt sit dolor exercitation proident sit
-        eiusmod voluptate Lorem qui esse. Cillum qui fugiat Lorem exercitation
-        pariatur mollit commodo nostrud aliqua eiusmod reprehenderit enim. Do
-        non adipisicing proident do sint est eu cupidatat deserunt nulla ad.
-        Pariatur officia ad dolore laborum. Deserunt et elit non id elit magna
-        consequat dolor do elit reprehenderit anim ut. Nisi adipisicing enim
-        labore voluptate exercitation quis amet amet veniam ea ipsum dolor. Et
-        proident laboris reprehenderit nisi anim. Ullamco fugiat voluptate
-        nostrud eu enim deserunt elit magna. Est sint Lorem qui eu ex
-        adipisicing nulla aliquip incididunt eiusmod irure anim commodo. Amet
-        mollit nulla ea est nostrud consectetur sit sint quis culpa nostrud do
-        do. Nisi occaecat proident pariatur non occaecat aute. Ut officia
-        cupidatat laboris ea tempor aliquip sunt culpa mollit cupidatat. Enim
-        amet incididunt velit excepteur mollit occaecat laboris quis magna.
-        Officia laborum ad sit irure sit eu aliquip irure aute dolor eiusmod
-        tempor. Culpa proident nostrud do enim eiusmod commodo elit adipisicing
-        ut sunt irure. Exercitation in ut nisi ad ipsum. Lorem id nostrud ex
-        commodo eu. Excepteur anim aute reprehenderit ipsum. Labore incididunt
-        aliquip non ipsum aliquip esse amet voluptate. Esse adipisicing cillum
-        adipisicing esse officia ad cupidatat deserunt id deserunt aliquip velit
-        adipisicing.
-      </p>
-    </mat-card-content>
-    <mat-card-actions>
-      <button mat-button>LIKE</button>
-      <button mat-button>SHARE</button>
-    </mat-card-actions>
-  </mat-card>
-</ng-template>
 }

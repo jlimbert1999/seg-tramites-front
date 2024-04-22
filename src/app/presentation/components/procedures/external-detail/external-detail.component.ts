@@ -3,6 +3,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   OnInit,
+  WritableSignal,
   computed,
   inject,
   input,
@@ -88,9 +89,6 @@ export class ExternalDetailComponent implements OnInit {
     return this.procedure()!;
   }
 
-  test() {
-    return this.procedure;
-  }
 
   print() {
     this.pdfService.GenerateIndexCard(this.procedure()!, this.workflow());

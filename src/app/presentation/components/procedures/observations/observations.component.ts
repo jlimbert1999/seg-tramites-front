@@ -36,7 +36,7 @@ export class ObservationsComponent {
   private readonly authService = inject(AuthService);
 
   enableOptions = input(false);
-  procedure = model.required<ExternalProcedure>();
+  procedure = model<ExternalProcedure | null>();
   observations = model.required<observationResponse[]>();
 
   public isFocused: boolean = false;
@@ -49,11 +49,11 @@ export class ObservationsComponent {
 
   add() {
     this.procedureService
-      .addObservation(this.procedure()._id, this.descripcion.value)
+      .addObservation(this.procedure()?._id!, this.descripcion.value)
       .subscribe((obs) => {
         this.observations.update((values) => [obs, ...values]);
         this.procedure.set(
-          this.procedure().copyWith({ state: StateProcedure.Observado })
+          this.procedure()?.copyWith({ state: StateProcedure.Observado })
         );
         this.removeFocus();
       });
@@ -71,9 +71,7 @@ export class ObservationsComponent {
         values[index].isSolved = true;
         return [...values];
       });
-      this.procedure.set(
-        this.procedure().copyWith({ state: StateProcedure.Observado })
-      );
+      this.procedure.set(this.procedure()?.copyWith({ state: resp.state }));
     });
   }
 

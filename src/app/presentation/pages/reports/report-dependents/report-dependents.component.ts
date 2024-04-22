@@ -42,7 +42,6 @@ export class ReportDependentsComponent implements OnInit {
   ngOnInit(): void {
     this.reportService.getPendingsByUnit().subscribe((data) => {
       this.dataSource.set(data);
-      console.log(data);
       // this.dependents.set(data);
     });
   }

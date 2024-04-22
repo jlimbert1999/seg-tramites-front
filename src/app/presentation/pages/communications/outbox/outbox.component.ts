@@ -91,7 +91,6 @@ export class OutboxComponent {
 
   public displayedColumns = [
     'code',
-    'state',
     'reference',
     'startDate',
     'expand',

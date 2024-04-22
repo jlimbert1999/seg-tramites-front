@@ -51,7 +51,6 @@ export class WorkflowGraphComponent {
   private overlayRef?: OverlayRef;
 
   public graph = computed<{ nodes: Node[]; links: Edge[] }>(() => {
-    console.log(this.workflow());
     return this.createChar(this.workflow());
   });
 

@@ -39,7 +39,6 @@ export class PostComponent {
       const reader = new FileReader();
       reader.onload = async (e: any) => {
         this.previews.push(e.target.result);
-        console.log(this.previews);
       };
       reader.readAsDataURL(this.selectedFiles[i]);
     }
@@ -49,7 +48,6 @@ export class PostComponent {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
       reader.onload = (e) => {
-        console.log(this.previews);
         resolve(e.target?.result);
       };
       reader.onerror = () => {

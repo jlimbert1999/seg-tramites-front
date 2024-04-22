@@ -9,13 +9,8 @@
 
 .example-card {
   max-width: 500px;
-  height: 150px;
+  height: 100px;
   border: 1px solid black;
-}
-
-/* TODO(mdc-migration): The following rule targets internal classes of card that may no longer apply for the MDC version. */
-mat-card-title {
-  color: royalblue;
 }
 
 .line-success {
