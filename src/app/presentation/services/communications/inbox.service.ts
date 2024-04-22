@@ -107,9 +107,9 @@ export class InboxService {
   }
 
   accept(id_mail: string) {
-    return this.http.put<{ state: StateProcedure; message: string }>(
+    return this.http.put<{ message: string }>(
       `${this.url}/accept/${id_mail}`,
-      undefined
+      null
     );
   }
   reject(id_mail: string, description: string) {

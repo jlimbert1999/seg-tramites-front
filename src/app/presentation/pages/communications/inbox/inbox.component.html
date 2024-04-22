@@ -60,9 +60,8 @@
         <ng-container matColumnDef="emitter">
           <th mat-header-cell *matHeaderCellDef>Emisor</th>
           <td mat-cell *matCellDef="let row">
-            <span class="fw-bold">{{ row.emitter.fullname }}</span>
-            <br />
-            <span class="fw-light">{{ row.emitter.jobtitle }}</span>
+            <span class="fw-bold d-block">{{ row.emitter.fullname }}</span>
+            <span class="d-block">{{ row.emitter.jobtitle }}</span>
           </td>
         </ng-container>
 

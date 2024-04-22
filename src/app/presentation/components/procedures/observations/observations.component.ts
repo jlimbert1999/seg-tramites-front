@@ -17,8 +17,12 @@ import {
 
 import { observationResponse } from '../../../../infraestructure/interfaces';
 import { MaterialModule } from '../../../../material.module';
-import { StateProcedure } from '../../../../domain/models';
-import { ProcedureService } from '../../../services';
+import {
+  ExternalProcedure,
+  Procedure,
+  StateProcedure,
+} from '../../../../domain/models';
+import { AuthService, ProcedureService } from '../../../services';
 
 @Component({
   selector: 'observations',
@@ -29,11 +33,12 @@ import { ProcedureService } from '../../../services';
 })
 export class ObservationsComponent {
   private readonly procedureService = inject(ProcedureService);
+  private readonly authService = inject(AuthService);
 
-  manager = input.required<string | undefined>();
-  onStateChange = output<StateProcedure>();
+  enableOptions = input(false);
+  procedure = model.required<ExternalProcedure>();
+  observations = model.required<observationResponse[]>();
 
-  public observations = model.required<observationResponse[]>();
   public isFocused: boolean = false;
   public descripcion = new FormControl('', {
     nonNullable: true,
@@ -43,13 +48,15 @@ export class ObservationsComponent {
   ngOnInit(): void {}
 
   add() {
-    // this.procedureService
-    //   .addObservation(this.procedure(), this.descripcion.value)
-    //   .subscribe((obs) => {
-    //     this.observations.update((values) => [obs, ...values]);
-    //     this.onStateChange.emit(StateProcedure.Observado);
-    //     this.removeFocus();
-    //   });
+    this.procedureService
+      .addObservation(this.procedure()._id, this.descripcion.value)
+      .subscribe((obs) => {
+        this.observations.update((values) => [obs, ...values]);
+        this.procedure.set(
+          this.procedure().copyWith({ state: StateProcedure.Observado })
+        );
+        this.removeFocus();
+      });
   }
 
   removeFocus() {
@@ -64,7 +71,13 @@ export class ObservationsComponent {
         values[index].isSolved = true;
         return [...values];
       });
-      this.onStateChange.emit(resp.state);
+      this.procedure.set(
+        this.procedure().copyWith({ state: StateProcedure.Observado })
+      );
     });
+  }
+
+  get manager() {
+    return this.authService.account()?.id_account;
   }
 }

@@ -63,6 +63,15 @@ export class ExternalProcedure extends Procedure {
     });
   }
 
+  public copyWith(modifyObject: {
+    [P in keyof this]?: this[P];
+  }): ExternalProcedure {
+    return Object.assign(Object.create(ExternalProcedure.prototype), {
+      ...this,
+      ...modifyObject,
+    });
+  }
+
   constructor({ details, ...procedureProps }: ExternalProps) {
     super(procedureProps);
     this.details = details;

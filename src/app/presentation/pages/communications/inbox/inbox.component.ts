@@ -133,11 +133,10 @@ export class InboxComponent implements OnInit {
       title: `¿Aceptar tramite ${procedure.code}?`,
       text: 'Solo debe aceptar tramites que haya recibido en fisico',
       callback: () => {
-        this.inboxService.accept(_id).subscribe((resp) => {
+        this.inboxService.accept(_id).subscribe(() => {
           this.datasource.update((values) => {
             const index = values.findIndex((el) => el._id === _id);
             values[index].status = StatusMail.Received;
-            values[index].procedure.state = resp.state;
             return [...values];
           });
         });
@@ -165,6 +164,7 @@ export class InboxComponent implements OnInit {
       attachmentQuantity: attachmentQuantity,
     };
     const dialogRef = this.dialog.open(DispatcherComponent, {
+      maxWidth: '1200px',
       width: '1200px',
       data: detail,
     });

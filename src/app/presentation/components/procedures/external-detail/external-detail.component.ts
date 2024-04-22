@@ -48,15 +48,15 @@ export class ExternalDetailComponent implements OnInit {
   private procedureService = inject(ProcedureService);
   private pdfService = inject(PdfService);
 
-  public readonly id = input.required<string>();
-  public enableOptions = input.required<boolean>();
+  readonly id = input.required<string>();
+  readonly enableOptions = input<boolean>(false);
   onStateChange = output<StateProcedure>();
 
-  public procedure = signal<ExternalProcedure | null>(null);
-  public workflow = signal<Workflow[]>([]);
-  public location = signal<locationResponse[]>([]);
-  public observations = signal<observationResponse[]>([]);
-  public manager = computed(() => {
+  procedure = signal<ExternalProcedure | null>(null);
+  workflow = signal<Workflow[]>([]);
+  location = signal<locationResponse[]>([]);
+  observations = signal<observationResponse[]>([]);
+  manager = computed(() => {
     if (!this.enableOptions()) return undefined;
     return this.authService.account()?.id_account;
   });
@@ -75,17 +75,21 @@ export class ExternalDetailComponent implements OnInit {
       this.procedure.set(resp[0] as ExternalProcedure);
       this.location.set(resp[1]);
       this.workflow.set(resp[2]);
-      this.observations.set(resp[3])
+      this.observations.set(resp[3]);
     });
   }
 
   changeStateProcedure(state: StateProcedure) {
-    this.procedure.set(new ExternalProcedure({ ...this.data, state: state }));
+    this.procedure.set(this.data.copyWith({ state }));
     this.onStateChange.emit(state);
   }
 
   get data() {
     return this.procedure()!;
+  }
+
+  test() {
+    return this.procedure;
   }
 
   print() {

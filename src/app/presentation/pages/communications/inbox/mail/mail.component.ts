@@ -47,7 +47,7 @@ import { InboxCache } from '../inbox.component';
 })
 export class MailComponent implements OnInit {
   private route = inject(ActivatedRoute);
-  private _location = inject(Location);
+  private location = inject(Location);
   private dialog = inject(MatDialog);
 
   private inboxService = inject(InboxService);
@@ -58,7 +58,7 @@ export class MailComponent implements OnInit {
   private alertService = inject(AlertService);
   private pdfService = inject(PdfService);
 
-  mail = signal<Communication | null>(null);
+  public mail = signal<Communication | null>(null);
 
   constructor() {}
 
@@ -75,15 +75,8 @@ export class MailComponent implements OnInit {
       title: `¿Aceptar tramite ${this.detail.procedure.code}?`,
       text: 'Solo debe aceptar tramites que haya recibido en fisico',
       callback: () => {
-        this.inboxService.accept(this.detail._id).subscribe((resp) => {
-          const { procedure } = this.detail;
-          procedure.state = resp.state;
-          this.mail.set(
-            this.detail.copyWith({
-              status: StatusMail.Received,
-              procedure: procedure,
-            })
-          );
+        this.inboxService.accept(this.detail._id).subscribe(() => {
+          this.mail.set(this.detail.copyWith({ status: StatusMail.Received }));
           this.updateElementCache();
         });
       },
@@ -111,6 +104,7 @@ export class MailComponent implements OnInit {
       attachmentQuantity: this.detail.attachmentQuantity,
     };
     const dialogRef = this.dialog.open(DispatcherComponent, {
+      maxWidth: '1200px',
       width: '1200px',
       data: detail,
     });
@@ -143,7 +137,7 @@ export class MailComponent implements OnInit {
       this.cacheService.pageSize.set(data['limit'] ?? 10);
       this.cacheService.pageIndex.set(data['index'] ?? 0);
       this.cacheService.keepAliveData.set(true);
-      this._location.back();
+      this.location.back();
     });
   }
 
