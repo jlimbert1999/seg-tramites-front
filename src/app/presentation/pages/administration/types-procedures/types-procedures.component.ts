@@ -18,7 +18,10 @@ import { MatTableModule } from '@angular/material/table';
 import { TypeProcedureComponent } from './type-procedure/type-procedure.component';
 import { TypeProcedureService } from './services/type-procedure.service';
 import { typeProcedureResponse } from '../../../../infraestructure/interfaces';
-import { PaginatorComponent, SidenavButtonComponent } from '../../../components';
+import {
+  PaginatorComponent,
+  SidenavButtonComponent,
+} from '../../../components';
 
 interface PageProps {
   limit: number;
@@ -72,6 +75,7 @@ export class TypesProceduresComponent {
 
   add() {
     const dialogRef = this.dialog.open(TypeProcedureComponent, {
+      maxWidth: '1200px',
       width: '1200px',
     });
     dialogRef.afterClosed().subscribe((result: typeProcedureResponse) => {
@@ -83,6 +87,7 @@ export class TypesProceduresComponent {
 
   edit(type: typeProcedureResponse) {
     const dialogRef = this.dialog.open(TypeProcedureComponent, {
+      maxWidth: '1200px',
       width: '1200px',
       data: type,
     });

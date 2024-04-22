@@ -112,6 +112,7 @@ export const routes: Routes = [
       {
         path: 'inbox',
         title: 'Bandeja - Entrada',
+        data: { resource: VALID_RESOURCES.communication },
         loadComponent: () =>
           import(
             './presentation/pages/communications/inbox/inbox.component'
