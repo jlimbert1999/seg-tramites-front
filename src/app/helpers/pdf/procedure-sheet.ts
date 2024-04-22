@@ -27,7 +27,7 @@ function CreateSectionWorkflow(workflow: Workflow[]): Content {
             : []),
         ],
         [
-          { text: `Fecha: ${send.date?.toDateString() ?? ''}` },
+          { text: `Fecha: ${send.date?.toLocaleString() ?? 'Pendiente'}` },
           { text: `Cantidad: ${send.attachmentQuantity}` },
           { text: `Nro. Interno: ${send.internalNumber}` },
         ],
@@ -37,16 +37,16 @@ function CreateSectionWorkflow(workflow: Workflow[]): Content {
     return [
       { text: `${index + 1}`, alignment: 'center' },
       { text: `${el.emitter.fullname} (${el.emitter.jobtitle})` },
-      { text: el.date.toDateString(), alignment: 'center' },
+      { text: el.date.toLocaleString(), alignment: 'center' },
       {
         table: {
           headerRows: 1,
           widths: [120, '*', 90, 50],
           body: [
             [
-              { text: 'Funcionario', style: 'tableHeader' },
-              { text: 'Referencia', style: 'tableHeader' },
-              { text: 'Detalle', style: 'tableHeader' },
+              { text: 'Servidor publico', style: 'tableHeader' },
+              { text: 'Proveido', style: 'tableHeader' },
+              { text: 'Detalles', style: 'tableHeader' },
               { text: 'Status', style: 'tableHeader' },
             ],
             ...subTable,
@@ -121,7 +121,7 @@ function CreateDetailSection(procedure: Procedure): Content {
             ? [
                 [
                   { text: 'FECHA FINALIZACION:' },
-                  procedure.endDate?.toDateString() ?? 'Pendiente',
+                  procedure.endDate?.toLocaleString() ?? 'Pendiente',
                 ],
               ]
             : []),
@@ -140,7 +140,7 @@ function CreateLocationSection(workflow: Workflow[]): Content {
         location.push([
           { text: `ARCHIVADO` },
           { text: `${el.receiver.fullname} (${el.receiver.jobtitle})` },
-          { text: `Ingreso: ${el.date?.toDateString() ?? 'Pendiente'}` },
+          { text: `Ingreso: ${el.date?.toLocaleString() ?? 'Pendiente'}` },
         ]);
         return;
       }
@@ -148,7 +148,7 @@ function CreateLocationSection(workflow: Workflow[]): Content {
         location.push([
           { text: `EN BANDEJA` },
           { text: `${el.receiver.fullname} (${el.receiver.jobtitle})` },
-          { text: `Ingreso: ${el.date?.toDateString() ?? 'Pendiente'}` },
+          { text: `Ingreso: ${el.date?.toLocaleString() ?? 'Pendiente'}` },
         ]);
         return;
       }

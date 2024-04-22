@@ -19,16 +19,6 @@
       <form [formGroup]="FormProcedure()">
         @switch (searchMode()) { @case ('simple') {
         <div class="row">
-          <div class="col-sm-3">
-            <mat-form-field>
-              <mat-label>Grupo</mat-label>
-              <mat-select formControlName="group">
-                <mat-option> - </mat-option>
-                <mat-option value="ExternalDetail">EXTERNOS</mat-option>
-                <mat-option value="InternalDetail">INTERNOS</mat-option>
-              </mat-select>
-            </mat-form-field>
-          </div>
           <div class="col-sm-4">
             <mat-form-field>
               <mat-label>Alterno</mat-label>
@@ -43,6 +33,16 @@
                 placeholder="Descripcion del tramite"
                 formControlName="reference"
               ></textarea>
+            </mat-form-field>
+          </div>
+          <div class="col-sm-3">
+            <mat-form-field>
+              <mat-label>Grupo</mat-label>
+              <mat-select formControlName="group">
+                <mat-option> - </mat-option>
+                <mat-option value="ExternalDetail">EXTERNOS</mat-option>
+                <mat-option value="InternalDetail">INTERNOS</mat-option>
+              </mat-select>
             </mat-form-field>
           </div>
         </div>

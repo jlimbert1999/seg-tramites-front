@@ -4,20 +4,10 @@
     <div class="m-2 animate__animated animate__fadeIn animate__faster">
       <div class="row g-2">
         <div class="col-12">
-          <div class="d-flex align-items-center p-2">
+          <div class="d-flex align-items-center p-1">
             <button mat-icon-button matTooltip="Imprimir" (click)="print()">
               <mat-icon>print</mat-icon>
             </button>
-            <div class="ms-auto">
-              @if(data.account.officer){
-              <span class="d-block fw-bold"
-                >{{ data.account.officer.fullname | titlecase }}
-              </span>
-              <small class="d-block">{{ data.account.officer.jobtitle }}</small>
-              } @else {
-              <span class="fw-bold text-danger">DESVINCULADO</span>
-              }
-            </div>
           </div>
         </div>
         <div class="col-12">
@@ -26,47 +16,59 @@
             <location [data]="location()" />
           </div>
         </div>
-        <div class="col-sm-3">
+        <div class="col-12">
           <div class="border border-dark rounded p-3">
-            <div class="mb-3 fw-bold">PROPIEDADES TRAMITE</div>
+            <div class="mb-3 fw-bold">DATOS TRAMITE</div>
             <dl class="row">
-              <dt class="col-md-4">ALTERNO:</dt>
-              <dd class="col-md-8">{{ data.code }}</dd>
+              <div class="col-sm-3">
+                <dl class="row">
+                  <dt class="col-md-4">ALTERNO:</dt>
+                  <dd class="col-md-8">{{ data.code }}</dd>
 
-              <dt class="col-md-4">CITE:</dt>
-              <dd class="col-md-8">{{ data.citeCode }}</dd>
+                  <dt class="col-md-4">CITE:</dt>
+                  <dd class="col-md-8">{{ data.citeCode }}</dd>
 
-              <dt class="col-md-4">PIN:</dt>
-              <dd class="col-md-8">{{ data.details.pin }}</dd>
+                  <dt class="col-md-4">PIN:</dt>
+                  <dd class="col-md-8">{{ data.details.pin }}</dd>
 
-              <dt class="col-md-4">ESTADO:</dt>
-              <dd class="col-md-8">{{ data.state }}</dd>
+                  <dt class="col-md-4">ESTADO:</dt>
+                  <dd class="col-md-8">{{ data.state }}</dd>
 
-              <dt class="col-md-4">REGISTRO:</dt>
-              <dd class="col-md-8">{{ data.startDate | date : "short" }}</dd>
+                  <dt class="col-md-4">REGISTRO:</dt>
+                  <dd class="col-md-8">
+                    {{ data.startDate | date : "short" }}
+                  </dd>
 
-              @if(data.endDate){
-              <dt class="col-md-4">CONCLUSION:</dt>
-              <dd class="col-md-8">{{ data.endDate | date : "short" }}</dd>
-              }
+                  @if(data.endDate){
+                  <dt class="col-md-4">CONCLUSION:</dt>
+                  <dd class="col-md-8">{{ data.endDate | date : "short" }}</dd>
+                  }
+                </dl>
+              </div>
+              <div class="col-sm-9">
+                <dl class="row">
+                  <dt class="col-sm-2">TIPO DE TRAMITE:</dt>
+                  <dd class="col-sm-10">{{ data.type | uppercase }}</dd>
+
+                  <dt class="col-sm-2">REFERENCIA:</dt>
+                  <dd class="col-sm-10">{{ data.reference }}</dd>
+
+                  <dt class="col-sm-2">REGISTRADO POR:</dt>
+                  <dd class="col-sm-10">
+                    @if(data.account.officer){
+                    {{ data.account.officer.fullname | titlecase }} (
+                    {{ data.account.officer.jobtitle }}) } @else {
+                    <span>DESVINCULADO</span>
+                    }
+                  </dd>
+                </dl>
+              </div>
             </dl>
           </div>
         </div>
-        <div class="col-sm-9">
-          <div class="border border-dark rounded p-3 h-100">
-            <div class="mb-3 fw-bold">DESCRIPCION TRAMITE</div>
-            <dl class="row">
-              <dt class="col-sm-2">TIPO:</dt>
-              <dd class="col-sm-10">{{ data.type | uppercase }}</dd>
-
-              <dt class="col-sm-2">REFERENCIA:</dt>
-              <dd class="col-sm-10">{{ data.reference }}</dd>
-            </dl>
-          </div>
-        </div>
-        <div class="col-sm-12">
+        <div class="col-12">
           <div class="border border-dark rounded p-3">
-            <div class="mb-3 fw-bold">REQUERIMIENTOS PRESENTADOS</div>
+            <div class="mb-3 fw-bold">REQUISITOS</div>
             <ul>
               @for (item of data.details.requirements; track $index) {
               <li>{{ item }}</li>
@@ -78,7 +80,7 @@
         </div>
         <div class="col-sm-6">
           <div class="border border-dark rounded p-3">
-            <div class="mb-3 fw-bold">SOLICITANTE</div>
+            <div class="mb-3 fw-bold">DATOS SOLICITANTE</div>
             <dl class="row">
               @if(data.details.solicitante.tipo==='NATURAL'){
               <dt class="col-md-3">NOMBRE:</dt>
@@ -105,7 +107,7 @@
         </div>
         <div class="col-sm-6">
           <div class="border border-dark rounded p-3 h-100">
-            <div class="mb-3 fw-bold">REPRESENTANTE</div>
+            <div class="mb-3 fw-bold">DATOS REPRESENTANTE</div>
             @if(data.details.representante){
             <dl class="row">
               <dt class="col-sm-3">NOMBRE:</dt>
