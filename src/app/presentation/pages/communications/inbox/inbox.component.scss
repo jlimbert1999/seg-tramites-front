@@ -1,24 +1,28 @@
 .mat-mdc-cell {
-  font-size: 13px;
+  font-size: 12px;
 }
 
 .mail-pending {
   background-color: #fe5f55;
-}
-
-.mail-pending .link {
   color: white;
-}
 
-.mail-pending .mat-mdc-cell {
-  color: white;
-}
-
-.mail-pending a {
-  color: white;
-  font-weight: bold;
+  a {
+    color: white;
+    font-weight: bold;
+  }
 }
 
 td.mat-column-options {
   width: 32px;
 }
+
+td.mat-column-reference {
+  width: 500px;
+}
+
+@media screen and (max-width: 960px) {
+  td.mat-column-reference {
+    width: 100%;
+  }
+}
+  
