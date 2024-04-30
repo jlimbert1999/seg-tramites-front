@@ -1,9 +1,7 @@
-/* You can add global styles to this file, and also import other style files */
 @import "ngx-toastr/toastr";
-@import "./assets/scss/status-badge.scss";
 @import '@angular/cdk/overlay-prebuilt.css';
-
 @import 'animate.css';
+@import "./assets/scss/status-badge.scss";
 
 html,
 body {
@@ -24,9 +22,6 @@ mat-form-field {
   padding-top: 5px !important;
 }
 
-// .swal2-popup {
-//   font-size: 9px !important;
-// }
 .swal2-title {
   font-size: 20px !important;
 
@@ -51,17 +46,9 @@ mat-form-field {
   background-color: #a8bbbf;
 }
 
-
-
 table {
   width: 100%;
 }
-
-td.mat-column-star {
-  width: 20px;
-  padding-right: 8px !important;
-}
-
 
 @media screen and (max-width: 960px) {
   .mat-elevation-z8 {
@@ -148,6 +135,7 @@ td.mat-column-star {
         display: none;
       }
     }
+
     .mat-column-options {
       width: auto;
       padding: 8px 0 0 !important;
@@ -155,6 +143,7 @@ td.mat-column-star {
       position: absolute;
       top: 0;
       right: 0;
+
       &:before {
         display: none;
       }

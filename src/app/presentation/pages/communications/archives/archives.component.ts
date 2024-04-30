@@ -58,8 +58,8 @@ export class ArchivesComponent implements OnInit {
 
   public displayedColumns: string[] = [
     'code',
-    'manager',
     'reference',
+    'manager',
     'date',
     'options',
   ];
@@ -114,10 +114,9 @@ export class ArchivesComponent implements OnInit {
 
   private removeItemDataSource(id_mail: string) {
     this.datasize.update((length) => (length -= 1));
-    this.datasource.update((values) => {
-      values = values.filter((el) => el._id !== id_mail);
-      return [...values];
-    });
+    this.datasource.update((values) =>
+      values.filter((el) => el._id !== id_mail)
+    );
   }
 
   private savePaginationData(): void {

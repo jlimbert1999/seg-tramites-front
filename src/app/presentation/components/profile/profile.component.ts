@@ -2,7 +2,9 @@ import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
+  computed,
   inject,
+  model,
   output,
 } from '@angular/core';
 import { MaterialModule } from '../../../material.module';
@@ -19,17 +21,11 @@ import { AuthService } from '../../services';
 })
 export class ProfileComponent {
   private readonly authService = inject(AuthService);
+  public user = computed(() => this.authService.account()?.officer);
+  public isOpen = model.required<boolean>();
   onLogout = output<void>();
-  onClose = output<void>();
 
-  logout() {
-    this.onLogout.emit();
-  }
   close() {
-    this.onClose.emit();
-  }
-
-  get officer() {
-    return this.authService.account()?.officer;
+    this.isOpen.set(false);
   }
 }

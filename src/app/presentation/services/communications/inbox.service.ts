@@ -100,6 +100,7 @@ export class InboxService {
         })
       );
   }
+  
   getMail(id: string) {
     return this.http
       .get<communicationResponse>(`${this.url}/${id}`)

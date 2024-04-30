@@ -25,7 +25,7 @@ $theme: matx.define-theme((color: (theme-type: light,
   .overlay-menu {
     background-color: mat.get-theme-color($theme, surface-container);
     color: mat.get-theme-color($theme, on-surface-variant);
-    padding: 20px;
+    padding: 15px;
     border-radius: 5px;
    
   }

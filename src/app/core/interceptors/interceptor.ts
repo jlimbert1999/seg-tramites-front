@@ -27,7 +27,6 @@ export function loggingInterceptor(
   appearanceService.showLoading();
   return next(reqWithHeader).pipe(
     catchError((error) => {
-      console.error(error);
       if (error instanceof HttpErrorResponse) {
         if (error.status === 401) {
           authService.logout();

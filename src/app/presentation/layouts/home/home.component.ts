@@ -10,12 +10,7 @@ import { Router, RouterModule } from '@angular/router';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { map, shareReplay } from 'rxjs';
-import {
-  AuthService,
-  SocketService,
-  AppearanceService,
-  AlertService,
-} from '../../services';
+import { AuthService, SocketService, AlertService } from '../../services';
 import {
   SidenavButtonComponent,
   NavigationListComponent,
@@ -39,16 +34,14 @@ import { MaterialModule } from '../../../material.module';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HomeComponent implements OnInit {
-  private appearanceService = inject(AppearanceService);
+  private breakpointObserver = inject(BreakpointObserver);
   private socketService = inject(SocketService);
   private alertservice = inject(AlertService);
   private authService = inject(AuthService);
   private destroyRef = inject(DestroyRef);
   private router = inject(Router);
-  private breakpointObserver = inject(BreakpointObserver);
 
-  protected detailsOpen = false;
-
+  public detailsOpen = false;
   public isHandset$ = this.breakpointObserver.observe(Breakpoints.Handset).pipe(
     map((result) => result.matches),
     shareReplay()
@@ -105,13 +98,5 @@ export class HomeComponent implements OnInit {
 
   get menu() {
     return this.authService.menu();
-  }
-
-  get user() {
-    return this.authService.account()!;
-  }
-
-  get isLoading() {
-    return this.appearanceService.isLoading;
   }
 }

@@ -23,7 +23,7 @@ export class InfoComponent {
       icon: 'settings',
       version: '2.0.0',
       group: 'error',
-      date: '20/02/2024',
+      date: '30/04/2024',
       title:
         'Corrección de errores e implementación de nuevas vistas para reportes e información',
       description:

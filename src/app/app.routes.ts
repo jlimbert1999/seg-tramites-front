@@ -123,8 +123,8 @@ export const routes: Routes = [
         title: 'Detalle - Envio',
         loadComponent: () =>
           import(
-            './presentation/pages/communications/inbox/mail/mail.component'
-          ).then((c) => c.MailComponent),
+            './presentation/pages/communications/communication/communication.component'
+          ).then((c) => c.CommunicationComponent),
       },
       {
         path: 'outbox',
