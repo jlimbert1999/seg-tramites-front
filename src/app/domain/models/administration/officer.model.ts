@@ -23,7 +23,7 @@ export class Officer {
       nombre: obj['nombre'],
       paterno: obj['paterno'],
       materno: obj['materno'],
-      dni: obj['dni'].toString(),
+      dni: obj['dni']?.toString() ?? '',
       telefono: obj['telefono'],
       // direccion: obj['direccion'],
       activo: obj['activo'],
