@@ -34,6 +34,10 @@ interface SelectOption<T> {
   text: string;
   value: T;
 }
+interface ListOption {
+  name: string;
+  isSelected: boolean;
+}
 
 @Component({
   selector: 'app-external',
@@ -84,7 +88,7 @@ export class ExternalComponent {
       ? this.createFormRepresentative()
       : this.fb.group({})
   );
-  requirements = signal<string[]>([]);
+  requirements = signal<ListOption[]>([]);
 
   ngOnInit(): void {
     if (this.external) {
@@ -125,7 +129,7 @@ export class ExternalComponent {
     this.requirements.set(
       type.requerimientos
         .filter((requirement) => requirement.activo)
-        .map((type) => type.nombre)
+        .map((type) => ({ name: type.nombre, isSelected: true }))
     );
   }
 
@@ -240,6 +244,8 @@ export class ExternalComponent {
       tipo: ['JURIDICO'],
     });
   }
+
+  toggleRequeriment() {}
 
   errorMessage(control: AbstractControl) {
     return handleFormErrorMessages(control);

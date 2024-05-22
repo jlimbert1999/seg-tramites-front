@@ -53,13 +53,14 @@
           </div>
           <div class="col-12">
             @if(FormProcedure.get('type')?.value){
-            <ul>
-              @for (requirement of requirements(); track $index) {
-              <li>{{ requirement }}</li>
-              }@empty {
+            <mat-selection-list style="max-height: 300px; overflow-y: scroll">
+              @for (requirement of requirements(); track requirement) {
+              <mat-list-option [(selected)]="requirement.isSelected">{{ requirement.name }}</mat-list-option>
+              } @empty {
               <li>SIN REQUISITOS</li>
               }
-            </ul>
+            </mat-selection-list>
+
             }
           </div>
         </div>

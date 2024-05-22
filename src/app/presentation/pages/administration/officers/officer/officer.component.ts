@@ -66,7 +66,6 @@ export class OfficerComponent {
       '',
       [
         Validators.required,
-        Validators.pattern(/^\d+$/),
         Validators.minLength(6),
         Validators.maxLength(8),
       ],
@@ -75,7 +74,6 @@ export class OfficerComponent {
       '',
       [
         Validators.required,
-        Validators.pattern(/^\d+$/),
         Validators.minLength(6),
         Validators.maxLength(8),
       ],

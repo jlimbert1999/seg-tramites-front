@@ -13,7 +13,7 @@ interface CreateExternalForm {
   FormProcedure: Object;
   FormApplicant: Object;
   FormRepresentative: Object;
-  Requeriments: string[];
+  Requeriments: { name: string; isSelected: boolean }[];
 }
 interface UpdateExternalForm {
   id: string;

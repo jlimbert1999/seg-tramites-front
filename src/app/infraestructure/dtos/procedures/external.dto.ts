@@ -4,7 +4,11 @@ interface externalProperties {
   formProcedure: any;
   formApplicant: any;
   formRepresentative: any;
-  requeriments: string[];
+  requeriments: requeriments[];
+}
+interface requeriments {
+  name: string;
+  isSelected: boolean;
 }
 interface applicant {
   nombre: string;
@@ -40,7 +44,7 @@ export class ExternalProcedureDto {
         amount: formProcedure['amount'],
         segment: formProcedure['segment'],
       },
-      requeriments,
+      requeriments.filter((el) => el.isSelected).map(({ name }) => name),
       formApplicant,
       Object.keys(formRepresentative).length > 0
         ? formRepresentative
