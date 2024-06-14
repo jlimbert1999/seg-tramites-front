@@ -10,6 +10,7 @@ import {
   isAuthenticatedGuard,
   isNotAuthenticatedGuard,
   roleGuard,
+  updatedPasswordGuard,
 } from './presentation/guards';
 import { InfoComponent } from './presentation/layouts/home/info/info.component';
 import { ReportDependentsComponent } from './presentation/pages/reports/report-dependents/report-dependents.component';
@@ -89,6 +90,7 @@ export const routes: Routes = [
       {
         path: 'external',
         title: 'Externos',
+        canActivate: [updatedPasswordGuard],
         loadComponent: () =>
           import(
             './presentation/pages/procedures/externals/externals.component'
@@ -96,6 +98,7 @@ export const routes: Routes = [
       },
       {
         path: 'internal',
+        canActivate: [updatedPasswordGuard],
         title: 'Internos',
         loadComponent: () =>
           import(
@@ -104,6 +107,7 @@ export const routes: Routes = [
       },
       {
         path: ':from/:group/:id',
+        canActivate: [updatedPasswordGuard],
         loadComponent: () =>
           import(
             './presentation/pages/procedures/detail/detail.component'
@@ -113,6 +117,7 @@ export const routes: Routes = [
         path: 'inbox',
         title: 'Bandeja - Entrada',
         data: { resource: VALID_RESOURCES.communication },
+        canActivate: [updatedPasswordGuard],
         loadComponent: () =>
           import(
             './presentation/pages/communications/inbox/inbox.component'
@@ -121,6 +126,7 @@ export const routes: Routes = [
       {
         path: 'inbox/:id',
         title: 'Detalle - Envio',
+        canActivate: [updatedPasswordGuard],
         loadComponent: () =>
           import(
             './presentation/pages/communications/communication/communication.component'
@@ -129,6 +135,7 @@ export const routes: Routes = [
       {
         path: 'outbox',
         title: 'Bandeja - Salida',
+        canActivate: [updatedPasswordGuard],
         loadComponent: () =>
           import(
             './presentation/pages/communications/outbox/outbox.component'

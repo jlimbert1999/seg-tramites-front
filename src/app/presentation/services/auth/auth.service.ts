@@ -1,6 +1,6 @@
 import { Injectable, computed, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { catchError, map } from 'rxjs/operators';
+import { catchError, map, tap } from 'rxjs/operators';
 import { jwtDecode } from 'jwt-decode';
 import { Observable, of } from 'rxjs';
 
@@ -69,6 +69,16 @@ export class AuthService {
           return of(false);
         })
       );
+  }
+
+  checkUpdatedPasswrod(): Observable<boolean> {
+    return this.http.get<boolean>(`${this.base_url}/auth/security`).pipe(
+      tap((isUpdated) => {
+        if (isUpdated) {
+          localStorage.setItem('updated', '1');
+        }
+      })
+    );
   }
 
   getMyAccount() {

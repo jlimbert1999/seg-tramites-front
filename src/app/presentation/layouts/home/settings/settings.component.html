@@ -78,55 +78,67 @@
         </div>
         } }
       </mat-expansion-panel>
-      <mat-expansion-panel>
+      <mat-expansion-panel [expanded]="true">
         <mat-expansion-panel-header>
           <mat-panel-title> CONFIGURACION CUENTA </mat-panel-title>
           <mat-panel-description>
             Configuracion de inicio de sesion
           </mat-panel-description>
         </mat-expansion-panel-header>
-        <div class="row">
-          <div class="col-3">
-            <mat-form-field class="example-full-width">
+
+        <div
+          class="d-flex flex-column justify-content-center align-items-center"
+        >
+          <form [formGroup]="form">
+            <mat-form-field class="mb-3">
               <mat-label>Nombre de usuario</mat-label>
               <input matInput [value]="account()?.login" readonly />
               <mat-hint>Este campo no se puede editar</mat-hint>
             </mat-form-field>
-          </div>
-          <div class="col-4">
-            <mat-form-field>
-              <mat-label>Nueva contraseña</mat-label>
+            <mat-form-field class="mb-3">
+              <mat-label>Nueva Contraseña</mat-label>
               <input
                 matInput
-                [type]="hidePassword ? 'password' : 'text'"
-                autocomplete="off"
-                placeholder="Ingrese una nueva contraseña"
-                [formControl]="passoword"
-                required
+                placeholder="Ingresa su nueva contraseña"
+                formControlName="password"
+                [type]="hide() ? 'password' : 'text'"
               />
               <button
                 mat-icon-button
                 matSuffix
-                (click)="hidePassword = !hidePassword"
+                (click)="clickEvent($event)"
                 [attr.aria-label]="'Hide password'"
-                [attr.aria-pressed]="hidePassword"
+                [attr.aria-pressed]="hide()"
               >
                 <mat-icon>{{
-                  hidePassword ? "visibility_off" : "visibility"
+                  hide() ? "visibility_off" : "visibility"
                 }}</mat-icon>
               </button>
-              @if (passoword.invalid) {
-              <mat-error>{{ getErrorMessage() }}</mat-error>
-              }
+              <mat-error>{{
+                handleFormErrorMessages(form.get("password")!)
+              }}</mat-error>
             </mat-form-field>
-          </div>
+            <mat-form-field class="mb-3">
+              <mat-label>Confirmar Contraseña</mat-label>
+              <input
+                matInput
+                placeholder="Cofirme su contraseña"
+                formControlName="confirmPassword"
+                [type]="hide() ? 'password' : 'text'"
+              />
+              <mat-error>{{
+                handleFormErrorMessages(form.get("confirmPassword")!)
+              }}</mat-error>
+            </mat-form-field>
+          </form>
         </div>
+
         <mat-action-row>
           <button
             mat-button
             color="primary"
             (click)="updatePassword()"
-            [disabled]="passoword.invalid"
+            [disabled]="form.invalid"
           >
             Actualizar
           </button>
