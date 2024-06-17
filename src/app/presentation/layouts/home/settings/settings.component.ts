@@ -58,10 +58,6 @@ export class SettingsComponent implements OnInit {
   private appearanceService = inject(AppearanceService);
   private fb = inject(FormBuilder);
   public account = toSignal<Account>(this.authService.getMyAccount());
-  public passoword = new FormControl('', [
-    Validators.required,
-    Validators.minLength(6),
-  ]);
 
   form = this.fb.group(
     {
@@ -70,9 +66,7 @@ export class SettingsComponent implements OnInit {
         [
           Validators.required,
           Validators.minLength(8),
-          Validators.pattern(
-            /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>]).{6,}$/
-          ),
+          Validators.pattern('^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).+$'),
         ],
       ],
       confirmPassword: ['', [Validators.required]],
@@ -83,15 +77,11 @@ export class SettingsComponent implements OnInit {
   dialogRef = inject(MatDialog);
   hide = signal(true);
   clickEvent(event: MouseEvent) {
-    this.hide.set(!this.hide);
+    this.hide.set(!this.hide());
     event.stopPropagation();
   }
   ngOnInit(): void {
     this.showNotification();
-  }
-
-  getErrorMessage() {
-    return handleFormErrorMessages(this.passoword);
   }
 
   updatePassword() {
@@ -102,7 +92,10 @@ export class SettingsComponent implements OnInit {
         this.alertService.SuccesToast({ title: resp.message });
         this.hide.set(true);
         this.form.reset({});
-        localStorage.setItem('updated', '1');
+        Object.keys(this.form.controls).forEach((key) => {
+          this.form.get(key)?.setErrors(null);
+          this.form.get(key)?.setErrors(null);
+        });
       });
   }
 
@@ -115,8 +108,7 @@ export class SettingsComponent implements OnInit {
   }
 
   showNotification() {
-    const isUpdate = localStorage.getItem('updated');
-    if (isUpdate) return;
+    if (this.authService.updatedPassword()) return;
     this.dialogRef.open(NotificationComponent);
   }
 
@@ -127,7 +119,7 @@ export class SettingsComponent implements OnInit {
       return `Ingrese al menos ${minLengthRequired} caracteres`;
     }
     if (control.hasError('pattern'))
-      return 'Ingrese al menos: 1 letra mayúscula, 1 letra minúscula, 1 número, 1 carácter especial.';
+      return 'Ingrese al menos: 1 letra mayúscula, 1 letra minúscula, 1 número';
 
     if (control.hasError('not_match')) {
       return `Las contraseñas no coinciden`;

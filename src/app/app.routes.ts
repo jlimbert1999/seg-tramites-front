@@ -3,7 +3,6 @@ import { LoginComponent } from './presentation/layouts/login/login.component';
 import { HomeComponent } from './presentation/layouts/home/home.component';
 import { ReportApplicantComponent } from './presentation/pages/reports/report-applicant/report-applicant.component';
 import { MainComponent } from './presentation/layouts/home/main/main.component';
-import { DetailComponent } from './presentation/pages/procedures/detail/detail.component';
 import { ReportSearchComponent } from './presentation/pages/reports/report-search/report-search.component';
 import { PostsComponent } from './presentation/pages/groupware/posts/posts.component';
 import {
@@ -98,8 +97,8 @@ export const routes: Routes = [
       },
       {
         path: 'internal',
-        canActivate: [updatedPasswordGuard],
         title: 'Internos',
+        canActivate: [updatedPasswordGuard],
         loadComponent: () =>
           import(
             './presentation/pages/procedures/internals/internals.component'
@@ -143,6 +142,7 @@ export const routes: Routes = [
       },
       {
         path: 'archives',
+        canActivate: [updatedPasswordGuard],
         loadComponent: () =>
           import(
             './presentation/pages/communications/archives/archives.component'
@@ -164,6 +164,7 @@ export const routes: Routes = [
       },
       {
         path: 'reports',
+        canActivate: [updatedPasswordGuard],
         component: ReportsComponent,
         title: 'Reportes',
         children: [

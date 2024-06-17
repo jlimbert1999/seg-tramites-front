@@ -63,8 +63,8 @@ export class LoginComponent {
         },
         this.loginForm.get('remember')?.value!
       )
-      .subscribe(() => {
-        this.router.navigate(['/home']);
+      .subscribe((url) => {
+        this.router.navigateByUrl(url);
       });
   }
 }
