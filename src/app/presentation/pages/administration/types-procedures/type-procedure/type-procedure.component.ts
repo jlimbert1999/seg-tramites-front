@@ -29,7 +29,12 @@ import { MatIconModule } from '@angular/material/icon';
 
 import { Observable, map, startWith } from 'rxjs';
 import { TypeProcedureService } from '../services/type-procedure.service';
-import { typeProcedureResponse, requirement } from '../../../../../infraestructure/interfaces';
+import {
+  typeProcedureResponse,
+  requirement,
+} from '../../../../../infraestructure/interfaces';
+import Swal from 'sweetalert2';
+import { read, utils } from 'xlsx';
 
 @Component({
   selector: 'app-type-procedure',
@@ -48,7 +53,7 @@ import { typeProcedureResponse, requirement } from '../../../../../infraestructu
     MatSelectModule,
   ],
   templateUrl: './type-procedure.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+  changeDetection: ChangeDetectionStrategy.Default,
 })
 export class TypeProcedureComponent {
   private fb = inject(FormBuilder);
@@ -116,10 +121,48 @@ export class TypeProcedureComponent {
   removeRequirement(index: number) {
     this.requeriments.removeAt(index);
   }
+
   private _filterSegments(value: string): string[] {
     const filterValue = value.toLowerCase();
     return this.segments().filter((option) =>
       option.toLowerCase().includes(filterValue)
     );
+  }
+
+  async upload() {
+    const { value: file } = await Swal.fire({
+      title: 'Seleccione el archivo a cargar',
+      text: 'Formatos permitidos :ods, csv, xlsx',
+      input: 'file',
+      showCancelButton: true,
+      confirmButtonText: 'Aceptar',
+      cancelButtonText: 'Cancelar',
+      inputAttributes: {
+        accept: '.xlsx, .xls',
+        'aria-label': 'Cargar archivo excel',
+      },
+    });
+    if (file) {
+      const reader = new FileReader();
+      reader.readAsBinaryString(file);
+      reader.onload = (e) => {
+        const wb = read(reader.result, {
+          type: 'binary',
+          cellDates: true,
+        });
+        const data: { nombre: string }[] = utils.sheet_to_json<any>(
+          wb.Sheets[wb.SheetNames[0]]
+        );
+        const controls = new FormArray([
+          ...data.map((item) =>
+            this.fb.group({
+              nombre: [item.nombre, Validators.required],
+              activo: true,
+            })
+          ),
+        ]);
+        this.FormTypeProcedure.setControl('requerimientos', controls);
+      };
+    }
   }
 }
