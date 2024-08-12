@@ -32,6 +32,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { NotificationComponent } from '../../../components/notification/notification.component';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-settings',
@@ -58,6 +59,7 @@ export class SettingsComponent implements OnInit {
   private appearanceService = inject(AppearanceService);
   private fb = inject(FormBuilder);
   public account = toSignal<Account>(this.authService.getMyAccount());
+  private router = inject(Router);
 
   form = this.fb.group(
     {
@@ -96,6 +98,7 @@ export class SettingsComponent implements OnInit {
           this.form.get(key)?.setErrors(null);
           this.form.get(key)?.setErrors(null);
         });
+        this.router.navigateByUrl('/home')
       });
   }
 

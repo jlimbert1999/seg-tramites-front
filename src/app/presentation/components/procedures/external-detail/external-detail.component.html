@@ -53,7 +53,7 @@
                   <dt class="col-sm-2">REFERENCIA:</dt>
                   <dd class="col-sm-10">{{ data.reference }}</dd>
 
-                  <dt class="col-sm-2">REGISTRADO POR:</dt>
+                  <dt class="col-sm-2">ENCARGADO:</dt>
                   <dd class="col-sm-10">
                     @if(data.account.officer){
                     {{ data.account.officer.fullname | titlecase }} (
@@ -69,13 +69,15 @@
         <div class="col-12">
           <div class="border border-dark rounded p-3">
             <div class="mb-3 fw-bold">REQUISITOS</div>
-            <ul>
+            <ol>
               @for (item of data.details.requirements; track $index) {
               <li>{{ item }}</li>
               } @empty {
-              <li>NO SE PRESENTARON REQUERIMIENTOS</li>
+              <li style="list-style-type: none">
+                NO SE PRESENTARON REQUERIMIENTOS
+              </li>
               }
-            </ul>
+            </ol>
           </div>
         </div>
         <div class="col-sm-6">

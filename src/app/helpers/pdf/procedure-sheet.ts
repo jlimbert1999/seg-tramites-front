@@ -115,7 +115,7 @@ function CreateDetailSection(procedure: Procedure): Content {
           [{ text: 'REFERENCIA:' }, procedure.reference],
           [{ text: 'CANTIDAD:' }, procedure.amount],
           [{ text: 'ESTADO:' }, procedure.state],
-          [{ text: 'REGISTRADO POR:' }, procedure.titleManager],
+          [{ text: 'ENCARGADO:' }, procedure.titleManager],
           [{ text: 'FECHA REGISTRO:' }, procedure.startDate.toLocaleString()],
           ...(procedure.state === StateProcedure.Concluido
             ? [
