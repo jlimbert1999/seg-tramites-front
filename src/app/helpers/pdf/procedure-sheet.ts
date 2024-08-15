@@ -250,7 +250,7 @@ function CreateExternalSection(procedure: ExternalProcedure): Content {
     },
     { text: 'REQUERIMIENTOS PRESENTADOS\n\n', bold: true },
     {
-      ul:
+      ol:
         procedure.details.requirements.length > 0
           ? [...procedure.details.requirements]
           : ['SIN REQUERIMIENTOS'],
