@@ -42,6 +42,11 @@ export class ReportsComponent implements OnInit {
       link: 'dependents',
       description: 'Listado de unidad',
     },
+    unit: {
+      label: 'Unidades',
+      link: 'unit',
+      description: 'Listado por unidad',
+    },
   };
   public menu = signal<menu[]>([]);
 

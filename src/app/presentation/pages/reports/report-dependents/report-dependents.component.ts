@@ -7,8 +7,10 @@ import {
   signal,
 } from '@angular/core';
 import { MaterialModule } from '../../../../material.module';
-import { PdfService, ReportService } from '../../../services';
-import { StatusMail } from '../../../../domain/models';
+import {
+  AuthService,
+  ReportService,
+} from '../../../services';
 interface dependents {
   id: string;
   officer?: {
@@ -26,9 +28,7 @@ interface dependents {
 })
 export class ReportDependentsComponent implements OnInit {
   private reportService = inject(ReportService);
-  private pdfService = inject(PdfService);
-
-  dependents = signal<dependents[]>([]);
+  private accout = inject(AuthService).account();
 
   displayedColumns: string[] = [
     'officer',
@@ -40,20 +40,11 @@ export class ReportDependentsComponent implements OnInit {
   ];
   dataSource = signal<any[]>([]);
   ngOnInit(): void {
-    this.reportService.getPendingsByUnit().subscribe((data) => {
+    if(!this.accout?.id_dependency) return
+    this.reportService.getPendingsByUnit(this.accout!.id_dependency).subscribe((data) => {
       this.dataSource.set(data);
-      // this.dependents.set(data);
     });
   }
 
-  getInbox(id_acoun: string) {
-    // this.reportService.getPendingsByAccount(id_acoun).subscribe((data) => {
-    //   this.pdfService.GenerateReportSheet(
-    //     'reporte',
-    //     {},
-    //     data,
-    //     [{ columnDef: 'reference', header: 'Referncia' }],
-    //   );
-    // });
-  }
+
 }

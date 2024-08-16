@@ -5,7 +5,9 @@ import { environment } from '../../../../environments/environment';
 import {
   accountResponse,
   communicationResponse,
+  dependencyResponse,
   externalResponse,
+  institutionResponse,
   internalResponse,
   procedure,
   reportUnit,
@@ -104,30 +106,46 @@ export class ReportService {
       );
   }
 
-  getPendingsByUnit() {
-    return this.http.get<reportUnit[]>(`${this.url}/unit/pendings`).pipe(
-      map((resp) =>
-        resp.map(({ _id: { _id, funcionario }, details }) => ({
-          id: _id,
-          officer: funcionario
-            ? {
-                fullname: `${funcionario.nombre} ${funcionario.paterno} ${funcionario.materno}`,
-                jobtitle: funcionario.cargo?.nombre ?? 'SIN CARGO',
-              }
-            : undefined,
-          details: Object.values(StatusMail).reduce((acc, curr) => {
-            const status = details.find((el) => el.status === curr);
-            return { [curr]: status?.total ?? 0, ...acc };
-          }, {}),
-        }))
-      )
+  getInboxAccount(accountId: string) {
+    return this.http.get<communicationResponse[]>(
+      `${this.url}/inbox/${accountId}`
     );
+  }
+  getPendingsByUnit(dependencyId: string) {
+    return this.http
+      .get<reportUnit[]>(`${this.url}/unit/pendings/${dependencyId}`)
+      .pipe(
+        map((resp) =>
+          resp.map(({ _id: { _id, funcionario }, details }) => ({
+            id: _id,
+            officer: funcionario
+              ? {
+                  fullname: `${funcionario.nombre} ${funcionario.paterno} ${funcionario.materno}`,
+                  jobtitle: funcionario.cargo?.nombre ?? 'SIN CARGO',
+                }
+              : undefined,
+            details: Object.values(StatusMail).reduce((acc, curr) => {
+              const status = details.find((el) => el.status === curr);
+              return { [curr]: status?.total ?? 0, ...acc };
+            }, {}),
+          }))
+        )
+      );
   }
 
   getPendingsByAccount(id_account: string) {
     return this.http.get<communicationResponse[]>(
       `${this.url}/pending/${id_account}`
     );
+  }
+
+  getDependencies(institutionId: string) {
+    return this.http.get<dependencyResponse[]>(
+      `${this.url}/dependencies/${institutionId}`
+    );
+  }
+  getInstitutions() {
+    return this.http.get<institutionResponse[]>(`${this.url}/institutions`);
   }
 
   getWorkDetails(id_account: string) {

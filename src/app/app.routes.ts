@@ -16,6 +16,7 @@ import { ReportDependentsComponent } from './presentation/pages/reports/report-d
 import { ClientsComponent } from './presentation/pages/groupware/clients/clients.component';
 import { VALID_RESOURCES } from './infraestructure/interfaces';
 import { ReportsComponent } from './presentation/pages/reports/reports.component';
+import { ReportUnitComponent } from './presentation/pages/reports/report-unit/report-unit.component';
 
 export const routes: Routes = [
   {
@@ -179,6 +180,10 @@ export const routes: Routes = [
           {
             path: 'dependents',
             component: ReportDependentsComponent,
+          },
+          {
+            path: 'unit',
+            component: ReportUnitComponent,
           },
           {
             path: '',
