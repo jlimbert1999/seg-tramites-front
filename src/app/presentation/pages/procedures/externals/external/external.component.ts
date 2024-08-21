@@ -125,7 +125,7 @@ export class ExternalComponent {
   }
 
   selectTypeProcedure(type: typeProcedureResponse) {
-    this.FormProcedure.patchValue({ type: type._id });
+    this.FormProcedure.patchValue({ type: type._id, reference: type.nombre });
     this.requirements.set(
       type.requerimientos
         .filter((requirement) => requirement.activo)
