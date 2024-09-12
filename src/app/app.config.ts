@@ -8,6 +8,7 @@ import { loggingInterceptor } from './core/interceptors/interceptor';
 import { registerLocaleData } from '@angular/common';
 import localeEs from '@angular/common/locales/es-BO';
 import { provideToastr } from 'ngx-toastr';
+import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 registerLocaleData(localeEs, 'es');
 
 export const appConfig: ApplicationConfig = {
@@ -16,6 +17,6 @@ export const appConfig: ApplicationConfig = {
     provideHttpClient(withInterceptors([loggingInterceptor])),
     provideToastr(),
     provideAnimations(),
-    { provide: LOCALE_ID, useValue: 'es' },
+    { provide: LOCALE_ID, useValue: 'es' }, provideAnimationsAsync(), provideAnimationsAsync(),
   ],
 };

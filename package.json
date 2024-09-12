@@ -17,11 +17,9 @@
     "@angular/core": "^18.2.4",
     "@angular/forms": "^18.2.4",
     "@angular/material": "^18.2.4",
-    "@angular/material-experimental": "^17.3.1",
     "@angular/platform-browser": "^18.2.4",
     "@angular/platform-browser-dynamic": "^18.2.4",
     "@angular/router": "^18.2.4",
-    "@swimlane/ngx-graph": "^8.3.0",
     "@types/d3": "^7.4.3",
     "@types/pdfmake": "^0.2.9",
     "animate.css": "^4.1.1",
@@ -30,9 +28,7 @@
     "jwt-decode": "^4.0.0",
     "moment": "^2.30.1",
     "moment-timezone": "^0.5.45",
-    "ngx-infinite-scroll": "^17.0.0",
-    "ngx-mat-select-search": "^7.0.5",
-    "ngx-toastr": "^18.0.0",
+    "ngx-toastr": "^19.0.0",
     "pdfmake": "^0.2.9",
     "rxjs": "~7.8.0",
     "socket.io-client": "^4.7.1",
@@ -42,8 +38,8 @@
     "zone.js": "~0.14.10"
   },
   "devDependencies": {
-    "@angular-devkit/build-angular": "^17.3.2",
-    "@angular/cli": "^17.3.2",
+    "@angular-devkit/build-angular": "^18.2.4",
+    "@angular/cli": "^18.2.4",
     "@angular/compiler-cli": "^18.2.4",
     "@types/jasmine": "~5.1.0",
     "jasmine-core": "~5.1.0",
@@ -52,7 +48,7 @@
     "karma-coverage": "~2.2.0",
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.1.0",
-    "typescript": "^5.7.0-dev.20240912"
+    "typescript": "^5.5.4"
   },
   "overrides": {
     "d3-selection": "3.0.0"
