@@ -1,0 +1,64 @@
+<h2 mat-dialog-title>Crear Publicacion</h2>
+<mat-dialog-content>
+  <form [formGroup]="form">
+    <mat-form-field>
+      <mat-label>Titulo</mat-label>
+      <input matInput formControlName="title" />
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Contenido</mat-label>
+      <textarea matInput formControlName="content"></textarea>
+    </mat-form-field>
+
+    <label id="priority-options">Prioridad:</label>
+    <mat-radio-group
+      aria-labelledby="priority-options"
+      formControlName="priority"
+    >
+      @for (item of prioritys; track $index) {
+      <mat-radio-button class="ml-2" [value]="item.value">
+        {{ item.label }}
+      </mat-radio-button>
+      }
+    </mat-radio-group>
+    <div class="flex justify-between items-center p-2">
+      <span>Archivos:</span>
+      <button mat-mini-fab aria-label="Attach file" (click)="fileInput.click()">
+        <mat-icon>attach_file</mat-icon>
+      </button>
+      <input
+        #fileInput
+        [hidden]="true"
+        type="file"
+        [multiple]="true"
+        (change)="addFile($event)"
+      />
+    </div>
+    <div></div>
+    <div class="col-span-2">
+      <mat-list
+        class="overflow-y-auto max-h-52 max-w-[520px] rounded-lg border-2"
+      >
+        @for (file of files(); track $index) {
+        <mat-list-item>
+          <mat-icon matListItemIcon>description</mat-icon>
+          <div matListItemTitle>{{ file.name }}</div>
+          <div matListItemLine>
+            {{ (file.size / 1024 / 1024).toFixed(2) }} MB
+          </div>
+          <button mat-icon-button (click)="removeFile($index)" matListItemMeta>
+            <mat-icon>delete</mat-icon>
+          </button>
+        </mat-list-item>
+        } @empty {
+        <span class="px-3">Sin arcivos adjuntos</span>
+        }
+      </mat-list>
+    </div>
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close>Cancelar</button>
+  <button mat-button (click)="create()">Aceptar</button>
+</mat-dialog-actions>

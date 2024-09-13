@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
-import { InfiniteScrollModule } from 'ngx-infinite-scroll';
+// import { InfiniteScrollModule } from 'ngx-infinite-scroll';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { SidenavButtonComponent } from '../../../components';
 import { MatIconModule } from '@angular/material/icon';
@@ -16,7 +16,7 @@ import { MatDialog } from '@angular/material/dialog';
     CommonModule,
     MatCardModule,
     MatButtonModule,
-    InfiniteScrollModule,
+    // InfiniteScrollModule,
     SidenavButtonComponent,
     MatToolbarModule,
     MatIconModule,

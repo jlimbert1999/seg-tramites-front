@@ -164,6 +164,11 @@ export const routes: Routes = [
           ).then((c) => c.SettingsComponent),
       },
       {
+        path: 'posts',
+        loadComponent: () =>
+          import('./posts/presentation/pages/post-list/post-list.component'),
+      },
+      {
         path: 'reports',
         canActivate: [updatedPasswordGuard],
         component: ReportsComponent,

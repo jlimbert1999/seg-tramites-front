@@ -1,15 +1,17 @@
 @use "@angular/material" as mat;
-@use "@angular/material-experimental" as matx;
 
-$theme: mat.define-theme((color: (theme-type: light,
-        primary: mat.$azure-palette,
-        tertiary: mat.$blue-palette,
-      ),
-      density: (
+$theme: mat.define-theme(
+  (
+    color: (
+      theme-type: light,
+      primary: mat.$azure-palette,
+      tertiary: mat.$blue-palette,
+    ),
+    density: (
       scale: 0,
     ),
-    ));
-
+  )
+);
 
 @include mat.core();
 @include mat.color-variants-backwards-compatibility($theme);
@@ -27,6 +29,5 @@ $theme: mat.define-theme((color: (theme-type: light,
     color: mat.get-theme-color($theme, on-surface-variant);
     padding: 15px;
     border-radius: 5px;
-   
   }
 }
