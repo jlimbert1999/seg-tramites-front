@@ -1,4 +1,4 @@
-export interface publications {
+export interface publication {
   _id: string;
   user: string;
   title: string;

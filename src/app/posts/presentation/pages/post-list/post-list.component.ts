@@ -12,10 +12,10 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { CreatePostComponent } from './create-post/create-post.component';
 import { PostService } from '../../services/post.service';
-import { publications } from '../../../infrastructure/interfaces/publications.interface';
+import { publication } from '../../../infrastructure/interfaces/publications.interface';
 import { InfiniteScrollModule } from 'ngx-infinite-scroll';
 import { MatCardModule } from '@angular/material/card';
-import { PublicationCardComponent } from '../../components';
+import { PublicationCardComponent, PublicationListComponent } from '../../components';
 
 @Component({
   selector: 'app-post-list',
@@ -28,6 +28,7 @@ import { PublicationCardComponent } from '../../components';
     MatCardModule,
     InfiniteScrollModule,
     PublicationCardComponent,
+    PublicationListComponent
   ],
   templateUrl: './post-list.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -36,7 +37,7 @@ export default class PostListComponent implements OnInit {
   readonly dialog = inject(MatDialog);
   private postService = inject(PostService);
 
-  pulications = signal<publications[]>([]);
+  pulications = signal<publication[]>([]);
 
   items = Array.from({ length: 60 }).map((_, i) => `Item #${i}`);
 

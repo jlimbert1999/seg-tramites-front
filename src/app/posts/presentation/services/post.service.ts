@@ -1,7 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { environment } from '../../../../environments/environment';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { publications } from '../../infrastructure/interfaces/publications.interface';
+import { publication } from '../../infrastructure/interfaces/publications.interface';
 
 interface attachmentProps {
   title: string;
@@ -30,6 +30,18 @@ export class PostService {
 
   findAll() {
     const params = new HttpParams({ fromObject: { limit: 10, offset: 0 } });
-    return this.http.get<publications[]>(this.url, { params });
+    return this.http.get<publication[]>(this.url, { params });
+  }
+
+  findByUser() {
+    const params = new HttpParams({ fromObject: { limit: 10, offset: 0 } });
+    return this.http.get<{ publications: publication[]; length: number }>(
+      `${this.url}/user`,
+      { params }
+    );
+  }
+
+  getFile(url: string) {
+    return this.http.get(url, { responseType: 'blob' });
   }
 }

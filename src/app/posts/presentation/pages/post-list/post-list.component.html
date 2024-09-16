@@ -12,18 +12,6 @@
     </button>
   </mat-toolbar>
   <div class="flex-1 overflow-scroll rounded-xl m-4" #containerRef>
-    <div
-      infiniteScroll
-      [infiniteScrollDistance]="2"
-      [infiniteScrollThrottle]="50"
-      [infiniteScrollContainer]="containerRef"
-      (scrolled)="onScroll()"
-    >
-      <div class="flex flex-col gap-y-4">
-        @for (pulication of pulications(); track $index) {
-        <publication-card [publication]="pulication" />
-        }
-      </div>
-    </div>
+    <publication-list [containerRef]="containerRef"></publication-list>
   </div>
 </div>

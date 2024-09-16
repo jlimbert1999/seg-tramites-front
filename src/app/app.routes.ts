@@ -209,7 +209,22 @@ export const routes: Routes = [
       },
       {
         path: 'posts',
-        component: PostsComponent,
+        children: [
+          {
+            path: 'history',
+            loadComponent: () =>
+              import(
+                './posts/presentation/pages/post-list/post-list.component'
+              ),
+          },
+          {
+            path: 'manage',
+            loadComponent: () =>
+              import(
+                './posts/presentation/pages/manage-post/manage-post.component'
+              ),
+          },
+        ],
       },
       {
         path: 'info',

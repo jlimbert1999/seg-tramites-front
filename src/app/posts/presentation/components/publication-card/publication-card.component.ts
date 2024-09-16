@@ -1,7 +1,13 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, input } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  input,
+} from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
-import { publications } from '../../../infrastructure/interfaces/publications.interface';
+import { publication } from '../../../infrastructure/interfaces/publications.interface';
+import { PostService } from '../../services/post.service';
 
 @Component({
   selector: 'publication-card',
@@ -15,21 +21,25 @@ import { publications } from '../../../infrastructure/interfaces/publications.in
         <mat-card-subtitle>Dog Breed</mat-card-subtitle>
       </mat-card-header>
       <mat-card-content>
-        <h3>{{ publication().title }}</h3>
+        <h4>{{ publication().title }}</h4>
         <p>{{ publication().content }}</p>
         <ul class="list-outside ">
           @for (item of publication().attachments; track $index) {
-          <li>
-            <a href="">{{ item.title }}</a>
+          <li class="list-disc">
+            <span
+              (click)="openFile(item.filename)"
+              class="text-blue-500 underline cursor-pointer"
+            >
+              {{ item.title }}
+            </span>
           </li>
-
           }
         </ul>
       </mat-card-content>
       <mat-card-actions>
-        <span class="px-2">{{
-          publication().createdAt | date : 'medium'
-        }}</span>
+        <span class="px-2">
+          {{ publication().createdAt | date : 'medium' }}
+        </span>
       </mat-card-actions>
     </mat-card>
   `,
@@ -37,5 +47,15 @@ import { publications } from '../../../infrastructure/interfaces/publications.in
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PublicationCardComponent {
-  publication = input.required<publications>();
+  private postService = inject(PostService);
+
+  publication = input.required<publication>();
+
+  openFile(url: string): void {
+    this.postService.getFile(url).subscribe((blob) => {
+      const url = window.URL.createObjectURL(blob);
+      window.open(url, '_blank');
+      window.URL.revokeObjectURL(url);
+    });
+  }
 }
