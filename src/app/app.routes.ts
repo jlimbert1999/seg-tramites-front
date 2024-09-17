@@ -2,7 +2,6 @@ import { Routes } from '@angular/router';
 import { LoginComponent } from './presentation/layouts/login/login.component';
 import { HomeComponent } from './presentation/layouts/home/home.component';
 import { ReportApplicantComponent } from './presentation/pages/reports/report-applicant/report-applicant.component';
-import { MainComponent } from './presentation/layouts/home/main/main.component';
 import { ReportSearchComponent } from './presentation/pages/reports/report-search/report-search.component';
 import { PostsComponent } from './presentation/pages/groupware/posts/posts.component';
 import {
@@ -35,7 +34,8 @@ export const routes: Routes = [
       { path: '', redirectTo: 'main', pathMatch: 'full' },
       {
         path: 'main',
-        component: MainComponent,
+        loadComponent: () =>
+          import('./presentation/layouts/home/main/main.component'),
       },
       {
         path: 'dependencies',
@@ -164,11 +164,6 @@ export const routes: Routes = [
           ).then((c) => c.SettingsComponent),
       },
       {
-        path: 'posts',
-        loadComponent: () =>
-          import('./posts/presentation/pages/post-list/post-list.component'),
-      },
-      {
         path: 'reports',
         canActivate: [updatedPasswordGuard],
         component: ReportsComponent,
@@ -214,14 +209,14 @@ export const routes: Routes = [
             path: 'history',
             loadComponent: () =>
               import(
-                './posts/presentation/pages/post-list/post-list.component'
+                './publications/presentation/pages/publication-history/publication-history.component'
               ),
           },
           {
             path: 'manage',
             loadComponent: () =>
               import(
-                './posts/presentation/pages/manage-post/manage-post.component'
+                './publications/presentation/pages/manage-publications/manage-publications.component'
               ),
           },
         ],

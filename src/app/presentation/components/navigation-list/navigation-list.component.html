@@ -1,9 +1,9 @@
 <mat-nav-list class="menu">
   @for (item of menu; track item.resource) { @if(item.children){
-  <mat-expansion-panel>
-    <mat-expansion-panel-header>
+  <mat-expansion-panel class="mat-elevation-z0">
+    <mat-expansion-panel-header class="px-2">
       <mat-panel-title>
-        <mat-icon>{{ item.icon }}</mat-icon>
+        <mat-icon class="mr-3 ml-2">{{ item.icon }}</mat-icon>
         <div class="ss">{{ item.text }}</div>
       </mat-panel-title>
     </mat-expansion-panel-header>

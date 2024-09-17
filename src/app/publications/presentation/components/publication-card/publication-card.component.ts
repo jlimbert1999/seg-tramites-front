@@ -16,12 +16,12 @@ import { PostService } from '../../services/post.service';
   template: `
     <mat-card class="w-full" appearance="outlined">
       <mat-card-header>
-        <img mat-card-avatar src="../../../../../assets/img/account.png" />
+        <img mat-card-avatar src="/assets/img/account.png" />
         <mat-card-title>Shiba Inu</mat-card-title>
         <mat-card-subtitle>Dog Breed</mat-card-subtitle>
       </mat-card-header>
       <mat-card-content>
-        <h4>{{ publication().title }}</h4>
+        <p class="text-2xl">{{ publication().title }}</p>
         <p>{{ publication().content }}</p>
         <ul class="list-outside ">
           @for (item of publication().attachments; track $index) {
@@ -37,7 +37,7 @@ import { PostService } from '../../services/post.service';
         </ul>
       </mat-card-content>
       <mat-card-actions>
-        <span class="px-2">
+        <span class="px-2 mt-4">
           {{ publication().createdAt | date : 'medium' }}
         </span>
       </mat-card-actions>

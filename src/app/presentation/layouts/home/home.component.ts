@@ -18,7 +18,8 @@ import {
 } from '../../components';
 import { MaterialModule } from '../../../material.module';
 import { MatDialog } from '@angular/material/dialog';
-import PostListComponent from '../../../posts/presentation/pages/post-list/post-list.component';
+import PublicationHistoryComponent from '../../../publications/presentation/pages/publication-history/publication-history.component';
+import { NotificationsComponent } from '../../../publications/presentation/pages/notifications/notifications.component';
 
 @Component({
   selector: 'app-home',
@@ -42,7 +43,7 @@ export class HomeComponent implements OnInit {
   private authService = inject(AuthService);
   private destroyRef = inject(DestroyRef);
   private router = inject(Router);
-  private dialog = inject(MatDialog);
+
 
   public detailsOpen = false;
   public isHandset$ = this.breakpointObserver.observe(Breakpoints.Handset).pipe(
@@ -61,7 +62,6 @@ export class HomeComponent implements OnInit {
     this.handleOnlineClients();
     this.handleExpelClient();
     this.handleCommunications();
-    this.dialog.open(PostListComponent, { height: '400px', minWidth: '900px',  });
   }
 
   logout() {

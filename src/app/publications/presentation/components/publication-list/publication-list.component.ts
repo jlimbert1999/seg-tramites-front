@@ -4,6 +4,7 @@ import {
   Component,
   inject,
   input,
+  model,
   OnInit,
   signal,
 } from '@angular/core';
@@ -35,12 +36,10 @@ import { publication } from '../../../infrastructure/interfaces/publications.int
 })
 export class PublicationListComponent implements OnInit {
   private postService = inject(PostService);
-  pulications = signal<publication[]>([]);
   containerRef = input.required<HTMLDivElement>();
+  pulications = model.required<publication[]>();
 
-  ngOnInit(): void {
-    this.loadPublications();
-  }
+  ngOnInit(): void {}
 
   loadPublications(): void {
     this.postService.findAll().subscribe((resp) => {
@@ -48,7 +47,5 @@ export class PublicationListComponent implements OnInit {
     });
   }
 
-  onScroll() {
-    console.log('scroll');
-  }
+  onScroll() {}
 }

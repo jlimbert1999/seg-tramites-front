@@ -5,17 +5,22 @@ import {
   inject,
   signal,
 } from '@angular/core';
+
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
+import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
+import { MatSelectModule } from '@angular/material/select';
+import { MatRadioModule } from '@angular/material/radio';
 import { MatInputModule } from '@angular/material/input';
 import { MatListModule } from '@angular/material/list';
-import { MatRadioModule } from '@angular/material/radio';
-import { MatSelectModule } from '@angular/material/select';
-import { PostService } from '../../../services/post.service';
+import { MatIconModule } from '@angular/material/icon';
+
 import { forkJoin, switchMap } from 'rxjs';
+
+import { PostService } from '../../../services/post.service';
+import { provideNativeDateAdapter } from '@angular/material/core';
 
 @Component({
   selector: 'app-create-post',
@@ -32,35 +37,47 @@ import { forkJoin, switchMap } from 'rxjs';
     MatInputModule,
     MatListModule,
     MatRadioModule,
+    MatDatepickerModule,
   ],
   templateUrl: './create-post.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  providers: [provideNativeDateAdapter()],
 })
 export class CreatePostComponent {
   private formBuilder = inject(FormBuilder);
   readonly dialogRef = inject(MatDialogRef<CreatePostComponent>);
   private postService = inject(PostService);
 
+  readonly minDate = new Date();
+
   readonly prioritys = [
-    { value: 'low', label: 'Baja' },
-    { value: 'medium', label: 'Media' },
-    { value: 'high', label: 'Alta' },
+    { value: 0, label: 'Baja' },
+    { value: 1, label: 'Media' },
+    { value: 2, label: 'Alta' },
   ];
 
   files = signal<File[]>([]);
   form = this.formBuilder.group({
     title: ['', Validators.required],
     content: ['', Validators.required],
-    priority: ['low'],
+    expirationDate: [this.minDate, Validators.required],
+    priority: [0, Validators.required],
   });
 
   create() {
     if (this.form.invalid) return;
-    forkJoin([...this.files().map((file) => this.postService.uploadFile(file))])
-      .pipe(switchMap((resp) => this.postService.create(this.form.value, resp)))
-      .subscribe(() => {
-        this.dialogRef.close();
-      });
+    const subscription =
+      this.files().length > 0
+        ? forkJoin([
+            ...this.files().map((file) => this.postService.uploadFile(file)),
+          ]).pipe(
+            switchMap((resp) => this.postService.create(this.form.value, resp))
+          )
+        : this.postService.create(this.form.value, []);
+
+    subscription.subscribe((resp) => {
+      this.dialogRef.close(resp);
+    });
   }
 
   addFile(event: Event): void {

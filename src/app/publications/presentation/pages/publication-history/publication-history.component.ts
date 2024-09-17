@@ -6,19 +6,23 @@ import {
   OnInit,
   signal,
 } from '@angular/core';
-import { MatButtonModule } from '@angular/material/button';
-import { MatDialog } from '@angular/material/dialog';
-import { MatIconModule } from '@angular/material/icon';
 import { MatToolbarModule } from '@angular/material/toolbar';
-import { CreatePostComponent } from './create-post/create-post.component';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatCardModule } from '@angular/material/card';
+import { MatDialog } from '@angular/material/dialog';
+import { InfiniteScrollModule } from 'ngx-infinite-scroll';
+
+import { CreatePostComponent } from '../manage-publications/create-post/create-post.component';
 import { PostService } from '../../services/post.service';
 import { publication } from '../../../infrastructure/interfaces/publications.interface';
-import { InfiniteScrollModule } from 'ngx-infinite-scroll';
-import { MatCardModule } from '@angular/material/card';
-import { PublicationCardComponent, PublicationListComponent } from '../../components';
+import {
+  PublicationCardComponent,
+  PublicationListComponent,
+} from '../../components';
 
 @Component({
-  selector: 'app-post-list',
+  selector: 'app-publication-history',
   standalone: true,
   imports: [
     CommonModule,
@@ -28,12 +32,12 @@ import { PublicationCardComponent, PublicationListComponent } from '../../compon
     MatCardModule,
     InfiniteScrollModule,
     PublicationCardComponent,
-    PublicationListComponent
+    PublicationListComponent,
   ],
-  templateUrl: './post-list.component.html',
+  templateUrl: './publication-history.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export default class PostListComponent implements OnInit {
+export default class PublicationHistoryComponent implements OnInit {
   readonly dialog = inject(MatDialog);
   private postService = inject(PostService);
 
@@ -51,6 +55,7 @@ export default class PostListComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe((result) => {
+      if (!result) return;
       console.log('The dialog was closed');
     });
   }

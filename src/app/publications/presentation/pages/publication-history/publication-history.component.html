@@ -1,0 +1,8 @@
+<div class="flex flex-col h-full">
+  <mat-toolbar>
+    <span>Publicaciones</span>
+  </mat-toolbar>
+  <div class="flex-1 overflow-scroll rounded-xl m-4" #containerRef>
+    <publication-list [containerRef]="containerRef" [pulications]="pulications()"></publication-list>
+  </div>
+</div>

@@ -25,7 +25,7 @@ export class PostService {
   }
 
   create(form: Object, attachments: attachmentProps[]) {
-    return this.http.post(this.url, { ...form, attachments });
+    return this.http.post<publication>(this.url, { ...form, attachments });
   }
 
   findAll() {
@@ -39,6 +39,11 @@ export class PostService {
       `${this.url}/user`,
       { params }
     );
+  }
+
+  getNews() {
+    const params = new HttpParams({ fromObject: { limit: 10, offset: 0 } });
+    return this.http.get<publication[]>(`${this.url}/news`, { params });
   }
 
   getFile(url: string) {
