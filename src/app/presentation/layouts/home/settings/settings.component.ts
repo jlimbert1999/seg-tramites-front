@@ -3,6 +3,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   OnInit,
+  computed,
   inject,
   signal,
 } from '@angular/core';
@@ -33,7 +34,15 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { NotificationComponent } from '../../../components/notification/notification.component';
 import { Router } from '@angular/router';
-
+import {
+  Colors,
+  THEME_OPTIONS,
+  ThemeClass,
+  ThemeService,
+} from '../../../services/theme.service';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import { MatSelectModule } from '@angular/material/select';
+import { MatTabsModule } from '@angular/material/tabs';
 @Component({
   selector: 'app-settings',
   standalone: true,
@@ -48,18 +57,25 @@ import { Router } from '@angular/router';
     MatFormFieldModule,
     MatInputModule,
     MatButtonModule,
+    MatButtonToggleModule,
+    MatSelectModule,
+    MatTabsModule,
   ],
   templateUrl: './settings.component.html',
   styleUrl: './settings.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SettingsComponent implements OnInit {
+export default class SettingsComponent implements OnInit {
   private authService = inject(AuthService);
   private alertService = inject(AlertService);
   private appearanceService = inject(AppearanceService);
   private fb = inject(FormBuilder);
   public account = toSignal<Account>(this.authService.getMyAccount());
   private router = inject(Router);
+  #themeService = inject(ThemeService);
+  activeTheme = this.#themeService.theme;
+
+  themeOptions = THEME_OPTIONS;
 
   form = this.fb.group(
     {
@@ -78,6 +94,21 @@ export class SettingsComponent implements OnInit {
 
   dialogRef = inject(MatDialog);
   hide = signal(true);
+
+  colors = [
+    'violet',
+    'red',
+    'blue',
+    'green',
+    'yellow',
+    'cyan',
+    'orange',
+    'magenta',
+    'chartreuse',
+    'azure',
+    'rose',
+  ];
+
   clickEvent(event: MouseEvent) {
     this.hide.set(!this.hide());
     event.stopPropagation();
@@ -98,7 +129,7 @@ export class SettingsComponent implements OnInit {
           this.form.get(key)?.setErrors(null);
           this.form.get(key)?.setErrors(null);
         });
-        this.router.navigateByUrl('/home')
+        this.router.navigateByUrl('/home');
       });
   }
 
@@ -129,4 +160,13 @@ export class SettingsComponent implements OnInit {
     }
     return '';
   };
+
+  color = signal<Colors>('azure');
+  background = signal<'light' | 'dark'>('light');
+
+  theme = computed(() => `${this.color()}-${this.background()}`);
+
+  changeTheme() {
+    this.#themeService.changeTheme(this.theme() as any);
+  }
 }

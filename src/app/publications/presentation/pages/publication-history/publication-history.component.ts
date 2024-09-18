@@ -2,71 +2,51 @@ import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
+  computed,
   inject,
   OnInit,
   signal,
 } from '@angular/core';
 import { MatToolbarModule } from '@angular/material/toolbar';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
-import { MatCardModule } from '@angular/material/card';
-import { MatDialog } from '@angular/material/dialog';
-import { InfiniteScrollModule } from 'ngx-infinite-scroll';
 
-import { CreatePostComponent } from '../manage-publications/create-post/create-post.component';
 import { PostService } from '../../services/post.service';
-import { publication } from '../../../infrastructure/interfaces/publications.interface';
-import {
-  PublicationCardComponent,
-  PublicationListComponent,
-} from '../../components';
+import { publication } from '../../../infrastructure';
+import { PublicationListComponent } from '../../components';
 
 @Component({
   selector: 'app-publication-history',
   standalone: true,
-  imports: [
-    CommonModule,
-    MatToolbarModule,
-    MatIconModule,
-    MatButtonModule,
-    MatCardModule,
-    InfiniteScrollModule,
-    PublicationCardComponent,
-    PublicationListComponent,
-  ],
+  imports: [CommonModule, MatToolbarModule, PublicationListComponent],
   templateUrl: './publication-history.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class PublicationHistoryComponent implements OnInit {
-  readonly dialog = inject(MatDialog);
-  private postService = inject(PostService);
+  private publicationService = inject(PostService);
 
-  pulications = signal<publication[]>([]);
+  publications = signal<publication[]>([]);
 
-  items = Array.from({ length: 60 }).map((_, i) => `Item #${i}`);
+  limit = signal(10);
+  index = signal(0);
+  offset = computed(() => this.limit() * this.index());
+  isLoading = signal(false);
 
   ngOnInit(): void {
-    this.findAll();
+    this.getPublications();
   }
 
-  create(): void {
-    const dialogRef = this.dialog.open(CreatePostComponent, {
-      width: '600px',
-    });
-
-    dialogRef.afterClosed().subscribe((result) => {
-      if (!result) return;
-      console.log('The dialog was closed');
-    });
+  getPublications(): void {
+    this.isLoading.set(true);
+    this.publicationService
+      .findAll(this.limit(), this.offset())
+      .subscribe((publications) => {
+        this.publications.update((values) => [...values, ...publications]);
+        this.isLoading.set(false);
+      });
   }
 
-  findAll() {
-    this.postService.findAll().subscribe((resp) => {
-      this.pulications.set(resp);
-    });
-  }
-
-  onScroll() {
-    console.log('scroll');
+  loadMorePublications(): void {
+    if (this.isLoading()) return;
+    this.index.update((value) => (value += 1));
+    this.getPublications();
   }
 }

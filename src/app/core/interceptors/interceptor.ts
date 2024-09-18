@@ -19,7 +19,7 @@ export function loggingInterceptor(
       `Bearer ${localStorage.getItem('token') || ''}`
     ),
   });
-  appearanceService.showLoading();
+  // appearanceService.showLoading();
   return next(reqWithHeader).pipe(
     catchError((error) => {
       if (error instanceof HttpErrorResponse) {
@@ -32,7 +32,7 @@ export function loggingInterceptor(
       return throwError(() => Error);
     }),
     finalize(() => {
-      appearanceService.hideLoading();
+      // appearanceService.hideLoading();
     })
   );
 }

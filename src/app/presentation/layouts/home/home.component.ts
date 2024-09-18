@@ -17,9 +17,6 @@ import {
   ProfileComponent,
 } from '../../components';
 import { MaterialModule } from '../../../material.module';
-import { MatDialog } from '@angular/material/dialog';
-import PublicationHistoryComponent from '../../../publications/presentation/pages/publication-history/publication-history.component';
-import { NotificationsComponent } from '../../../publications/presentation/pages/notifications/notifications.component';
 
 @Component({
   selector: 'app-home',
@@ -43,7 +40,6 @@ export class HomeComponent implements OnInit {
   private authService = inject(AuthService);
   private destroyRef = inject(DestroyRef);
   private router = inject(Router);
-
 
   public detailsOpen = false;
   public isHandset$ = this.breakpointObserver.observe(Breakpoints.Handset).pipe(

@@ -1,6 +1,7 @@
-import { Component, OnInit, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, OnInit, Renderer2, effect, inject } from '@angular/core';
+import { CommonModule, DOCUMENT } from '@angular/common';
 import { RouterOutlet } from '@angular/router';
+import { ThemeService } from './presentation/services/theme.service';
 
 @Component({
   selector: 'app-root',
@@ -11,8 +12,19 @@ import { RouterOutlet } from '@angular/router';
 })
 export class AppComponent implements OnInit {
   title = 'seg-tramites-front';
+  #document = inject(DOCUMENT);
+  #renderer = inject(Renderer2);
+  #themeService = inject(ThemeService);
 
-
-  ngOnInit(): void {
+  constructor() {
+    effect(() => {
+      this.#renderer.setAttribute(
+        this.#document.documentElement,
+        'class',
+        this.#themeService.theme()
+      );
+    });
   }
+
+  ngOnInit(): void {}
 }

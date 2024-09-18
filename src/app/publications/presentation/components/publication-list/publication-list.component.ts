@@ -2,15 +2,12 @@ import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
-  inject,
   input,
-  model,
   OnInit,
-  signal,
+  output,
 } from '@angular/core';
 import { InfiniteScrollModule } from 'ngx-infinite-scroll';
 import { PublicationCardComponent } from '../publication-card/publication-card.component';
-import { PostService } from '../../services/post.service';
 import { publication } from '../../../infrastructure/interfaces/publications.interface';
 
 @Component({
@@ -20,13 +17,13 @@ import { publication } from '../../../infrastructure/interfaces/publications.int
   template: `
     <div
       infiniteScroll
-      [infiniteScrollDistance]="2"
-      [infiniteScrollThrottle]="50"
+      [infiniteScrollDistance]="0.5"
+      [infiniteScrollThrottle]="500"
       [infiniteScrollContainer]="containerRef()"
-      (scrolled)="onScroll()"
+      (scrolled)="load()"
     >
       <div class="flex flex-col gap-y-4">
-        @for (pulication of pulications(); track $index) {
+        @for (pulication of publications(); track $index) {
         <publication-card [publication]="pulication" />
         }
       </div>
@@ -35,17 +32,13 @@ import { publication } from '../../../infrastructure/interfaces/publications.int
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PublicationListComponent implements OnInit {
-  private postService = inject(PostService);
   containerRef = input.required<HTMLDivElement>();
-  pulications = model.required<publication[]>();
+  publications = input.required<publication[]>();
+  onScroll = output<void>();
 
   ngOnInit(): void {}
 
-  loadPublications(): void {
-    this.postService.findAll().subscribe((resp) => {
-      this.pulications.set(resp);
-    });
+  load(): void {
+    this.onScroll.emit();
   }
-
-  onScroll() {}
 }

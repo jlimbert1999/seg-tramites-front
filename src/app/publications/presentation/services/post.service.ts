@@ -7,6 +7,10 @@ interface attachmentProps {
   title: string;
   filename: string;
 }
+interface paginationParams {
+  limit: number;
+  offset: number;
+}
 @Injectable({
   providedIn: 'root',
 })
@@ -28,8 +32,8 @@ export class PostService {
     return this.http.post<publication>(this.url, { ...form, attachments });
   }
 
-  findAll() {
-    const params = new HttpParams({ fromObject: { limit: 10, offset: 0 } });
+  findAll(limit: number = 10, offset: number = 0) {
+    const params = new HttpParams({ fromObject: { limit, offset } });
     return this.http.get<publication[]>(this.url, { params });
   }
 
@@ -41,8 +45,10 @@ export class PostService {
     );
   }
 
-  getNews() {
-    const params = new HttpParams({ fromObject: { limit: 10, offset: 0 } });
+  getNews(limit: number = 10, offset: number = 0) {
+    const params = new HttpParams({
+      fromObject: { limit: limit, offset: offset },
+    });
     return this.http.get<publication[]>(`${this.url}/news`, { params });
   }
 

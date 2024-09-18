@@ -3,7 +3,6 @@ import { LoginComponent } from './presentation/layouts/login/login.component';
 import { HomeComponent } from './presentation/layouts/home/home.component';
 import { ReportApplicantComponent } from './presentation/pages/reports/report-applicant/report-applicant.component';
 import { ReportSearchComponent } from './presentation/pages/reports/report-search/report-search.component';
-import { PostsComponent } from './presentation/pages/groupware/posts/posts.component';
 import {
   isAuthenticatedGuard,
   isNotAuthenticatedGuard,
@@ -157,13 +156,6 @@ export const routes: Routes = [
           ).then((c) => c.ResourcesComponent),
       },
       {
-        path: 'settings',
-        loadComponent: () =>
-          import(
-            './presentation/layouts/home/settings/settings.component'
-          ).then((c) => c.SettingsComponent),
-      },
-      {
         path: 'reports',
         canActivate: [updatedPasswordGuard],
         component: ReportsComponent,
@@ -220,6 +212,11 @@ export const routes: Routes = [
               ),
           },
         ],
+      },
+      {
+        path: 'settings',
+        loadComponent: () =>
+          import('./presentation/layouts/home/settings/settings.component'),
       },
       {
         path: 'info',

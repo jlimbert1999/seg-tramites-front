@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -7,9 +6,11 @@ import {
 } from '@angular/core';
 
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+
 import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { provideNativeDateAdapter } from '@angular/material/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSelectModule } from '@angular/material/select';
 import { MatRadioModule } from '@angular/material/radio';
@@ -20,13 +21,11 @@ import { MatIconModule } from '@angular/material/icon';
 import { forkJoin, switchMap } from 'rxjs';
 
 import { PostService } from '../../../services/post.service';
-import { provideNativeDateAdapter } from '@angular/material/core';
 
 @Component({
   selector: 'app-create-post',
   standalone: true,
   imports: [
-    CommonModule,
     ReactiveFormsModule,
 
     MatDialogModule,
@@ -45,11 +44,10 @@ import { provideNativeDateAdapter } from '@angular/material/core';
 })
 export class CreatePostComponent {
   private formBuilder = inject(FormBuilder);
-  readonly dialogRef = inject(MatDialogRef<CreatePostComponent>);
   private postService = inject(PostService);
+  private readonly dialogRef = inject(MatDialogRef<CreatePostComponent>);
 
   readonly minDate = new Date();
-
   readonly prioritys = [
     { value: 0, label: 'Baja' },
     { value: 1, label: 'Media' },
@@ -60,8 +58,8 @@ export class CreatePostComponent {
   form = this.formBuilder.group({
     title: ['', Validators.required],
     content: ['', Validators.required],
-    expirationDate: [this.minDate, Validators.required],
     priority: [0, Validators.required],
+    expirationDate: [this.minDate, Validators.required],
   });
 
   create() {
