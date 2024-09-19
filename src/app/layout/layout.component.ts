@@ -10,16 +10,16 @@ import { Router, RouterModule } from '@angular/router';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { map, shareReplay } from 'rxjs';
-import { AuthService, SocketService, AlertService } from '../../services';
+import { AuthService, SocketService, AlertService } from '../presentation/services';
 import {
   SidenavButtonComponent,
   NavigationListComponent,
   ProfileComponent,
-} from '../../components';
-import { MaterialModule } from '../../../material.module';
+} from '../presentation/components';
+import { MaterialModule } from '../material.module';
 
 @Component({
-  selector: 'app-home',
+  selector: 'app-layout',
   standalone: true,
   imports: [
     CommonModule,
@@ -29,11 +29,11 @@ import { MaterialModule } from '../../../material.module';
     SidenavButtonComponent,
     ProfileComponent,
   ],
-  templateUrl: './home.component.html',
-  styleUrl: './home.component.scss',
+  templateUrl: './layout.component.html',
+  styleUrl: './layout.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class HomeComponent implements OnInit {
+export default class LayoutComponent implements OnInit {
   private breakpointObserver = inject(BreakpointObserver);
   private socketService = inject(SocketService);
   private alertservice = inject(AlertService);

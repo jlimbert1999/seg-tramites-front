@@ -8,7 +8,7 @@ import {
   signal,
 } from '@angular/core';
 import { MatToolbarModule } from '@angular/material/toolbar';
-import { SidenavButtonComponent } from '../../../components';
+import { SidenavButtonComponent } from '../../presentation/components';
 import { MatExpansionModule } from '@angular/material/expansion';
 import {
   AbstractControl,
@@ -25,24 +25,25 @@ import {
   AlertService,
   AppearanceService,
   AuthService,
-} from '../../../services';
+} from '../../presentation/services';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { Account } from '../../../../domain/models';
-import { FormValidators, handleFormErrorMessages } from '../../../../helpers';
+import { Account } from '../../domain/models';
+import { FormValidators, handleFormErrorMessages } from '../../helpers';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
-import { NotificationComponent } from '../../../components/notification/notification.component';
+import { NotificationComponent } from '../../presentation/components/notification/notification.component';
 import { Router } from '@angular/router';
 import {
   Colors,
   THEME_OPTIONS,
   ThemeClass,
   ThemeService,
-} from '../../../services/theme.service';
+} from '../presentation/services/theme.service';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTabsModule } from '@angular/material/tabs';
+import { ThemeSwitcherComponent } from '../components';
 @Component({
   selector: 'app-settings',
   standalone: true,
@@ -60,6 +61,7 @@ import { MatTabsModule } from '@angular/material/tabs';
     MatButtonToggleModule,
     MatSelectModule,
     MatTabsModule,
+    ThemeSwitcherComponent,
   ],
   templateUrl: './settings.component.html',
   styleUrl: './settings.component.scss',

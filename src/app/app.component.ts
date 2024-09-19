@@ -1,7 +1,7 @@
 import { Component, OnInit, Renderer2, effect, inject } from '@angular/core';
 import { CommonModule, DOCUMENT } from '@angular/common';
 import { RouterOutlet } from '@angular/router';
-import { ThemeService } from './presentation/services/theme.service';
+import { ThemeService } from './layout/presentation/services/theme.service';
 
 @Component({
   selector: 'app-root',

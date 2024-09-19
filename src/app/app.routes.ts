@@ -1,6 +1,5 @@
 import { Routes } from '@angular/router';
 import { LoginComponent } from './presentation/layouts/login/login.component';
-import { HomeComponent } from './presentation/layouts/home/home.component';
 import { ReportApplicantComponent } from './presentation/pages/reports/report-applicant/report-applicant.component';
 import { ReportSearchComponent } from './presentation/pages/reports/report-search/report-search.component';
 import {
@@ -9,12 +8,12 @@ import {
   roleGuard,
   updatedPasswordGuard,
 } from './presentation/guards';
-import { InfoComponent } from './presentation/layouts/home/info/info.component';
 import { ReportDependentsComponent } from './presentation/pages/reports/report-dependents/report-dependents.component';
 import { ClientsComponent } from './presentation/pages/groupware/clients/clients.component';
 import { VALID_RESOURCES } from './infraestructure/interfaces';
 import { ReportsComponent } from './presentation/pages/reports/reports.component';
 import { ReportUnitComponent } from './presentation/pages/reports/report-unit/report-unit.component';
+import { InfoComponent } from './layout/info/info.component';
 
 export const routes: Routes = [
   {
@@ -25,16 +24,15 @@ export const routes: Routes = [
   },
   {
     path: 'home',
+    title: 'Inicio',
     canActivate: [isAuthenticatedGuard],
     canActivateChild: [roleGuard],
-    component: HomeComponent,
-    title: 'Inicio',
+    loadComponent: () => import('./layout/layout.component'),
     children: [
       { path: '', redirectTo: 'main', pathMatch: 'full' },
       {
         path: 'main',
-        loadComponent: () =>
-          import('./presentation/layouts/home/main/main.component'),
+        loadComponent: () => import('./layout/layout.component'),
       },
       {
         path: 'dependencies',
@@ -151,9 +149,9 @@ export const routes: Routes = [
       {
         path: 'resources',
         loadComponent: () =>
-          import(
-            './presentation/layouts/home/resources/resources.component'
-          ).then((c) => c.ResourcesComponent),
+          import('./layout/resources/resources.component').then(
+            (c) => c.ResourcesComponent
+          ),
       },
       {
         path: 'reports',
@@ -215,8 +213,7 @@ export const routes: Routes = [
       },
       {
         path: 'settings',
-        loadComponent: () =>
-          import('./presentation/layouts/home/settings/settings.component'),
+        loadComponent: () => import('./layout/settings/settings.component'),
       },
       {
         path: 'info',

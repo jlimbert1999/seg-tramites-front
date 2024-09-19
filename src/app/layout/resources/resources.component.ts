@@ -1,8 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { MatToolbarModule } from '@angular/material/toolbar';
-import { SidenavButtonComponent } from '../../../components';
-import { AlertService, PdfService, ReportService } from '../../../services';
+import { SidenavButtonComponent } from '../../presentation/components';
+import { AlertService, PdfService, ReportService } from '../../presentation/services';
 
 @Component({
   selector: 'resources',
