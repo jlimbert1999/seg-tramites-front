@@ -78,6 +78,7 @@ export class ExternalProcedure extends Procedure {
   }
 
   get fullNameApplicant() {
+    return 'ds'
     return this.details.solicitante.tipo === 'NATURAL'
       ? [
           this.details.solicitante.nombre,

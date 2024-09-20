@@ -8,7 +8,6 @@ import {
   signal,
 } from '@angular/core';
 import { MatToolbarModule } from '@angular/material/toolbar';
-import { SidenavButtonComponent } from '../../presentation/components';
 import { MatExpansionModule } from '@angular/material/expansion';
 import {
   AbstractControl,
@@ -21,29 +20,22 @@ import {
 } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import {
-  AlertService,
-  AppearanceService,
-  AuthService,
-} from '../../presentation/services';
+
 import { toSignal } from '@angular/core/rxjs-interop';
-import { Account } from '../../domain/models';
-import { FormValidators, handleFormErrorMessages } from '../../helpers';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
-import { NotificationComponent } from '../../presentation/components/notification/notification.component';
 import { Router } from '@angular/router';
-import {
-  Colors,
-  THEME_OPTIONS,
-  ThemeClass,
-  ThemeService,
-} from '../presentation/services/theme.service';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTabsModule } from '@angular/material/tabs';
-import { ThemeSwitcherComponent } from '../components';
+import { Account } from '../../../../domain/models';
+import { FormValidators } from '../../../../helpers';
+import { SidenavButtonComponent } from '../../../../presentation/components';
+import { NotificationComponent } from '../../../../presentation/components/notification/notification.component';
+import { AuthService, AlertService, AppearanceService } from '../../../../presentation/services';
+import { ThemeSwitcherComponent } from '../../../components';
+
 @Component({
   selector: 'app-settings',
   standalone: true,
@@ -74,10 +66,9 @@ export default class SettingsComponent implements OnInit {
   private fb = inject(FormBuilder);
   public account = toSignal<Account>(this.authService.getMyAccount());
   private router = inject(Router);
-  #themeService = inject(ThemeService);
-  activeTheme = this.#themeService.theme;
 
-  themeOptions = THEME_OPTIONS;
+
+
 
   form = this.fb.group(
     {
@@ -96,20 +87,6 @@ export default class SettingsComponent implements OnInit {
 
   dialogRef = inject(MatDialog);
   hide = signal(true);
-
-  colors = [
-    'violet',
-    'red',
-    'blue',
-    'green',
-    'yellow',
-    'cyan',
-    'orange',
-    'magenta',
-    'chartreuse',
-    'azure',
-    'rose',
-  ];
 
   clickEvent(event: MouseEvent) {
     this.hide.set(!this.hide());
@@ -163,12 +140,4 @@ export default class SettingsComponent implements OnInit {
     return '';
   };
 
-  color = signal<Colors>('azure');
-  background = signal<'light' | 'dark'>('light');
-
-  theme = computed(() => `${this.color()}-${this.background()}`);
-
-  changeTheme() {
-    this.#themeService.changeTheme(this.theme() as any);
-  }
 }

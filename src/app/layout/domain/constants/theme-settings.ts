@@ -1,4 +1,4 @@
-export type themeColor =
+export type ThemeColor =
   | 'violet'
   | 'red'
   | 'blue'
@@ -11,63 +11,93 @@ export type themeColor =
   | 'azure'
   | 'rose';
 
-export type ThemeClass = `${themeColor}-light` | `${themeColor}-dark`;
+export type ThemeClass = `${ThemeColor}-light` | `${ThemeColor}-dark`;
 
 export interface ThemeOption {
-  light: {
-    hex: `#${string}`;
-    class: ThemeClass;
-  };
-  dark: {
-    hex: `#${string}`;
-    class: ThemeClass;
-  };
-  name: themeColor;
+  value: ThemeColor;
+  color: string;
+  label: string;
 }
 
-export const THEME_OPTIONS = [
+export const THEME_CLASSES: ThemeClass[] = [
+  'violet-light',
+  'violet-dark',
+  'red-light',
+  'red-dark',
+  'green-light',
+  'green-dark',
+  'blue-light',
+  'blue-dark',
+  'yellow-light',
+  'yellow-dark',
+  'cyan-light',
+  'cyan-dark',
+  'magenta-light',
+  'magenta-dark',
+  'orange-light',
+  'orange-dark',
+  'chartreuse-light',
+  'chartreuse-dark',
+  'azure-light',
+  'azure-dark',
+  'rose-light',
+  'rose-dark',
+];
+
+export const THEME_OPTIONS: ThemeOption[] = [
   {
-    value: '#7d00fa',
+    value: 'violet',
+    color: '#7d00fa',
     label: 'Violeta',
   },
   {
-    value: '#c00100',
+    value: 'red',
+    color: '#c00100',
     label: 'Rojo',
   },
   {
-    value: '#026e00',
-    label: 'Verde',
-  },
-  {
-    value: '#343dff',
+    value: 'blue',
+    color: '#026e00',
     label: 'Azul',
   },
   {
-    value: '#626200',
+    value: 'green',
+    color: '#343dff',
+    label: 'Verde',
+  },
+  {
+    value: 'yellow',
+    color: '#626200',
     label: 'Amarillo',
   },
   {
-    value: '#006a6a',
+    value: 'cyan',
+    color: '#006a6a',
     label: 'Cyan',
   },
   {
-    value: '#a900a9',
+    value: 'orange',
+    color: '#a900a9',
     label: 'Magenta',
   },
   {
-    value: '#964900',
+    value: 'magenta',
+    color: '#964900',
     label: 'Naranja',
   },
   {
-    value: '#326b00',
+    value: 'chartreuse',
+    color: '#326b00',
     label: 'chartreuse',
   },
   {
-    value: '#005cbb',
+    value: 'azure',
+    color: '#005cbb',
     label: 'azure',
   },
   {
-    value: '#ba005c',
+    value: 'rose',
+    color: '#ba005c',
     label: 'rose',
   },
 ];

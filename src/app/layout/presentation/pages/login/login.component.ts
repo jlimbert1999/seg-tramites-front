@@ -12,8 +12,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
+import { AuthService } from '../../../../presentation/services';
 
-import { AuthService } from '../../services';
 
 @Component({
   selector: 'app-login',
@@ -33,7 +33,7 @@ import { AuthService } from '../../services';
   styleUrl: './login.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class LoginComponent {
+export default class LoginComponent {
   hidePassword = true;
   loginForm = this.fb.group({
     login: ['', Validators.required],

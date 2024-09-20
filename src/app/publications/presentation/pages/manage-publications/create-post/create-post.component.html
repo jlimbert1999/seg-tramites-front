@@ -1,30 +1,36 @@
 <h2 mat-dialog-title>Crear Publicacion</h2>
 <mat-dialog-content>
   <form [formGroup]="form">
-    <mat-form-field>
-      <mat-label>Titulo</mat-label>
-      <input matInput formControlName="title" />
-    </mat-form-field>
-
-    <mat-form-field>
-      <mat-label>Contenido</mat-label>
-      <textarea matInput formControlName="content"></textarea>
-    </mat-form-field>
-
-    <div class="flex sm:flex-row gap-x-3">
-      <div class="w-1/2">
+    <div class="grid grid-cols-2 gap-x-2">
+      <div class="col-span-2 border-1">
+        <mat-form-field class="min-w-full">
+          <mat-label>Titulo</mat-label>
+          <input matInput formControlName="title" />
+        </mat-form-field>
+      </div>
+      <div class="col-span-2">
+        <mat-form-field>
+          <mat-label>Contenido</mat-label>
+          <textarea matInput formControlName="content"></textarea>
+        </mat-form-field>
+      </div>
+      <div>
         <mat-form-field>
           <mat-label>Expiracion</mat-label>
-          <input matInput [matDatepicker]="picker" [min]="minDate" />
+          <input
+            matInput
+            [matDatepicker]="picker"
+            [min]="minDate"
+            formControlName="expirationDate"
+          />
           <mat-datepicker-toggle
             matIconSuffix
             [for]="picker"
-            formControlName="expirationDate"
           ></mat-datepicker-toggle>
           <mat-datepicker #picker></mat-datepicker>
         </mat-form-field>
       </div>
-      <div class="w-1/2">
+      <div>
         <mat-form-field>
           <mat-label>Prioridad</mat-label>
           <mat-select formControlName="priority">
@@ -53,9 +59,7 @@
     </div>
     <div></div>
     <div class="col-span-2">
-      <mat-list
-        class="overflow-y-auto max-h-52 w-full rounded-lg border-2"
-      >
+      <mat-list class="overflow-y-auto max-h-52 w-full rounded-lg border-2">
         @for (file of files(); track $index) {
         <mat-list-item>
           <mat-icon matListItemIcon>description</mat-icon>

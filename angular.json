@@ -32,11 +32,7 @@
             "styles": [
               "@angular/material/prebuilt-themes/azure-blue.css",
               "src/styles.scss",
-              "src/theme.scss",
-              "node_modules/bootstrap/dist/css/bootstrap.css"
-            ],
-            "scripts": [
-              "node_modules/bootstrap/dist/js/bootstrap.js"
+              "src/theme.scss"
             ],
             "allowedCommonJsDependencies": [
               "sweetalert2",

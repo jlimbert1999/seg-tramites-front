@@ -26,16 +26,7 @@ export class AppearanceService {
     @Inject(DOCUMENT) private document: Document,
     private overlay: Overlay
   ) {
-    effect(() => {
-      if (this.isDarkTheme()) {
-        this.document.body.classList.add('dark-theme');
-        localStorage.setItem('theme', 'dark-theme');
-      } else {
-        this.document.body.classList.remove('dark-theme');
-        localStorage.removeItem('theme');
-      }
-    });
-    if (localStorage.getItem('theme')) this.isDarkTheme.set(true);
+  
   }
 
   toggleTheme() {

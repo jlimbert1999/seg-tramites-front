@@ -47,7 +47,7 @@ interface CacheData {
   styleUrl: './internals.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class InternalsComponent {
+export default class InternalsComponent {
   private dialog = inject(MatDialog);
   private internalService = inject(InternalService);
   private procedureService = inject(ProcedureService);

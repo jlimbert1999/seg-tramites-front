@@ -6,9 +6,9 @@ import {
   OnInit,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { AuthService } from '../../presentation/services';
-import { PostService } from '../../publications/presentation/services/post.service';
-import { PublicationDialogComponent } from '../../publications/presentation/components/publication-dialog/publication-dialog.component';
+import { AuthService } from '../../../../presentation/services';
+import { PublicationDialogComponent } from '../../../../publications/presentation/components';
+import { PostService } from '../../../../publications/presentation/services/post.service';
 
 @Component({
   selector: 'app-main',

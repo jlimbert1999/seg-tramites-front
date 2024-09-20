@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatIconModule } from '@angular/material/icon';
-import { SidenavButtonComponent } from '../../presentation/components';
+import { SidenavButtonComponent } from '../../../../presentation/components';
 
 @Component({
   selector: 'app-info',

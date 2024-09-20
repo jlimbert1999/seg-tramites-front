@@ -1,13 +1,12 @@
-import { effect, inject, Injectable, signal } from '@angular/core';
-import { ThemeClass } from '../../domain';
+import { computed, effect, Injectable, signal } from '@angular/core';
+import { THEME_CLASSES, ThemeClass } from '../../domain';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ThemeService {
-  _theme = signal<ThemeClass>(this.getCurrentTheme());
-
-  theme = this._theme.asReadonly();
+  private _theme = signal<ThemeClass>(this.getCurrentTheme());
+  theme = computed(() => this._theme());
 
   constructor() {
     effect(() => {
@@ -16,21 +15,15 @@ export class ThemeService {
   }
 
   changeTheme(newTheme: ThemeClass) {
-    console.log(newTheme);
     this._theme.set(newTheme);
   }
 
-  // getCurrentTheme(): ThemeClass {
-  //   const theme = localStorage.getItem('theme');
-  //   if (!theme) return 'azure-light';
-  //   const [savedColor, savedTheme] = theme.trim().split('-');
-  //   if()
+  getCurrentTheme(): ThemeClass {
+    const theme = localStorage.getItem('theme');
+    return this.validateTheme(theme) ? theme : 'azure-light';
+  }
 
-  //   return this.validateThemeCookie(theme) ? theme : 'violet-dark';
-  // }
-
-  // validateThemeCookie(theme: string): theme is ThemeClass {
-  //   if(typeof theme===)
-  //   return THEME_CLASSES.includes(theme as ThemeClass);
-  // }
+  validateTheme(theme: string | null): theme is ThemeClass {
+    return THEME_CLASSES.some((validTheme) => validTheme === theme);
+  }
 }
