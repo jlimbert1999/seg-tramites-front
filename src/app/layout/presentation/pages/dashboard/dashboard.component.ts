@@ -24,6 +24,8 @@ import {
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { OverlayModule } from '@angular/cdk/overlay';
 import { MatButtonModule } from '@angular/material/button';
+import { MatDialog } from '@angular/material/dialog';
+import { PublicationDialogComponent } from '../../../../publications/presentation/components';
 
 @Component({
   selector: 'app-dashboard',
@@ -52,6 +54,8 @@ export default class DashboardComponent {
   private destroyRef = inject(DestroyRef);
   private router = inject(Router);
 
+  readonly dialogRef = inject(MatDialog);
+
   public detailsOpen = false;
   public isHandset$ = this.breakpointObserver.observe(Breakpoints.Handset).pipe(
     map((result) => result.matches),
@@ -65,10 +69,17 @@ export default class DashboardComponent {
   }
 
   ngOnInit(): void {
-    // this.socketService.connect();
-    // this.handleOnlineClients();
-    // this.handleExpelClient();
-    // this.handleCommunications();
+    this.socketService.connect();
+    this.handleOnlineClients();
+    this.handleExpelClient();
+    this.handleCommunications();
+    this.socketService.listNews().subscribe((pub) => {
+      this.dialogRef.open(PublicationDialogComponent, {
+        data: [pub],
+        minWidth: '900px',
+        height: '600px',
+      });
+    });
   }
 
   logout() {

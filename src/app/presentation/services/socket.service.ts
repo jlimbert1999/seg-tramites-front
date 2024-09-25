@@ -7,6 +7,7 @@ import {
   communicationResponse,
 } from '../../infraestructure/interfaces';
 import { Communication } from '../../domain/models';
+import { publication } from '../../publications/infrastructure';
 
 @Injectable({
   providedIn: 'root',
@@ -56,6 +57,14 @@ export class SocketService {
   listExpel(): Observable<string> {
     return new Observable((observable) => {
       this.socket.on('has-expel', (message: string) => {
+        observable.next(message);
+      });
+    });
+  }
+
+  listNews(): Observable<publication> {
+    return new Observable((observable) => {
+      this.socket.on('news', (message: publication) => {
         observable.next(message);
       });
     });

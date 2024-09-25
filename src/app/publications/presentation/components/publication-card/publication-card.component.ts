@@ -17,15 +17,26 @@ import { PostService } from '../../services/post.service';
     <mat-card class="w-full" appearance="outlined">
       <mat-card-header>
         <img mat-card-avatar src="/assets/img/account.png" />
-        <mat-card-title>Shiba Inu</mat-card-title>
-        <mat-card-subtitle>Dog Breed</mat-card-subtitle>
+        @if(publication().user.funcionario){
+        <mat-card-title>
+          {{ publication().user.funcionario.nombre }}
+          {{ publication().user.funcionario.paterno }}
+          {{ publication().user.funcionario.materno }}
+        </mat-card-title>
+
+        } @else {
+        <mat-card-title> Administrador </mat-card-title>
+        }
+        <mat-card-subtitle>
+          <span class="text-sm">{{ publication().user.jobtitle }}</span>
+        </mat-card-subtitle>
       </mat-card-header>
       <mat-card-content>
         <p class="text-2xl">{{ publication().title }}</p>
         <p>{{ publication().content }}</p>
-        <ul class="list-outside ">
+        <ul class="list-disc px-4">
           @for (item of publication().attachments; track $index) {
-          <li class="list-disc">
+          <li>
             <span
               (click)="openFile(item.filename)"
               class="text-blue-500 underline cursor-pointer"

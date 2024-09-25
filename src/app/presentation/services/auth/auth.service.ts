@@ -13,6 +13,11 @@ import {
 } from '../../../infraestructure/interfaces';
 import { Account } from '../../../domain/models';
 
+interface loginProps {
+  login: string;
+  password: string;
+  remember: boolean;
+}
 @Injectable({
   providedIn: 'root',
 })
@@ -32,12 +37,17 @@ export class AuthService {
 
   constructor(private http: HttpClient) {}
 
-  login(formData: { login: string; password: string }, remember: boolean) {
-    remember
-      ? localStorage.setItem('login', formData.login)
-      : localStorage.removeItem('login');
+  login({ login, password, remember }: loginProps) {
+    if (remember) {
+      localStorage.setItem('login', login);
+    } else {
+      localStorage.removeItem('login');
+    }
     return this.http
-      .post<{ token: string; url: string }>(`${this.base_url}/auth`, formData)
+      .post<{ token: string; url: string }>(`${this.base_url}/auth`, {
+        login,
+        password,
+      })
       .pipe(
         map(({ token, url }) => {
           this._setAuthentication(token);
