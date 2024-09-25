@@ -1,6 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
 import Swal from 'sweetalert2';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 interface AlertOptions {
   title: string;
@@ -27,11 +28,17 @@ interface ToastOptions {
   onActionRouteNavigate?: string;
 }
 
+interface SnackbarOptions {
+  message: string;
+  duration?: number;
+  action?: string;
+}
 @Injectable({
   providedIn: 'root',
 })
 export class AlertService {
   private toast = inject(ToastrService);
+  private snackBar = inject(MatSnackBar);
 
   Alert({ icon = 'info', title, text }: AlertOptions) {
     Swal.fire({
@@ -55,6 +62,7 @@ export class AlertService {
       }
     });
   }
+
   ConfirmAlert({ title, text, callback }: ConfirmAlertOptions) {
     Swal.fire({
       icon: 'question',
@@ -102,6 +110,11 @@ export class AlertService {
       timeOut: seconds,
     });
   }
+
+  Snackbar({ message, duration = 3000, action }: SnackbarOptions) {
+    return this.snackBar.open(message, action, { duration });
+  }
+
   SuccesToast({ seconds = 5000, title, message }: ToastOptions) {
     this.toast.success(message, title, {
       positionClass: 'toast-bottom-right',
