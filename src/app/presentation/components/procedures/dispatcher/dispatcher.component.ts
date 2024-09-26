@@ -178,7 +178,7 @@ export class DispatcherComponent implements OnInit {
       map((clients) =>
         receivers.map((receiver) => {
           const isOnline = clients.some(
-            ({ id_account }) => id_account === receiver.id_account
+            ({ userId }) => userId === receiver.id_account
           );
           return { ...receiver, online: isOnline };
         })

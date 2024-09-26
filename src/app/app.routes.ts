@@ -32,6 +32,13 @@ export const routes: Routes = [
 
     children: [
       { path: '', redirectTo: 'main', pathMatch: 'full' },
+      {
+        path: 'usuarios',
+        loadComponent: () =>
+          import(
+            './users/presentation/pages/users-manage/users-manage.component'
+          ),
+      },
 
       {
         path: 'dependencies',

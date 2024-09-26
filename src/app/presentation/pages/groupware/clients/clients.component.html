@@ -17,8 +17,7 @@
     @for (user of filteredClients|async; track user) {
     <mat-list-item>
       <img matListItemAvatar src="../../../../../assets/img/account.png" />
-      <div matListItemTitle>{{ user.officer.fullname | titlecase }}</div>
-      <div matListItemLine>{{ user.officer.jobtitle }}</div>
+      <div matListItemTitle>{{ user.fullname | titlecase }}</div>
       <div matListItemLine>sesiones: {{ user.socketIds.length }}</div>
       <button mat-icon-button matListItemMeta (click)="confirmRemove(user)">
         <mat-icon>close</mat-icon>

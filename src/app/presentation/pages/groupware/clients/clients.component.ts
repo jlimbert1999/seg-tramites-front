@@ -7,12 +7,7 @@ import {
   inject,
 } from '@angular/core';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import {
-  Observable,
-  map,
-  startWith,
-  switchMap,
-} from 'rxjs';
+import { Observable, map, startWith, switchMap } from 'rxjs';
 import { MaterialModule } from '../../../../material.module';
 import { SidenavButtonComponent } from '../../../components';
 import { AlertService, SocketService } from '../../../services';
@@ -51,7 +46,7 @@ export class ClientsComponent implements OnInit {
 
   confirmRemove(client: SocketClient) {
     this.alertService.ConfirmAlert({
-      title: `¿Expulsar al funcionario ${client.officer.fullname} (${client.officer.jobtitle})?`,
+      title: `¿Expulsar al funcionario ${client.fullname}?`,
       text: `SESIONES ABIERTAS: ${client.socketIds.length}`,
       callback: (result) => {
         this._remove(client, result);
@@ -60,20 +55,16 @@ export class ClientsComponent implements OnInit {
   }
 
   private _remove(client: SocketClient, message: string) {
-    this.socketService.expelClient(client.id_account, message);
+    this.socketService.expelClient(client.userId, message);
   }
 
   private _filter(term: string | null) {
     return this.socketService.onlineClients$.pipe(
       map((clients) => {
         if (!term) return clients;
-        return clients.filter(({ officer: { fullname, jobtitle } }) => {
-          const textToSearch = term.toLowerCase();
-          return (
-            fullname.toLowerCase().includes(textToSearch) ||
-            jobtitle.toLowerCase().includes(textToSearch)
-          );
-        });
+        return clients.filter(({ fullname }) =>
+          fullname.toLowerCase().includes(term.toLowerCase())
+        );
       })
     );
   }
