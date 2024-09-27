@@ -17,7 +17,7 @@ import {
   MatDialogRef,
 } from '@angular/material/dialog';
 
-import { RoleService } from '../services/role.service';
+import { RoleService } from '../../../services/role.service';
 import {
   roleResponse,
   systemResource,
@@ -25,9 +25,9 @@ import {
 import { MaterialModule } from '../../../../../material.module';
 
 @Component({
-  selector: 'app-role',
+  selector: 'app-role-dialog',
   standalone: true,
-  templateUrl: './role.component.html',
+  templateUrl: './role-dialog.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
@@ -37,7 +37,7 @@ import { MaterialModule } from '../../../../../material.module';
     MaterialModule,
   ],
 })
-export class RoleComponent {
+export class RoleDialogComponent {
   private dialogRef = inject(MatDialogRef);
   private roleService = inject(RoleService);
 

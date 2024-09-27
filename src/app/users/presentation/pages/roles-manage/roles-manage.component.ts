@@ -11,13 +11,13 @@ import { MatTableModule } from '@angular/material/table';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { RoleService } from './services/role.service';
-import { RoleComponent } from './role/role.component';
-import { SidenavButtonComponent } from '../../../components';
+import { RoleService } from '../../services/role.service';
+import { RoleDialogComponent } from './role-dialog/role-dialog.component';
 import { roleResponse } from '../../../../infraestructure/interfaces';
+import { SidenavButtonComponent } from '../../../../presentation/components';
 
 @Component({
-  selector: 'app-roles',
+  selector: 'app-roles-manage',
   standalone: true,
   imports: [
     CommonModule,
@@ -28,10 +28,10 @@ import { roleResponse } from '../../../../infraestructure/interfaces';
     MatButtonModule,
     SidenavButtonComponent,
   ],
-  templateUrl: './roles.component.html',
+  templateUrl: './roles-manage.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class RolesComponent {
+export default class RolesManageComponent {
   private dialog = inject(MatDialog);
   private roleService = inject(RoleService);
   public displayedColumns: string[] = ['rol', 'privilegios', 'options'];
@@ -48,7 +48,7 @@ export class RolesComponent {
   }
 
   add(): void {
-    const dialogRef = this.dialog.open(RoleComponent, {
+    const dialogRef = this.dialog.open(RoleDialogComponent, {
       maxWidth: '600px',
       width: '600px',
     });
@@ -59,7 +59,7 @@ export class RolesComponent {
   }
 
   edit(role: roleResponse) {
-    const dialogRef = this.dialog.open(RoleComponent, {
+    const dialogRef = this.dialog.open(RoleDialogComponent, {
       data: role,
       maxWidth: '600px',
       width: '600px',

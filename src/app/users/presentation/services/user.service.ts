@@ -24,7 +24,12 @@ export class UserService {
     return this.http.post<user>(this.url, form);
   }
 
-  update(id: string, form: Object) {
+  update(id: string, form: { [key: string]: string | number }) {
+    if (form['password'] === '') delete form['password'];
     return this.http.patch<user>(`${this.url}/${id}`, form);
+  }
+
+  getRoles() {
+    return this.http.get<any[]>(`${this.url}/roles`);
   }
 }

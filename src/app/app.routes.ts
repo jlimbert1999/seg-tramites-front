@@ -78,9 +78,7 @@ export const routes: Routes = [
       {
         path: 'roles',
         loadComponent: () =>
-          import(
-            './presentation/pages/administration/roles/roles.component'
-          ).then((c) => c.RolesComponent),
+          import('./users/presentation/pages/roles-manage/roles-manage.component'),
       },
       {
         path: 'accounts',
