@@ -5,10 +5,10 @@ import { environment } from '../../../../environments/environment';
 import {
   accountResponse,
   dependencyResponse,
-  institutionResponse,
+  institution,
   jobResponse,
   officerResponse,
-  roleResponse,
+  role,
 } from '../../../infraestructure/interfaces';
 import { Account, Officer } from '../../../domain/models';
 import { AccountDto, OfficerDto } from '../../../infraestructure/dtos';
@@ -32,10 +32,10 @@ export class AccountService {
   }
 
   getRoles() {
-    return this.http.get<roleResponse[]>(`${this.url}/roles`);
+    return this.http.get<role[]>(`${this.url}/roles`);
   }
   getInstitutions() {
-    return this.http.get<institutionResponse[]>(`${this.url}/institutions`);
+    return this.http.get<institution[]>(`${this.url}/institutions`);
   }
   getDependenciesOfInstitution(id_institution: string, text?: string) {
     return this.http.get<dependencyResponse[]>(

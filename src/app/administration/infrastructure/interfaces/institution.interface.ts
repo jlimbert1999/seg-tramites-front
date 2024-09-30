@@ -1,4 +1,4 @@
-export interface institutionResponse {
+export interface institution {
   _id: string;
   nombre: string;
   sigla: string;

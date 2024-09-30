@@ -37,6 +37,7 @@
 
 @include mat.core();
 
+
 $palettes: (
   "red": mat.$red-palette,
   "green": mat.$green-palette,
@@ -84,7 +85,7 @@ $violet-dark-theme: mat.define-theme(
     // add density only for default theme config to avoid duplicated theming styles
     density:
       (
-        scale: -1,
+        scale: -2,
       ),
   )
 );
@@ -151,6 +152,7 @@ $violet-light-theme: mat.define-theme(
 
 html {
   @include mat.all-component-themes($violet-dark-theme);
+  @include mat.form-field-density(-3);
 
   &.violet-dark {
     @include themable-styles($violet-dark-theme);
@@ -172,31 +174,12 @@ html {
       @include themable-styles(map-get($theme-map, "#{$color}-light-theme"));
     }
   }
+  
 }
 
-html,
-body {
-  height: 100%;
-}
-
-body {
-  margin: 0;
-  font-family: Roboto, "Helvetica Neue", sans-serif;
-}
-
-.sidebar-link {
-  --mdc-list-list-item-container-shape: 9999px;
-}
-
-.flex-wrapper {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.55rem;
-}
-
-.sections-wrapper {
-  display: flex;
-  flex-direction: column;
-  gap: 1.8rem;
+:root {
+  --mat-form-field-filled-label-display: block;
+  --mat-form-field-filled-with-label-container-padding-top: 16px;
+  --mat-form-field-filled-with-label-container-padding-bottom: 0px;
 }
 

@@ -7,7 +7,7 @@ import {
   communicationResponse,
   dependencyResponse,
   externalResponse,
-  institutionResponse,
+  institution,
   internalResponse,
   procedure,
   reportUnit,
@@ -145,7 +145,7 @@ export class ReportService {
     );
   }
   getInstitutions() {
-    return this.http.get<institutionResponse[]>(`${this.url}/institutions`);
+    return this.http.get<institution[]>(`${this.url}/institutions`);
   }
 
   getWorkDetails(id_account: string) {

@@ -1,6 +1,6 @@
-import { institution } from "../../../administration/infrastructure";
+import { institution } from "./institution.interface";
 
-export interface dependencyResponse {
+export interface dependency {
   _id: string;
   nombre: string;
   sigla: string;

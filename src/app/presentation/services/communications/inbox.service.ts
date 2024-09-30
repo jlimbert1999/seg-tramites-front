@@ -7,7 +7,7 @@ import {
   accountResponse,
   communicationResponse,
   dependencyResponse,
-  institutionResponse,
+  institution,
   receiver,
 } from '../../../infraestructure/interfaces';
 import {
@@ -34,7 +34,7 @@ export class InboxService {
   constructor() {}
 
   getInstitucions() {
-    return this.http.get<institutionResponse[]>(`${this.url}/institutions`);
+    return this.http.get<institution[]>(`${this.url}/institutions`);
   }
   getDependenciesInInstitution(id_institution: string) {
     return this.http.get<dependencyResponse[]>(

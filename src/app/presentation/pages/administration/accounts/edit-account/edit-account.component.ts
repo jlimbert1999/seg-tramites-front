@@ -25,7 +25,7 @@ import {
   PdfService,
   ReportService,
 } from '../../../../services';
-import { roleResponse } from '../../../../../infraestructure/interfaces';
+import { role } from '../../../../../infraestructure/interfaces';
 import { ServerSelectSearchComponent } from '../../../../components';
 import { Account, Officer } from '../../../../../domain/models';
 import { generateCredentials } from '../../../../../helpers';
@@ -57,7 +57,7 @@ export class EditAccountComponent {
   private pdfService = inject(PdfService);
 
   public account = signal(inject<Account>(MAT_DIALOG_DATA));
-  public roles = signal<roleResponse[]>([]);
+  public roles = signal<role[]>([]);
   public hidePassword = true;
   public updatePassword = false;
   public officers = signal<SelectOption[]>([]);

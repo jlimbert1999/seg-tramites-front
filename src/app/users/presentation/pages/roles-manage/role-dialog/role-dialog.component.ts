@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
+  computed,
   inject,
   signal,
 } from '@angular/core';
@@ -16,13 +17,15 @@ import {
   MatDialogModule,
   MatDialogRef,
 } from '@angular/material/dialog';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { CdkAccordionModule } from '@angular/cdk/accordion';
+import { MatButtonModule } from '@angular/material/button';
+import { MatInputModule } from '@angular/material/input';
+import { MatIconModule } from '@angular/material/icon';
 
-import { RoleService } from '../../../services/role.service';
-import {
-  roleResponse,
-  systemResource,
-} from '../../../../../infraestructure/interfaces';
-import { MaterialModule } from '../../../../../material.module';
+import { resource, role } from '../../../../infrastructure';
+import { RoleService } from '../../../services';
 
 @Component({
   selector: 'app-role-dialog',
@@ -34,16 +37,27 @@ import { MaterialModule } from '../../../../../material.module';
     ReactiveFormsModule,
     FormsModule,
     MatDialogModule,
-    MaterialModule,
+    MatIconModule,
+    CdkAccordionModule,
+    MatCheckboxModule,
+    MatInputModule,
+    MatFormFieldModule,
+    MatButtonModule,
   ],
 })
 export class RoleDialogComponent {
   private dialogRef = inject(MatDialogRef);
   private roleService = inject(RoleService);
 
-  public role = inject<roleResponse | undefined>(MAT_DIALOG_DATA);
+  public data = inject<role | undefined>(MAT_DIALOG_DATA);
   public name = new FormControl('', Validators.required);
-  public resources = signal<systemResource[]>([]);
+  public resources = signal<resource[]>([]);
+
+  hasPermissions = computed(() =>
+    this.resources().some(
+      ({ actions }) => actions.some((action) => action.isSelected)
+    )
+  );
 
   ngOnInit(): void {
     this.roleService.getResources().subscribe((resources) => {
@@ -52,12 +66,9 @@ export class RoleDialogComponent {
   }
 
   save(): void {
-    const hasPermissions = this.resources().some((resource) =>
-      resource.actions.some((action) => action.isSelected)
-    );
-    if (this.name.invalid || !hasPermissions) return;
-    const subscription = this.role
-      ? this.roleService.edit(this.role._id, this.name.value!, this.resources())
+    if (this.name.invalid || !this.hasPermissions()) return;
+    const subscription = this.data
+      ? this.roleService.edit(this.data._id, this.name.value!, this.resources())
       : this.roleService.add(this.name.value!, this.resources());
     subscription.subscribe((resp) => {
       this.dialogRef.close(resp);
@@ -71,7 +82,7 @@ export class RoleDialogComponent {
       values[index].actions.forEach(
         (action) => (action.isSelected = isSelected)
       );
-      return values;
+      return [...values];
     });
   }
 
@@ -81,7 +92,7 @@ export class RoleDialogComponent {
       values[index].isSelected = values[index].actions.every(
         (action) => action.isSelected
       );
-      return values;
+      return [...values];
     });
   }
 
@@ -96,9 +107,9 @@ export class RoleDialogComponent {
     );
   }
 
-  loadResources(resources: systemResource[]) {
-    if (!this.role) return this.resources.set(resources);
-    const { permissions, name } = this.role;
+  loadResources(resources: resource[]) {
+    if (!this.data) return this.resources.set(resources);
+    const { permissions, name } = this.data;
     this.name.setValue(name);
     const checkedResources = resources.map((resource) => {
       const hasPermission = permissions.find(

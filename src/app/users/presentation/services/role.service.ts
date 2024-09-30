@@ -2,11 +2,8 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { map } from 'rxjs';
 import { environment } from '../../../../environments/environment';
-import { RoleDto } from '../../../infraestructure/dtos';
-import {
-  roleResponse,
-  systemResource,
-} from '../../../infraestructure/interfaces';
+import { resource, role, RoleDto } from '../../infrastructure';
+
 
 @Injectable({
   providedIn: 'root',
@@ -17,12 +14,12 @@ export class RoleService {
 
   findAll() {
     return this.http
-      .get<{ roles: roleResponse[]; length: number }>(`${this.url}`)
+      .get<{ roles: role[]; length: number }>(`${this.url}`)
       .pipe(map((resp) => ({ roles: resp.roles, length: resp.length })));
   }
 
   getResources() {
-    return this.http.get<systemResource[]>(`${this.url}/resources`).pipe(
+    return this.http.get<resource[]>(`${this.url}/resources`).pipe(
       map((resp) =>
         resp.map(({ actions, ...props }) => ({
           ...props,
@@ -33,13 +30,13 @@ export class RoleService {
     );
   }
 
-  add(name: string, systemResources: systemResource[]) {
-    const Role = RoleDto.toModel(name, systemResources);
-    return this.http.post<roleResponse>(`${this.url}`, Role);
+  add(name: string, resources: resource[]) {
+    const Role = RoleDto.toModel(name, resources);
+    return this.http.post<role>(`${this.url}`, Role);
   }
 
-  edit(id: string, name: string, systemResources: systemResource[]) {
-    const Role = RoleDto.toModel(name, systemResources);
-    return this.http.put<roleResponse>(`${this.url}/${id}`, Role);
+  edit(id: string, name: string, resources: resource[]) {
+    const Role = RoleDto.toModel(name, resources);
+    return this.http.put<role>(`${this.url}/${id}`, Role);
   }
 }

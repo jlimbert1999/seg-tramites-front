@@ -20,7 +20,7 @@ import {
   ServerSelectSearchComponent,
   SimpleSelectSearchComponent,
 } from '../../../../components';
-import { roleResponse } from '../../../../../infraestructure/interfaces';
+import { role } from '../../../../../infraestructure/interfaces';
 import { Officer } from '../../../../../domain/models';
 import { generateCredentials } from '../../../../../helpers';
 
@@ -57,7 +57,7 @@ export class AssignAccountComponent implements OnInit {
   institutions = signal<SelectOption[]>([]);
   dependencies = signal<SelectOption[]>([]);
   officers = signal<SelectOptionOfficer[]>([]);
-  roles = signal<roleResponse[]>([]);
+  roles = signal<role[]>([]);
   FormAccount: FormGroup = this.fb.nonNullable.group({
     password: ['', [Validators.required, Validators.pattern(/^\S+$/)]],
     funcionario: ['', Validators.required],

@@ -5,8 +5,6 @@ export * from './cache.service';
 export * from './appearance.service';
 
 export * from './auth/auth.service';
-
-export * from './administration/dependency.service';
 export * from './administration/account.service';
 export * from './administration/officer.service';
 

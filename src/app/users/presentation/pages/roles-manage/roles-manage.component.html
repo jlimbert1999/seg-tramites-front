@@ -6,8 +6,8 @@
   </button>
 </mat-toolbar>
 
-<div class="container-fluid">
-  <table mat-table [dataSource]="dataSource()" class="mat-elevation-z8">
+<div class="p-2">
+  <table mat-table [dataSource]="datasource()" class="mat-elevation-z8">
     <ng-container matColumnDef="rol">
       <th mat-header-cell *matHeaderCellDef>Rol</th>
       <td mat-cell *matCellDef="let element">
@@ -15,16 +15,9 @@
       </td>
     </ng-container>
 
-    <ng-container matColumnDef="privilegios">
-      <th mat-header-cell *matHeaderCellDef>Privilegios</th>
-      <td mat-cell *matCellDef="let element">
-        {{ element.permissions.length }}
-      </td>
-    </ng-container>
-
     <ng-container matColumnDef="options">
       <th mat-header-cell *matHeaderCellDef></th>
-      <td mat-cell *matCellDef="let element">
+      <td mat-cell *matCellDef="let element"  class="w-8">
         <button mat-icon-button (click)="edit(element)">
           <mat-icon>edit</mat-icon>
         </button>

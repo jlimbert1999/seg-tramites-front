@@ -1,4 +1,5 @@
-import { systemResource } from '../../interfaces/auth/system-resources.interface';
+import { resource } from "../interfaces/resource.interface";
+
 
 interface permission {
   resource: string;
@@ -6,8 +7,8 @@ interface permission {
 }
 
 export class RoleDto {
-  static toModel(name: string, systemResources: systemResource[]): RoleDto {
-    const permissions: permission[] = systemResources
+  static toModel(name: string, resources: resource[]): RoleDto {
+    const permissions: permission[] = resources
       .filter((resource) =>
         resource.actions.some((action) => action.isSelected)
       )

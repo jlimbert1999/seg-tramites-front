@@ -13,8 +13,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { RoleService } from '../../services/role.service';
 import { RoleDialogComponent } from './role-dialog/role-dialog.component';
-import { roleResponse } from '../../../../infraestructure/interfaces';
-import { SidenavButtonComponent } from '../../../../presentation/components';
+
+import { role } from '../../../infrastructure';
 
 @Component({
   selector: 'app-roles-manage',
@@ -26,7 +26,6 @@ import { SidenavButtonComponent } from '../../../../presentation/components';
     FormsModule,
     MatIconModule,
     MatButtonModule,
-    SidenavButtonComponent,
   ],
   templateUrl: './roles-manage.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -34,8 +33,9 @@ import { SidenavButtonComponent } from '../../../../presentation/components';
 export default class RolesManageComponent {
   private dialog = inject(MatDialog);
   private roleService = inject(RoleService);
-  public displayedColumns: string[] = ['rol', 'privilegios', 'options'];
-  public dataSource = signal<roleResponse[]>([]);
+
+   datasource = signal<role[]>([]);
+   displayedColumns: string[] = ['rol', 'options'];
 
   ngOnInit(): void {
     this.getData();
@@ -43,7 +43,7 @@ export default class RolesManageComponent {
 
   getData(): void {
     this.roleService.findAll().subscribe((resp) => {
-      this.dataSource.set(resp.roles);
+      this.datasource.set(resp.roles);
     });
   }
 
@@ -52,21 +52,21 @@ export default class RolesManageComponent {
       maxWidth: '600px',
       width: '600px',
     });
-    dialogRef.afterClosed().subscribe((result?: roleResponse) => {
+    dialogRef.afterClosed().subscribe((result?: role) => {
       if (!result) return;
-      this.dataSource.update((values) => [result, ...values]);
+      this.datasource.update((values) => [result, ...values]);
     });
   }
 
-  edit(role: roleResponse) {
+  edit(role: role) {
     const dialogRef = this.dialog.open(RoleDialogComponent, {
       data: role,
       maxWidth: '600px',
       width: '600px',
     });
-    dialogRef.afterClosed().subscribe((result: roleResponse) => {
+    dialogRef.afterClosed().subscribe((result: role) => {
       if (!result) return;
-      this.dataSource.update((values) => {
+      this.datasource.update((values) => {
         const index = values.findIndex(({ _id }) => _id === result._id);
         values[index] = result;
         return [...values];

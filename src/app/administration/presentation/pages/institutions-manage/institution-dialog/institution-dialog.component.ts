@@ -16,23 +16,23 @@ import {
   MatDialogModule,
   MatDialogRef,
 } from '@angular/material/dialog';
-import { InstitutionService } from '../services/institution.service';
-import { institutionResponse } from '../../../../../infraestructure/interfaces';
+import { InstitutionService } from '../../../services/institution.service';
 import { MaterialModule } from '../../../../../material.module';
+import { institution } from '../../../../infrastructure';
 
 @Component({
-  selector: 'app-institution',
+  selector: 'app-institution-dialog',
   standalone: true,
   imports: [CommonModule, MatDialogModule, ReactiveFormsModule, MaterialModule],
-  templateUrl: './institution.component.html',
+  templateUrl: './institution-dialog.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class InstitutionComponent implements OnInit {
+export class InstitutionDialogComponent implements OnInit {
   private fb = inject(FormBuilder);
   private institutionService = inject(InstitutionService);
-  private dialogRef = inject(MatDialogRef<InstitutionComponent>);
+  private dialogRef = inject(MatDialogRef<InstitutionDialogComponent>);
 
-  institution = inject<institutionResponse | undefined>(MAT_DIALOG_DATA);
+  data = inject<institution | undefined>(MAT_DIALOG_DATA);
   FormInstitution: FormGroup = this.fb.group({
     nombre: ['', Validators.required],
     sigla: [
@@ -41,19 +41,20 @@ export class InstitutionComponent implements OnInit {
         Validators.required,
         Validators.minLength(2),
         Validators.maxLength(10),
-        Validators.pattern(/^[A-Za-z-]+$/),
+        Validators.pattern(/^[A-Za-z0-9-]+$/),
       ],
     ],
+    activo:[true]
   });
 
   ngOnInit(): void {
-    this.FormInstitution.patchValue(this.institution ?? {});
+    this.FormInstitution.patchValue(this.data ?? {});
   }
 
   save() {
-    const subscription = this.institution
+    const subscription = this.data
       ? this.institutionService.edit(
-          this.institution._id,
+          this.data._id,
           this.FormInstitution.value
         )
       : this.institutionService.add(this.FormInstitution.value);

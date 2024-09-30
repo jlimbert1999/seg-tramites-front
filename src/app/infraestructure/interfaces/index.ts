@@ -1,15 +1,15 @@
 export * from './auth/jwt-payload.interface';
-export * from './auth/system-resources.interface';
+export * from '../../users/infrastructure/interfaces/resource.interface';
 export * from './auth/resources.enum';
 export * from './auth/menu.interface';
 
 export * from './administration/account-response.interface';
-export * from './administration/institution-response.interface';
+export * from '../../administration/infrastructure/interfaces/institution.interface';
 export * from './administration/dependency-response.interface';
 export * from './administration/job-response.interface';
 export * from './administration/oficer-response.interface';
 export * from './administration/work-history-response.interface';
-export * from './administration/role-response.interface';
+export * from '../../users/infrastructure/interfaces/role.interface';
 export * from './administration/type-procedure-response.interface';
 
 export * from './procedures/external-response.interface';

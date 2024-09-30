@@ -1,4 +1,4 @@
-export interface systemResource {
+export interface resource {
   value: string;
   label: string;
   actions: action[];

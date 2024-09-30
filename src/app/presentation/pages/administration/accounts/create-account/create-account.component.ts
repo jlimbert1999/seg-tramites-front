@@ -18,7 +18,7 @@ import {
   ServerSelectSearchComponent,
   SimpleSelectSearchComponent,
 } from '../../../../components';
-import { roleResponse } from '../../../../../infraestructure/interfaces';
+import { role } from '../../../../../infraestructure/interfaces';
 import {
   PdfService,
   AccountService,
@@ -53,7 +53,7 @@ export class CreateAccountComponent {
 
   institutions = signal<SelectOption[]>([]);
   dependencies = signal<SelectOption[]>([]);
-  roles = signal<roleResponse[]>([]);
+  roles = signal<role[]>([]);
   jobs = signal<SelectOption[]>([]);
 
   hidePassword = true;

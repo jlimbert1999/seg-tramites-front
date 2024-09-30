@@ -1,34 +1,17 @@
-<!-- <mat-toolbar>
-  <span>Usuarios</span>
-  <span class="flex-1"></span>
-  <button mat-icon-button aria-label="Add user" (click)="create()">
-    <mat-icon>add</mat-icon>
-  </button>
-</mat-toolbar> -->
-
-<div class="flex flex-wrap items-center gap-x-2">
-  <div class="flex-1 text-2xl">Usuarios</div>
-  <div class="flex-none order-last w-full sm:w-60 sm:order-none">
-   
-  
+<div class="flex flex-wrap items-center gap-x-2 px-4">
+  <div class="flex-1 text-xl">Usuarios</div>
+  <div class="order-last w-full sm:w-60 sm:order-none h-12">
+   <search-input (onSearch)="search($event)"/>
   </div>
-  <div class="flex-none">
+  <div>
     <button mat-icon-button aria-label="Add user" (click)="create()">
       <mat-icon>add</mat-icon>
     </button>
   </div>
 </div>
 
-<div class="flex justify-end">
-  <mat-form-field class="w-full sm:w-auto">
-    <mat-label>Favorite food</mat-label>
-    <input matInput placeholder="Ex. Pizza" value="Sushi">
-  </mat-form-field>
-</div>
 
-<div class="p-3">
- 
-
+<div class="p-2">
   <div class="relative mat-elevation-z8">
     <!-- @if (isLoading) {
     <div class="absolute flex justify-center items-center top-0 bottom-14 left-0 right-0 z-10" style="background: rgba(0, 0, 0, 0.15);">
@@ -91,6 +74,7 @@
         showFirstLastButtons
         [length]="datasize()"
         [pageSize]="10"
+        [pageIndex]="index()"
         (page)="onPageChange($event)"
       />
     </div>

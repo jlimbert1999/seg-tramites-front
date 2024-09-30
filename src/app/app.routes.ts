@@ -39,20 +39,20 @@ export const routes: Routes = [
             './users/presentation/pages/users-manage/users-manage.component'
           ),
       },
+      {
+        path: 'institutions',
+        loadComponent: () =>
+          import(
+            './administration/presentation/pages/institutions-manage/institutions-manage.component'
+          ),
+      },
 
       {
         path: 'dependencies',
         loadComponent: () =>
           import(
-            './presentation/pages/administration/dependencies/dependencies.component'
-          ).then((c) => c.DependenciesComponent),
-      },
-      {
-        path: 'institutions',
-        loadComponent: () =>
-          import(
-            './presentation/pages/administration/institutions/institutions.component'
-          ).then((c) => c.InstitutionsComponent),
+            './administration/presentation/pages/dependencies-manage/dependencies-manage.component'
+          ),
       },
       {
         path: 'types-procedures',

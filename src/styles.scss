@@ -1,6 +1,5 @@
-@import "ngx-toastr/toastr";
+
 @import '@angular/cdk/overlay-prebuilt.css';
-@import 'animate.css';
 @import "./assets/scss/status-badge.scss";
 
 @tailwind base;
@@ -22,14 +21,14 @@ mat-form-field {
   width: 100%;
 }
 
-.mat-mdc-dialog-content {
-  padding-top: 5px !important;
-}
+// .mat-mdc-dialog-content {
+//   padding-top: 5px !important;
+// }
 
-.swal2-title {
-  font-size: 20px !important;
+// .swal2-title {
+//   font-size: 20px !important;
 
-}
+// }
 
 .toolbar-spacer {
   flex: 1 1 auto;

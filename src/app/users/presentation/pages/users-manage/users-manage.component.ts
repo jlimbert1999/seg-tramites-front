@@ -13,13 +13,13 @@ import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
 import { MatTableModule } from '@angular/material/table';
-import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDialog } from '@angular/material/dialog';
 
 import { user } from '../../../infrastructure';
 import { UserService } from '../../services';
 import { UserDialogComponent } from './user-dialog/user-dialog.component';
+import { SearchInputComponent } from '../../../../shared';
 
 @Component({
   selector: 'app-users-manage',
@@ -28,14 +28,15 @@ import { UserDialogComponent } from './user-dialog/user-dialog.component';
     CommonModule,
     MatIconModule,
     MatTableModule,
-    MatInputModule,
     MatButtonModule,
     MatToolbarModule,
     MatPaginatorModule,
     MatProgressSpinnerModule,
+    SearchInputComponent
   ],
   templateUrl: './users-manage.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+
 })
 export default class UsersManageComponent implements OnInit {
   private userService = inject(UserService);
@@ -63,7 +64,7 @@ export default class UsersManageComponent implements OnInit {
 
   getData() {
     this.userService
-      .findAll(this.limit(), this.offset())
+      .findAll(this.limit(), this.offset(), this.term())
       .subscribe(({ users, length }) => {
         this.datasource.set(users);
         this.datasize.set(length);
@@ -81,7 +82,7 @@ export default class UsersManageComponent implements OnInit {
     });
   }
 
-  update(user: any) {
+  update(user: user) {
     const dialogRef = this.dialogRef.open(UserDialogComponent, {
       width: '600px',
       data: user,
@@ -94,5 +95,11 @@ export default class UsersManageComponent implements OnInit {
         return [...values];
       });
     });
+  }
+
+  search(term:string){
+    this.index.set(0)
+    this.term.set(term)
+    this.getData()
   }
 }
