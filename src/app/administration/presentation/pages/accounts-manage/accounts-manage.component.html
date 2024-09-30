@@ -1,4 +1,4 @@
-<mat-toolbar>
+<!-- <mat-toolbar>
   <span>Cuentas</span>
   <span class="toolbar-spacer"></span>
   <button mat-icon-button [matMenuTriggerFor]="menu">
@@ -14,10 +14,58 @@
       <span>Asignar Cuenta</span>
     </button>
   </mat-menu>
-</mat-toolbar>
+</mat-toolbar> -->
 
-<div class="container-fluid">
-  <div class="row">
+<div class="flex flex-wrap items-center gap-x-2 px-4 mb-2">
+  <div class="flex-1 text-xl">Dependencias</div>
+  <div class="order-last w-full sm:w-60 sm:order-none h-12">
+    <search-input (onSearch)="search($event)" />
+  </div>
+  <div>
+    <button
+      mat-icon-button
+      aria-label="Filter user"
+      cdkOverlayOrigin
+      (click)="isOpen = !isOpen"
+      #menuOverlay="cdkOverlayOrigin"
+    >
+      <mat-icon>tune</mat-icon>
+    </button>
+  </div>
+  <div>
+    <button mat-icon-button aria-label="Add user">
+      <mat-icon>add</mat-icon>
+    </button>
+  </div>
+</div>
+
+<ng-template
+  cdkConnectedOverlay
+  [cdkConnectedOverlayOrigin]="menuOverlay"
+  [cdkConnectedOverlayOpen]="isOpen"
+>
+  <div class="overlay-menu w-auto sm:w-[400px] px-3 py-2 mat-elevation-z8">
+    <simple-select-search
+      placeholder="Institucion"
+      [elements]="institutions()"
+      (onSelect)="selectInstitution($event!)"
+      [value]="institution()"
+    />
+    <!-- <simple-select-search
+      placeholder="Dependencia"
+      [elements]="dependencies()"
+      (onSelect)=se""
+      [value]="dependency()"
+    /> -->
+    <div class="flex justify-end gap-x-2">
+      <button mat-button>Restablecer</button>
+      <button mat-flat-button (click)="filter()">Buscar</button>
+    </div>
+  </div>
+</ng-template>
+
+<div class="p-2">
+  <!-- <div class="row">
     <div class="col-sm-3">
       <simple-select-search
         placeholder="Seleccione una institucion"
@@ -54,16 +102,10 @@
         </button>
       </mat-form-field>
     </div>
-  </div>
+  </div> -->
   <div class="example-container mat-elevation-z8">
     <div class="example-table-container">
-      <table mat-table [dataSource]="accounts()">
-        <ng-container matColumnDef="login">
-          <th mat-header-cell *matHeaderCellDef>Login</th>
-          <td mat-cell *matCellDef="let element">
-            {{ element.login }}
-          </td>
-        </ng-container>
+      <table mat-table [dataSource]="datasource()">
         <ng-container matColumnDef="nombre">
           <th mat-header-cell *matHeaderCellDef>Funcionario</th>
           <td mat-cell *matCellDef="let element">
@@ -100,7 +142,7 @@
 
         <ng-container matColumnDef="options">
           <th mat-header-cell *matHeaderCellDef></th>
-          <td mat-cell *matCellDef="let element">
+          <td mat-cell *matCellDef="let element" class="w-8">
             <button
               mat-icon-button
               [matMenuTriggerFor]="menu"
@@ -131,12 +173,13 @@
         </tr>
       </table>
     </div>
-    <paginator
-      [length]="length()"
-      [limit]="limit()"
-      [index]="index()"
-      [pageSizeOptions]="[10, 20, 30, 50]"
-      (onPageChage)="onPageChage($event)"
+    <mat-paginator
+      aria-label="Select page of users search results"
+      showFirstLastButtons
+      [length]="datasize()"
+      [pageIndex]="index()"
+      [pageSize]="10"
+      (page)="onPageChange($event)"
     />
   </div>
 </div>

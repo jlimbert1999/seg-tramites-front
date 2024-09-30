@@ -1,12 +1,12 @@
 import { Content, Table } from 'pdfmake/interfaces';
 import {
-  accountResponse,
+  account,
   communicationResponse,
 } from '../../infraestructure/interfaces';
 import { StatusMail } from '../../domain/models';
 
 function CreateSectionDetails(
-  { funcionario, login, dependencia }: accountResponse,
+  { funcionario, dependencia }: account,
   date: Date,
   inbox: communicationResponse[]
 ): Content[] {
@@ -40,9 +40,7 @@ function CreateSectionDetails(
               alignment: 'right',
             },
             {
-              text: `${
-                funcionario?.cargo?.nombre ?? 'SIN CARGO'
-              }`.toUpperCase(),
+              text: `${'SIN CARGO'}`.toUpperCase(),
             },
           ],
           [
@@ -53,7 +51,7 @@ function CreateSectionDetails(
               alignment: 'right',
             },
             {
-              text: `${login}`.toUpperCase(),
+              text: `s`.toUpperCase(),
             },
           ],
           [

@@ -4,7 +4,7 @@ import { Observable, map } from 'rxjs';
 import { environment } from '../../../../environments/environment';
 import {
   transferDetails,
-  accountResponse,
+  account,
   communicationResponse,
   dependencyResponse,
   institution,
@@ -43,12 +43,12 @@ export class InboxService {
   }
   getAccountsForSend(id_dependency: string): Observable<receiver[]> {
     return this.http
-      .get<accountResponse[]>(`${this.url}/accounts/${id_dependency}`)
+      .get<account[]>(`${this.url}/accounts/${id_dependency}`)
       .pipe(
         map((resp) =>
           resp.map(({ _id, funcionario }) => ({
             id_account: _id,
-            officer: Officer.officerFromJson(funcionario!),
+            officer: {} as any,
             online: false,
           }))
         )
@@ -100,7 +100,7 @@ export class InboxService {
         })
       );
   }
-  
+
   getMail(id: string) {
     return this.http
       .get<communicationResponse>(`${this.url}/${id}`)

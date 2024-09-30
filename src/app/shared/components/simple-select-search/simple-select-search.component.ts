@@ -1,19 +1,23 @@
-import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
+  DestroyRef,
   Input,
+  OnInit,
   effect,
+  inject,
   input,
   output,
 } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatSelectModule } from '@angular/material/select';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { ReplaySubject, Subject, takeUntil } from 'rxjs';
 import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
-type MatSelectSearchData<T> = {
+export type SimpleSelectOption<T> = {
   text: string;
   value: T;
 };
@@ -21,8 +25,8 @@ type MatSelectSearchData<T> = {
   selector: 'simple-select-search',
   standalone: true,
   imports: [
-    ReactiveFormsModule,
     CommonModule,
+    ReactiveFormsModule,
     NgxMatSelectSearchModule,
     MatFormFieldModule,
     MatSelectModule,
@@ -41,9 +45,9 @@ type MatSelectSearchData<T> = {
             [formControl]="bankFilterCtrl"
           ></ngx-mat-select-search>
         </mat-option>
-        @if(bankCtrl.value && !isRequired()){
+        <!-- @if(bankCtrl.value && !isRequired()){
         <mat-option>-- Ninguno --</mat-option>
-        }
+        } -->
         <mat-option
           *ngFor="let bank of filteredBanks | async"
           [value]="bank.value"
@@ -55,20 +59,18 @@ type MatSelectSearchData<T> = {
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SimpleSelectSearchComponent<T> {
-  elements = input.required<MatSelectSearchData<T>[]>();
+export class SimpleSelectSearchComponent<T> implements OnInit {
+  private destroyRef = inject(DestroyRef);
+
+  value = input<T>();
+  elements = input.required<SimpleSelectOption<T>[]>();
   placeholder = input<string>('Buscar....');
   isRequired = input<boolean>(true);
   onSelect = output<T | undefined>();
 
-  @Input() set initialValue(value: T) {
-    this.bankCtrl.setValue(value);
-  }
-
-  public bankCtrl = new FormControl<T | null>(null);
+  bankCtrl = new FormControl();
   public bankFilterCtrl = new FormControl<string>('');
-  public filteredBanks = new ReplaySubject<MatSelectSearchData<T>[]>(1);
-  protected _onDestroy = new Subject<void>();
+  public filteredBanks = new ReplaySubject<SimpleSelectOption<T>[]>(1);
 
   constructor() {
     effect(() => {
@@ -77,19 +79,15 @@ export class SimpleSelectSearchComponent<T> {
   }
 
   ngOnInit(): void {
+    this.bankCtrl.setValue(this.value());
     this.bankFilterCtrl.valueChanges
-      .pipe(takeUntil(this._onDestroy))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(() => this.filterBanks());
   }
 
   selectOption(value: T | undefined) {
     if (this.isRequired() && !value) return;
     this.onSelect.emit(value);
-  }
-
-  ngOnDestroy(): void {
-    this._onDestroy.next();
-    this._onDestroy.complete();
   }
 
   protected filterBanks() {

@@ -19,16 +19,13 @@ import {
   MatDialogRef,
 } from '@angular/material/dialog';
 import { MaterialModule } from '../../../../../material.module';
-import {
-  AccountService,
-  AlertService,
-  PdfService,
-  ReportService,
-} from '../../../../services';
+
 import { role } from '../../../../../infraestructure/interfaces';
-import { ServerSelectSearchComponent } from '../../../../components';
+
 import { Account, Officer } from '../../../../../domain/models';
 import { generateCredentials } from '../../../../../helpers';
+import { ServerSelectSearchComponent } from '../../../../../shared';
+import { AccountService, AlertService, PdfService, ReportService } from '../../../../../presentation/services';
 
 interface SelectOption {
   text: string;
@@ -124,7 +121,7 @@ export class EditAccountComponent {
     this.accountService
       .edit(this.account()._id, this.FormAccount.value)
       .subscribe((account) => {
-        this.account.set(account);
+        this.account.set(account as any);
         const passwordCtrl = this.FormAccount.get('password');
         if (account.funcionario && passwordCtrl) {
           this.pdfService.createAccountSheet(account, passwordCtrl?.value);

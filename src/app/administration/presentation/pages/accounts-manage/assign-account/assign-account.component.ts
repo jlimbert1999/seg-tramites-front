@@ -15,14 +15,14 @@ import {
 import { MatDialogRef } from '@angular/material/dialog';
 import { forkJoin } from 'rxjs';
 import { MaterialModule } from '../../../../../material.module';
-import { AccountService, PdfService } from '../../../../services';
-import {
-  ServerSelectSearchComponent,
-  SimpleSelectSearchComponent,
-} from '../../../../components';
+
+
 import { role } from '../../../../../infraestructure/interfaces';
 import { Officer } from '../../../../../domain/models';
 import { generateCredentials } from '../../../../../helpers';
+import { ServerSelectSearchComponent, SimpleSelectSearchComponent } from '../../../../../shared';
+import { AccountService } from '../../../services';
+import { PdfService } from '../../../../../presentation/services';
 
 interface SelectOption {
   value: string;

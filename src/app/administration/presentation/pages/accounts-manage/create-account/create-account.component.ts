@@ -14,17 +14,13 @@ import {
   FormGroup,
 } from '@angular/forms';
 import { forkJoin } from 'rxjs';
-import {
-  ServerSelectSearchComponent,
-  SimpleSelectSearchComponent,
-} from '../../../../components';
+
 import { role } from '../../../../../infraestructure/interfaces';
-import {
-  PdfService,
-  AccountService,
-  OfficerService,
-} from '../../../../services';
+
 import { MaterialModule } from '../../../../../material.module';
+import { OfficerService, PdfService } from '../../../../../presentation/services';
+import { ServerSelectSearchComponent, SimpleSelectSearchComponent } from '../../../../../shared';
+import { AccountService } from '../../../services';
 
 
 interface SelectOption {

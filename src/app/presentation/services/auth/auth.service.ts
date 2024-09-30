@@ -8,7 +8,7 @@ import { environment } from '../../../../environments/environment';
 import {
   JwtPayload,
   VALID_RESOURCES,
-  accountResponse,
+  account,
   menu,
 } from '../../../infraestructure/interfaces';
 import { Account } from '../../../domain/models';
@@ -91,7 +91,7 @@ export class AuthService {
   }
 
   getMyAccount() {
-    return this.http.get<accountResponse>(`${this.base_url}/auth/detail`).pipe(
+    return this.http.get<account>(`${this.base_url}/auth/detail`).pipe(
       map((resp) => {
         resp.dependencia = resp.dependencia
           ? resp.dependencia
@@ -103,7 +103,7 @@ export class AuthService {
               activo: true,
               institucion: { _id: '', nombre: '', sigla: '', activo: true },
             };
-        return Account.fromJson(resp);
+        return new Account({ ...(resp as any) });
       })
     );
   }

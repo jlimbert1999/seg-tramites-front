@@ -3,7 +3,7 @@ export * from '../../users/infrastructure/interfaces/resource.interface';
 export * from './auth/resources.enum';
 export * from './auth/menu.interface';
 
-export * from './administration/account-response.interface';
+export * from '../../administration/infrastructure/interfaces/account.interface';
 export * from '../../administration/infrastructure/interfaces/institution.interface';
 export * from './administration/dependency-response.interface';
 export * from './administration/job-response.interface';

@@ -33,7 +33,16 @@ export const routes: Routes = [
     children: [
       { path: '', redirectTo: 'main', pathMatch: 'full' },
       {
+        path: 'roles',
+        title: 'Roles',
+        loadComponent: () =>
+          import(
+            './users/presentation/pages/roles-manage/roles-manage.component'
+          ),
+      },
+      {
         path: 'usuarios',
+        title: 'Usuarios',
         loadComponent: () =>
           import(
             './users/presentation/pages/users-manage/users-manage.component'
@@ -41,6 +50,7 @@ export const routes: Routes = [
       },
       {
         path: 'institutions',
+        title: 'Instituciones',
         loadComponent: () =>
           import(
             './administration/presentation/pages/institutions-manage/institutions-manage.component'
@@ -49,9 +59,18 @@ export const routes: Routes = [
 
       {
         path: 'dependencies',
+        title: 'Dependencias',
         loadComponent: () =>
           import(
             './administration/presentation/pages/dependencies-manage/dependencies-manage.component'
+          ),
+      },
+      {
+        path: 'accounts',
+        title: 'Cuentas',
+        loadComponent: () =>
+          import(
+            './administration/presentation/pages/accounts-manage/accounts-manage.component'
           ),
       },
       {
@@ -75,19 +94,7 @@ export const routes: Routes = [
             './presentation/pages/administration/jobs/jobs.component'
           ).then((c) => c.JobsComponent),
       },
-      {
-        path: 'roles',
-        loadComponent: () =>
-          import('./users/presentation/pages/roles-manage/roles-manage.component'),
-      },
-      {
-        path: 'accounts',
-        title: 'Cuentas',
-        loadComponent: () =>
-          import(
-            './presentation/pages/administration/accounts/accounts.component'
-          ).then((c) => c.AccountsComponent),
-      },
+
       {
         path: 'external',
         title: 'Externos',

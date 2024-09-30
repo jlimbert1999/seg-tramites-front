@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable, map } from 'rxjs';
 import { environment } from '../../../../environments/environment';
 import {
-  accountResponse,
+  account,
   communicationResponse,
   dependencyResponse,
   externalResponse,
@@ -96,7 +96,7 @@ export class ReportService {
 
   getUnlinkAccountData() {
     return this.http
-      .get<{ account: accountResponse; inbox: communicationResponse[] }>(
+      .get<{ account: account; inbox: communicationResponse[] }>(
         `${this.url}/unlink`
       )
       .pipe(

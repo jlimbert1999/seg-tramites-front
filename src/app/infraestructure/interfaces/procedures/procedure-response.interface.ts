@@ -1,5 +1,4 @@
 import { typeProcedureResponse } from '../administration/type-procedure-response.interface';
-import { accountResponse } from '../administration/account-response.interface';
 import { GroupProcedure, StateProcedure } from '../../../domain/models';
 
 export interface procedure {
@@ -13,6 +12,6 @@ export interface procedure {
   startDate: string;
   endDate?: string;
   type: typeProcedureResponse | string;
-  account: accountResponse | string;
+  account: any | string;
   state: StateProcedure;
 }

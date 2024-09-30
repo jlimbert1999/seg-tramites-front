@@ -15,7 +15,7 @@ import {
 
 import { CreateRouteMap } from '../../helpers/pdf/route-map';
 import {
-  accountResponse,
+  account,
   communicationResponse,
 } from '../../infraestructure/interfaces';
 import {
@@ -91,7 +91,7 @@ export class PdfService {
 
   async GenerateUnlinkSheet(
     data: communicationResponse[],
-    account: accountResponse
+    account: account
   ) {
     const date = new Date();
     const docDefinition: TDocumentDefinitions = {
@@ -132,7 +132,7 @@ export class PdfService {
     pdfMake.createPdf(docDefinition).print();
   }
 
-  async createAccountSheet(account: Account, password: string) {
+  async createAccountSheet(account: any, password: string) {
     const docDefinition: TDocumentDefinitions = {
       pageSize: 'LETTER',
       pageMargins: [40, 40, 40, 40],
