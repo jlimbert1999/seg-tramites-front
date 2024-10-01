@@ -49,7 +49,13 @@ import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 export default class AccountsManageComponent {
   private dialog = inject(MatDialog);
   private accountService = inject(AccountService);
-  public displayedColumns = ['visibility', 'nombre', 'dependency', 'options'];
+  public displayedColumns = [
+    'visibility',
+    'nombre',
+    'jobtitle',
+    'dependency',
+    'options',
+  ];
 
   public text: string = '';
 
@@ -108,9 +114,23 @@ export default class AccountsManageComponent {
     });
   }
 
+  assign() {
+    const dialogRef = this.dialog.open(AssignAccountComponent, {
+      width: '600px',
+    });
+    dialogRef.afterClosed().subscribe((result?: Account) => {
+      if (!result) return;
+      this.datasource.update((values) => {
+        if (values.length === this.limit()) values.pop();
+        return [result, ...values];
+      });
+      this.datasize.update((value) => (value += 1));
+    });
+  }
+
   edit(account: Account) {
     const dialogRef = this.dialog.open(EditAccountComponent, {
-      maxWidth: '800px',
+      width: '800px',
       data: account,
       disableClose: true,
     });
@@ -121,17 +141,6 @@ export default class AccountsManageComponent {
         values[index] = result;
         return [...values];
       });
-    });
-  }
-
-  assign() {
-    const dialogRef = this.dialog.open(AssignAccountComponent, {
-      maxWidth: '800px',
-    });
-    dialogRef.afterClosed().subscribe((result: Account) => {
-      if (!result) return;
-      this.datasource.update((values) => [result, ...values]);
-      this.datasize.update((value) => (value += 1));
     });
   }
 

@@ -22,15 +22,21 @@ import { MaterialModule } from '../../../../../material.module';
 
 import { role } from '../../../../../infraestructure/interfaces';
 
-import { Account, Officer } from '../../../../../domain/models';
 import { generateCredentials } from '../../../../../helpers';
-import { ServerSelectSearchComponent } from '../../../../../shared';
-import { AccountService, AlertService, PdfService, ReportService } from '../../../../../presentation/services';
-
-interface SelectOption {
-  text: string;
-  value: Officer;
-}
+import {
+  ServerSelectOption,
+  ServerSelectSearchComponent,
+  SimpleSelectSearchComponent,
+} from '../../../../../shared';
+import {
+  AccountService,
+  AlertService,
+  PdfService,
+  ReportService,
+} from '../../../../../presentation/services';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { map } from 'rxjs';
+import { Account, Officer } from '../../../../domain';
 
 @Component({
   selector: 'app-edit-account',
@@ -41,6 +47,7 @@ interface SelectOption {
     MatDialogModule,
     MaterialModule,
     ServerSelectSearchComponent,
+    SimpleSelectSearchComponent,
   ],
   templateUrl: './edit-account.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -54,39 +61,65 @@ export class EditAccountComponent {
   private pdfService = inject(PdfService);
 
   public account = signal(inject<Account>(MAT_DIALOG_DATA));
-  public roles = signal<role[]>([]);
   public hidePassword = true;
   public updatePassword = false;
-  public officers = signal<SelectOption[]>([]);
+  public officers = signal<ServerSelectOption<Officer>[]>([]);
   public communications = signal<{ label: string; count: number }[]>([]);
+
   public FormAccount: FormGroup = this.fb.group({
     login: ['', [Validators.required, Validators.pattern(/^[a-zA-Z0-9]+$/)]],
-    rol: ['', Validators.required],
+    password: ['', Validators.pattern(/^\S+$/)],
+    role: ['', Validators.required],
+    jobtitle: ['', Validators.required],
+    isVisible: [true, Validators.required],
+    isActive: [true, Validators.required],
+    funcionario: [''],
   });
 
+  roles = toSignal(
+    this.accountService.getRoles().pipe(
+      map((resp) =>
+        resp.map(({ _id, name }) => ({
+          value: _id,
+          text: name,
+        }))
+      )
+    ),
+    { initialValue: [] }
+  );
+
   ngOnInit(): void {
-    const { funcionario, ...props } = this.account();
-    this.FormAccount.patchValue(props);
-    this.accountService.getRoles().subscribe((roles) => this.roles.set(roles));
-    this.reportService.getWorkDetails(this.account()._id).subscribe((data) => {
-      this.communications.set(data);
-    });
+    this._loadForm();
+  }
+
+  save() {
+    this.accountService
+      .edit(this.account()._id, this.FormAccount.value)
+      .subscribe((account) => {
+        // this.account.set(account as any);
+        // const passwordCtrl = this.FormAccount.get('password');
+        // if (account.funcionario && passwordCtrl) {
+        //   this.pdfService.createAccountSheet(account, '', passwordCtrl?.value);
+        // }
+        this.dialogRef.close(account);
+      });
   }
 
   unlink() {
-    this.alertService.QuestionAlert({
-      title: `¿ DESVINCULAR CUENTA ?`,
-      text: `${
-        this.account().funcionario?.fullname
-      } perdera el acceso y la cuenta quedará deshabilitada hasta una asignación.`,
-      callback: () => {
-        this.accountService.unlink(this.account()._id).subscribe(() => {
-          this.account.update(
-            ({ funcionario, ...props }) => new Account({ ...props })
-          );
-        });
-      },
-    });
+    // this.alertService.QuestionAlert({
+    //   title: `¿ DESVINCULAR CUENTA ?`,
+    //   text: `${
+    //     this.account().funcionario?.fullname
+    //   } perdera el acceso y la cuenta quedará deshabilitada hasta una asignación.`,
+    //   callback: () => {
+    //     this.accountService.unlink(this.account()._id).subscribe(() => {
+    //       this.account.update(
+    //         ({ funcionario, ...props }) => new Account({ ...props })
+    //       );
+    //     });
+    //   },
+    // });
+    this.FormAccount.removeControl('funcionario');
   }
 
   searchOfficer(text: string) {
@@ -94,13 +127,13 @@ export class EditAccountComponent {
       this.officers.set(
         data.map((officer) => ({
           value: officer,
-          text: officer.fullWorkTitle,
+          text: officer.fullname,
         }))
       );
     });
   }
 
-  selectOfficer(officer: Officer) {
+  onSselectOfficer(officer: Officer) {
     this.updatePassword = true;
     this.hidePassword = false;
     const credentials = generateCredentials({
@@ -117,18 +150,6 @@ export class EditAccountComponent {
     this.FormAccount.patchValue({ ...credentials });
   }
 
-  save() {
-    this.accountService
-      .edit(this.account()._id, this.FormAccount.value)
-      .subscribe((account) => {
-        this.account.set(account as any);
-        const passwordCtrl = this.FormAccount.get('password');
-        if (account.funcionario && passwordCtrl) {
-          this.pdfService.createAccountSheet(account, passwordCtrl?.value);
-        }
-        this.dialogRef.close(account);
-      });
-  }
   close() {
     this.dialogRef.close(this.account());
   }
@@ -150,5 +171,14 @@ export class EditAccountComponent {
         Validators.pattern(/^[a-zA-Z0-9$]+$/),
       ])
     );
+  }
+  private _loadForm() {
+    console.log(this.account());
+    const { user, ...props } = this.account();
+    console.log(props);
+    this.FormAccount.patchValue({ ...user, ...props });
+    // this.reportService.getWorkDetails(this.account()._id).subscribe((data) => {
+    //   this.communications.set(data);
+    // });
   }
 }

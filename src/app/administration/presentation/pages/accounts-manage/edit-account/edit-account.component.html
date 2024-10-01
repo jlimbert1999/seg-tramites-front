@@ -1,111 +1,134 @@
 <h2 mat-dialog-title>Edicion Cuenta</h2>
 <mat-dialog-content>
-  @if (account().funcionario) {
-  <div class="d-flex border rounded-2 p-2 mb-4">
-    <div class="flex-shrink-0">
-      <img src="../../../../../../assets/img/account.png" style="width: 40px" />
-    </div>
-    <div class="flex-grow-1 ms-3">
-      <div class="d-flex flex-column">
-        <span class="fw-bold">{{ account().funcionario?.fullname }}</span>
-        <span>{{ account().funcionario?.jobtitle }}</span>
-      </div>
-    </div>
-    <div class="ms-auto">
-      <button
-        mat-mini-fab
-        color="primary"
-        matTooltip="Desvincular"
-        (click)="unlink()"
-      >
-        <mat-icon>person_off</mat-icon>
-      </button>
-    </div>
-  </div>
-  } @else {
-  <server-select-search
-    placeholder="Buscar funcionario"
-    (onSearch)="searchOfficer($event)"
-    (onSelect)="selectOfficer($event)"
-    [elements]="officers()"
-  />
-  }
-  <div class="row m-0">
-    <div class="col-md-5 border rounded-2 p-3">
-      <p class="fw-bold">PROPIEDADES BANDEJA</p>
-      <dl class="row">
-        @for (item of communications(); track $index) {
-        <dt class="col-6">{{ item.label }}</dt>
-        <dd class="col-6">{{ item.count }}</dd>
-        }
-        @empty {
-          <p class="p-2">CARGANDO...</p>
-        }
-      </dl>
-    </div>
-    <div class="col-md-7">
-      <form [formGroup]="FormAccount">
-        <div class="row">
-          <div class="col-12 py-3">
-            <mat-checkbox
-              (change)="togglePassword($event.checked)"
-              [checked]="updatePassword"
+  <mat-tab-group mat-stretch-tabs="false" mat-align-tabs="start">
+    <mat-tab label="Cuenta">
+      <!-- @if (account().funcionario) {
+        <div class="d-flex border rounded-2 p-2 mb-4">
+          <div class="flex-shrink-0">
+            <img src="../../../../../../assets/img/account.png" style="width: 40px" />
+          </div>
+          <div class="flex-grow-1 ms-3">
+            <div class="d-flex flex-column">
+              <span class="fw-bold">{{ account().funcionario?.fullname }}</span>
+              <span>{{ account().funcionario?.jobtitle }}</span>
+            </div>
+          </div>
+          <div class="ms-auto">
+            <button
+              mat-mini-fab
+              color="primary"
+              matTooltip="Desvincular"
+              (click)="unlink()"
             >
-              Actualizar contraseña
-            </mat-checkbox>
+              <mat-icon>person_off</mat-icon>
+            </button>
           </div>
+        </div>
+        } @else {
+        <server-select-search
+          placeholder="Buscar funcionario"
+          (onSearch)="searchOfficer($event)"
+          (onSelect)="selectOfficer($event)"
+          [elements]="officers()"
+        />
+        } -->
+      <!-- <div class="row m-0">
+        <div class="col-md-5 border rounded-2 p-3">
+          <p class="fw-bold">PROPIEDADES BANDEJA</p>
+          <dl class="row">
+            @for (item of communications(); track $index) {
+            <dt class="col-6">{{ item.label }}</dt>
+            <dd class="col-6">{{ item.count }}</dd>
+            } @empty {
+            <p class="p-2">CARGANDO...</p>
+            }
+          </dl>
+        </div>
+        <div class="col-md-7">
+         
+        </div>
+      </div> -->
+      <!-- <mat-form-field class="example-form-field">
+        <mat-label>Clearable input</mat-label>
+        <input matInput type="text" [(ngModel)]="value">
+        @if (value) {
+          <button matSuffix mat-icon-button aria-label="Clear" (click)="value=''">
+            <mat-icon>close</mat-icon>
+          </button>
+        }
+      </mat-form-field> -->
+      @if (FormAccount.get('funcionario')?.value) {
+      <mat-form-field class="example-form-field">
+        <mat-label>Funcionario</mat-label>
+        <input
+          matInput
+          type="text"
+          [value]="account().funcionario?.fullname"
+          readonly
+        />
+        <button matSuffix mat-icon-button aria-label="Clear" (click)="unlink()">
+          <mat-icon>close</mat-icon>
+        </button>
+      </mat-form-field>
+      } @else {
+      <server-select-search
+        placeholder="Buscar funcionario"
+        [elements]="officers()"
+        (onSearch)="searchOfficer($event)"
+        (onSelect)="onSselectOfficer($event)"
+      />
+      }
 
-          <div class="col-12">
-            <mat-form-field>
-              <mat-label>Permisos</mat-label>
-              <mat-select formControlName="rol">
-                <mat-option *ngFor="let rol of roles()" [value]="rol._id">
-                  {{ rol.name }}
-                </mat-option>
-              </mat-select>
-            </mat-form-field>
-          </div>
-
-          <div class="col-12">
-            <mat-form-field>
-              <mat-label>Login</mat-label>
-              <input formControlName="login" matInput />
-            </mat-form-field>
-          </div>
-
-          @if(FormAccount.get('password')){
-          <div class="col-12">
-            <mat-form-field>
-              <mat-label>Contraseña</mat-label>
-              <input
-                matInput
-                [autocomplete]="false"
-                formControlName="password"
-                [type]="hidePassword ? 'password' : 'text'"
-              />
-              <button
-                mat-icon-button
-                matSuffix
-                (click)="hidePassword = !hidePassword"
-                [attr.aria-label]="'Hide password'"
-                [attr.aria-pressed]="hidePassword"
-              >
-                <mat-icon>{{
-                  hidePassword ? "visibility_off" : "visibility"
-                }}</mat-icon>
-              </button>
-            </mat-form-field>
-          </div>
-          }
+      <form [formGroup]="FormAccount" class="mt-2">
+        <mat-form-field>
+          <mat-label>Cargo</mat-label>
+          <input formControlName="jobtitle" matInput />
+        </mat-form-field>
+        <div class="flex gap-x-2">
+          <mat-form-field>
+            <mat-label>Login</mat-label>
+            <input formControlName="login" matInput />
+          </mat-form-field>
+          <mat-form-field>
+            <mat-label>Contraseña</mat-label>
+            <input
+              matInput
+              [autocomplete]="false"
+              formControlName="password"
+              [type]="hidePassword ? 'password' : 'text'"
+            />
+            <button
+              mat-icon-button
+              matSuffix
+              (click)="hidePassword = !hidePassword"
+              [attr.aria-label]="'Hide password'"
+              [attr.aria-pressed]="hidePassword"
+            >
+              <mat-icon>{{
+                hidePassword ? "visibility_off" : "visibility"
+              }}</mat-icon>
+            </button>
+          </mat-form-field>
+        </div>
+        <simple-select-search
+          placeholder="Seleccione un rol"
+          [elements]="roles()"
+          [value]="FormAccount.get('role')?.value"
+          (onSelect)="FormAccount.get('role')?.setValue($event)"
+        />
+        <div class="flex flex-col gap-y-2">
+          <mat-checkbox formControlName="isActive"> Habilitado </mat-checkbox>
+          <mat-checkbox formControlName="isVisible"> Visible </mat-checkbox>
         </div>
       </form>
-    </div>
-  </div>
+    </mat-tab>
+    <mat-tab label="Detalle">Content 2</mat-tab>
+  </mat-tab-group>
 </mat-dialog-content>
 <mat-dialog-actions align="end">
-  <button mat-raised-button color="warn" (click)="close()">Cancelar</button>
+  <button mat-button color="warn" (click)="close()">Cancelar</button>
   <button
-    mat-raised-button
+    mat-button
     color="primary"
     [disabled]="FormAccount.invalid"
     (click)="save()"

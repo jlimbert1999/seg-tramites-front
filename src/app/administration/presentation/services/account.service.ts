@@ -34,18 +34,17 @@ export class AccountService {
   getInstitutions() {
     return this.http.get<institution[]>(`${this.url}/institutions`);
   }
-  getDependenciesOfInstitution(id_institution: string, text?: string) {
+
+  getDependenciesOfInstitution(institutionId: string) {
     return this.http.get<dependency[]>(
-      `${this.url}/dependencie/${id_institution}`,
-      {
-        params: text ? { text } : undefined,
-      }
+      `${this.url}/dependencies/${institutionId}`
     );
   }
 
-  searchOfficersWithoutAccount(text: string) {
+  searchOfficersWithoutAccount(term: string) {
+    const params = new HttpParams({ fromObject: { term } });
     return this.http
-      .get<officer[]>(`${this.url}/assign/${text}`)
+      .get<officer[]>(`${this.url}/assign`, { params })
       .pipe(
         map((resp) =>
           resp.map((officer) => OfficerMapper.fromResponse(officer))
@@ -89,15 +88,15 @@ export class AccountService {
   }
 
   assign(form: Object) {
-    // const account = AccountDto.toModel(form);
     return this.http
       .post<account>(`${this.url}/assign`, form)
       .pipe(map((resp) => AccountMapper.fromResponse(resp)));
   }
 
-  edit(id: string, account: Object) {
+  edit(id: string, form: Record<string, any>) {
+    if (form['password'] === '') delete form['password'];
     return this.http
-      .put<account>(`${this.url}/${id}`, account)
+      .patch<account>(`${this.url}/${id}`, form)
       .pipe(map((resp) => AccountMapper.fromResponse(resp)));
   }
 

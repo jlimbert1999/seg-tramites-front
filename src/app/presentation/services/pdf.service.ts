@@ -4,7 +4,6 @@ import pdfMake from 'pdfmake/build/pdfmake';
 import pdfFonts from 'pdfmake/build/vfs_fonts';
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
 import {
-  Account,
   ExternalProcedure,
   GroupProcedure,
   InternalProcedure,
@@ -28,6 +27,7 @@ import { UnlinkSheet } from '../../helpers/pdf/unlink-form';
 import { AuthService } from './auth/auth.service';
 import { createReportSheet } from '../../helpers/pdf/report-sheet';
 import { ReportSheetProps } from '../../domain/interfaces';
+import { Account } from '../../administration/domain';
 
 @Injectable({
   providedIn: 'root',
@@ -89,10 +89,7 @@ export class PdfService {
     pdfMake.createPdf(docDefinition).print();
   }
 
-  async GenerateUnlinkSheet(
-    data: communicationResponse[],
-    account: account
-  ) {
+  async GenerateUnlinkSheet(data: communicationResponse[], account: account) {
     const date = new Date();
     const docDefinition: TDocumentDefinitions = {
       pageSize: 'LETTER',
@@ -132,7 +129,7 @@ export class PdfService {
     pdfMake.createPdf(docDefinition).print();
   }
 
-  async createAccountSheet(account: any, password: string) {
+  async createAccountSheet(account: Account, login: string, password: string) {
     const docDefinition: TDocumentDefinitions = {
       pageSize: 'LETTER',
       pageMargins: [40, 40, 40, 40],
@@ -143,7 +140,7 @@ export class PdfService {
           code: 'SF-000-74-RG26',
           date: '20/02/2020',
         }),
-        AccountSheet.createContent(account, password),
+        AccountSheet.createContent(account, login, password),
       ],
     };
     pdfMake.createPdf(docDefinition).print();

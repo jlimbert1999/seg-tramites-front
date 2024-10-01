@@ -1,6 +1,10 @@
 import { Content } from 'pdfmake/interfaces';
-import { Account } from '../../domain/models';
-function createContent(account: Account, password: string): Content {
+import { Account } from '../../administration/domain';
+function createContent(
+  account: Account,
+  login: string,
+  password: string
+): Content {
   return [
     {
       marginTop: 50,
@@ -12,7 +16,7 @@ function createContent(account: Account, password: string): Content {
         },
         'CARGO: ',
         {
-          text: `${account.jobtitleManager()}\n\n`,
+          text: `${account.jobtitle}\n\n`,
           bold: false,
         },
         'UNIDAD: ',
@@ -34,7 +38,7 @@ function createContent(account: Account, password: string): Content {
     {
       text: [
         'Usuario: ',
-        { text: `${account.login}\n\n`, bold: false },
+        { text: `${login}\n\n`, bold: false },
         'Contraseña: ',
         { text: `${password ? password : '*********'}\n\n`, bold: false },
       ],

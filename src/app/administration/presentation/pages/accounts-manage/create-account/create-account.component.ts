@@ -18,10 +18,15 @@ import { forkJoin } from 'rxjs';
 import { role } from '../../../../../infraestructure/interfaces';
 
 import { MaterialModule } from '../../../../../material.module';
-import { OfficerService, PdfService } from '../../../../../presentation/services';
-import { ServerSelectSearchComponent, SimpleSelectSearchComponent } from '../../../../../shared';
+import {
+  OfficerService,
+  PdfService,
+} from '../../../../../presentation/services';
+import {
+  ServerSelectSearchComponent,
+  SimpleSelectSearchComponent,
+} from '../../../../../shared';
 import { AccountService } from '../../../services';
-
 
 interface SelectOption {
   value: string;
@@ -84,6 +89,7 @@ export class CreateAccountComponent {
       .subscribe((account) => {
         this.pdfService.createAccountSheet(
           account,
+          '',
           this.FormAccount.get('password')?.value
         );
         this.dialogRef.close(account);

@@ -19,7 +19,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
 import { ReplaySubject, Subject, debounceTime, filter, takeUntil } from 'rxjs';
 
-type MatSelectSearchData<T> = {
+export type ServerSelectOption<T> = {
   text: string;
   value: T;
 };
@@ -40,7 +40,7 @@ type MatSelectSearchData<T> = {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ServerSelectSearchComponent<T> implements OnInit, OnDestroy {
-  elements = input.required<MatSelectSearchData<T>[]>();
+  elements = input.required<ServerSelectOption<T>[]>();
   placeholder = input<string>('Buscar...');
   isRequired = input<boolean>(true);
   onSearch = output<string>();
@@ -52,7 +52,7 @@ export class ServerSelectSearchComponent<T> implements OnInit, OnDestroy {
 
   public bankCtrl = new FormControl<T | null>(null);
   public bankFilterCtrl = new FormControl<string>('');
-  public filteredBanks = new ReplaySubject<MatSelectSearchData<T>[]>(1);
+  public filteredBanks = new ReplaySubject<ServerSelectOption<T>[]>(1);
   protected _onDestroy = new Subject<void>();
 
   constructor() {

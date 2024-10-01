@@ -55,6 +55,7 @@ export class CreatePostComponent {
   ];
 
   files = signal<File[]>([]);
+  image = signal<File | undefined>(undefined);
   form = this.formBuilder.group({
     title: ['', Validators.required],
     content: ['', Validators.required],
@@ -76,6 +77,11 @@ export class CreatePostComponent {
     subscription.subscribe((resp) => {
       this.dialogRef.close(resp);
     });
+  }
+
+  selectImage(event: Event): void {
+    const inputElement = event.target as HTMLInputElement;
+    this.image.set(inputElement.files?.[0]);
   }
 
   addFile(event: Event): void {

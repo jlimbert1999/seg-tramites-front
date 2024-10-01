@@ -3,4 +3,5 @@ export class user {
   fullname: string;
   login: string;
   isActive: boolean;
+  role: string;
 }

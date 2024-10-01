@@ -12,35 +12,36 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { MatDialogRef } from '@angular/material/dialog';
-import { forkJoin } from 'rxjs';
-import { MaterialModule } from '../../../../../material.module';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatButtonModule } from '@angular/material/button';
+import { MatInputModule } from '@angular/material/input';
+import { MatIconModule } from '@angular/material/icon';
+import { map } from 'rxjs';
 
-
-import { role } from '../../../../../infraestructure/interfaces';
-import { Officer } from '../../../../../domain/models';
-import { generateCredentials } from '../../../../../helpers';
-import { ServerSelectSearchComponent, SimpleSelectSearchComponent } from '../../../../../shared';
-import { AccountService } from '../../../services';
 import { PdfService } from '../../../../../presentation/services';
-
-interface SelectOption {
-  value: string;
-  text: string;
-}
-
-interface SelectOptionOfficer {
-  value: Officer;
-  text: string;
-}
+import { Officer } from '../../../../../domain/models';
+import {
+  ServerSelectOption,
+  ServerSelectSearchComponent,
+  SimpleSelectSearchComponent,
+} from '../../../../../shared';
+import { AccountService } from '../../../services';
 
 @Component({
   selector: 'app-assign-account',
   standalone: true,
   imports: [
     CommonModule,
-    MaterialModule,
     ReactiveFormsModule,
+    MatButtonModule,
+    MatInputModule,
+    MatFormFieldModule,
+    MatDialogModule,
+    MatIconModule,
+    MatDividerModule,
     SimpleSelectSearchComponent,
     ServerSelectSearchComponent,
   ],
@@ -54,15 +55,36 @@ export class AssignAccountComponent implements OnInit {
   private dialogRef = inject(MatDialogRef<AssignAccountComponent>);
 
   hidePassword = true;
-  institutions = signal<SelectOption[]>([]);
-  dependencies = signal<SelectOption[]>([]);
-  officers = signal<SelectOptionOfficer[]>([]);
-  roles = signal<role[]>([]);
+
+  institutions = toSignal(
+    this.accountService.getInstitutions().pipe(
+      map((resp) =>
+        resp.map(({ _id, nombre }) => ({
+          value: _id,
+          text: nombre,
+        }))
+      )
+    ),
+    { initialValue: [] }
+  );
+
+  roles = toSignal(
+    this.accountService.getRoles().pipe(
+      map((resp) =>
+        resp.map(({ _id, name }) => ({
+          value: _id,
+          text: name,
+        }))
+      )
+    ),
+    { initialValue: [] }
+  );
+
+  dependencies = signal<ServerSelectOption<string>[]>([]);
+  officers = signal<ServerSelectOption<Officer>[]>([]);
+
   FormAccount: FormGroup = this.fb.nonNullable.group({
-    password: ['', [Validators.required, Validators.pattern(/^\S+$/)]],
-    funcionario: ['', Validators.required],
-    dependencia: ['', Validators.required],
-    rol: ['', Validators.required],
+    fullname: ['', Validators.required],
     login: [
       '',
       [
@@ -71,66 +93,63 @@ export class AssignAccountComponent implements OnInit {
         Validators.minLength(4),
       ],
     ],
+    password: ['', [Validators.required, Validators.pattern(/^\S+$/)]],
+    officer: ['', Validators.required],
+    dependency: ['', Validators.required],
+    jobtitle: ['', Validators.required],
+    role: ['', Validators.required],
   });
 
-  ngOnInit(): void {
-    this._getRequiredProps();
-  }
-
-  selectInstitution(id: string) {
-    this.dependencies.set([]);
-    this.accountService.getDependenciesOfInstitution(id).subscribe((data) => {
-      this.dependencies.set(
-        data.map(({ _id, nombre }) => ({ value: _id, text: nombre }))
-      );
-    });
-  }
-
-  selectOfficer({ nombre, paterno, materno, dni, _id }: Officer) {
-    const crendentials = generateCredentials({
-      name: nombre,
-      middlename: paterno,
-      lastname: materno,
-      dni: dni,
-    });
-    this.FormAccount.patchValue({
-      funcionario: _id,
-      ...crendentials,
-    });
-  }
-
-  searchOfficers(term: string) {
-    this.accountService
-      .searchOfficersWithoutAccount(term)
-      .subscribe((officers) => {
-        this.officers.set(
-          officers.map((officer) => ({
-            text: `${officer.fullname} (${officer.jobtitle})`,
-            value: officer,
-          }))
-        );
-      });
-  }
+  ngOnInit(): void {}
 
   save() {
     this.accountService.assign(this.FormAccount.value).subscribe((account) => {
       this.pdfService.createAccountSheet(
         account,
+        this.FormAccount.get('login')?.value,
         this.FormAccount.get('password')?.value
       );
       this.dialogRef.close(account);
     });
   }
 
-  private _getRequiredProps() {
-    forkJoin([
-      this.accountService.getInstitutions(),
-      this.accountService.getRoles(),
-    ]).subscribe(([institutions, roles]) => {
-      this.roles.set(roles);
-      this.institutions.set(
-        institutions.map(({ nombre, _id }) => ({ text: nombre, value: _id }))
-      );
+  searchOfficer(term: string): void {
+    this.accountService
+      .searchOfficersWithoutAccount(term)
+      .subscribe((officers) => {
+        const options = officers.map((officer) => ({
+          text: `${officer.fullname}`,
+          value: officer,
+        }));
+        this.officers.set(options);
+      });
+  }
+
+  onSelectInstitution(id: string): void {
+    this.dependencies.set([]);
+    this.accountService.getDependenciesOfInstitution(id).subscribe((data) => {
+      const options = data.map(({ _id, nombre }) => ({
+        value: _id,
+        text: nombre,
+      }));
+      this.dependencies.set(options);
+    });
+  }
+
+  onSelectOfficer({
+    _id,
+    dni,
+    nombre,
+    paterno,
+    materno,
+    fullname,
+  }: Officer): void {
+    const login = nombre.charAt(0) + materno + paterno.charAt(0);
+    this.FormAccount.patchValue({
+      fullname,
+      officer: _id,
+      login: login.trim(),
+      password: dni.trim(),
     });
   }
 }
