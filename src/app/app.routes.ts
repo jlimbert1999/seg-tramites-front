@@ -204,7 +204,22 @@ export const routes: Routes = [
       },
       {
         path: 'posts',
-        component: PostsComponent,
+        children: [
+          {
+            path: 'history',
+            loadComponent: () =>
+              import(
+                './publications/presentation/pages/publication-history/publication-history.component'
+              ),
+          },
+          {
+            path: 'manage',
+            loadComponent: () =>
+              import(
+                './publications/presentation/pages/manage-publications/manage-publications.component'
+              ),
+          },
+        ],
       },
       {
         path: 'info',

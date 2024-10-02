@@ -17,6 +17,8 @@ import {
   ProfileComponent,
 } from '../../components';
 import { MaterialModule } from '../../../material.module';
+import { MatDialog } from '@angular/material/dialog';
+import { PublicationDialogComponent } from '../../../publications/presentation/components';
 
 @Component({
   selector: 'app-home',
@@ -39,7 +41,10 @@ export class HomeComponent implements OnInit {
   private alertservice = inject(AlertService);
   private authService = inject(AuthService);
   private destroyRef = inject(DestroyRef);
+
   private router = inject(Router);
+
+  readonly dialogRef = inject(MatDialog);
 
   public detailsOpen = false;
   public isHandset$ = this.breakpointObserver.observe(Breakpoints.Handset).pipe(
@@ -58,6 +63,13 @@ export class HomeComponent implements OnInit {
     this.handleOnlineClients();
     this.handleExpelClient();
     this.handleCommunications();
+    this.socketService.listNews().subscribe((pub) => {
+      this.dialogRef.open(PublicationDialogComponent, {
+        data: [pub],
+        minWidth: '900px',
+        height: '600px',
+      });
+    });
   }
 
   logout() {

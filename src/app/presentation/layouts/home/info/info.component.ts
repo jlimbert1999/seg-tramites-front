@@ -21,7 +21,21 @@ export class InfoComponent {
   logs = [
     {
       icon: 'settings',
-      version: '2.0.0',
+      version: '1.9.1',
+      group: 'error',
+      date: '2/10/2024',
+      title: 'Implementacion de comunicados',
+      description: 'Vista de comunicados para administracion mas historicos',
+      activities: [
+        'Implementación de carga de archivos',
+        'Implementación de validaciones de tipos de documentos',
+        'Implementacion de nuevo roles y permisos',
+        'Correccion esquema de usuarios',
+      ],
+    },
+    {
+      icon: 'settings',
+      version: '1.9.0',
       group: 'error',
       date: '30/04/2024',
       title:
@@ -35,7 +49,7 @@ export class InfoComponent {
     },
     {
       icon: 'settings',
-      version: '1.9.0',
+      version: '1.8.0',
       group: 'error',
       date: '20/02/2024',
       title:

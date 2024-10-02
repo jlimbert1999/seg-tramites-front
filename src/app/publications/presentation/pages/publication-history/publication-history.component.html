@@ -1,0 +1,12 @@
+<div class="flex flex-col h-full">
+  <mat-toolbar>
+    <span>Comunicados</span>
+  </mat-toolbar>
+  <div class="flex-1 overflow-scroll rounded-xl m-4" #containerRef>
+    <publication-list
+      [containerRef]="containerRef"
+      [publications]="publications()"
+      (onScroll)="loadMorePublications()"
+    />
+  </div>
+</div>

@@ -3,6 +3,10 @@
 @import 'animate.css';
 @import "./assets/scss/status-badge.scss";
 
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 html,
 body {
   height: 100%;
@@ -154,4 +158,8 @@ table {
     margin-top: 24px;
   }
 
+}
+
+*, ::before, ::after {
+  border-style: none;
 }
