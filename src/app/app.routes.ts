@@ -58,6 +58,15 @@ export const routes: Routes = [
       },
 
       {
+        title: 'Funcionarios',
+        path: 'officers',
+        loadComponent: () =>
+          import(
+            './administration/presentation/pages/officers-manage/officers-manage.component'
+          ),
+      },
+
+      {
         path: 'dependencies',
         title: 'Dependencias',
         loadComponent: () =>
@@ -77,16 +86,10 @@ export const routes: Routes = [
         path: 'types-procedures',
         loadComponent: () =>
           import(
-            './presentation/pages/administration/types-procedures/types-procedures.component'
-          ).then((c) => c.TypesProceduresComponent),
+            './administration/presentation/pages/types-procedures/types-procedures.component'
+          ),
       },
-      {
-        path: 'officers',
-        loadComponent: () =>
-          import(
-            './presentation/pages/administration/officers/officers.component'
-          ).then((c) => c.OfficersComponent),
-      },
+
       {
         path: 'jobs',
         loadComponent: () =>

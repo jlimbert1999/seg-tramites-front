@@ -1,34 +1,17 @@
-<p>
-  <mat-toolbar color="primary">
-    <sidenav-button />
-    <span>Tipos de tramites</span>
-    <span class="toolbar-spacer"></span>
-    <button (click)="add()" mat-icon-button matTooltip="Crear cuenta">
+<div class="flex flex-wrap items-center gap-x-2 px-4 mb-2">
+  <div class="flex-1 text-xl">Tramites</div>
+  <div class="order-last w-full sm:w-60 sm:order-none h-12">
+    <search-input (onSearch)="search($event)" />
+  </div>
+  <div>
+    <button mat-icon-button aria-label="Add user" (click)="create()">
       <mat-icon>add</mat-icon>
     </button>
-  </mat-toolbar>
-</p>
-<div class="container-fluid">
-  <mat-form-field class="example-full-width">
-    <mat-label>Buscar tipo de tramite</mat-label>
-    <input
-      matInput
-      [(ngModel)]="term"
-      (keyup)="applyFilter($event)"
-      placeholder="Nombre / Segmento"
-      #input
-    />
-    <button
-      *ngIf="term"
-      matSuffix
-      mat-icon-button
-      aria-label="Clear"
-      (click)="cancelSearch()"
-    >
-      <mat-icon>close</mat-icon>
-    </button>
-  </mat-form-field>
-  <div class="example-container mat-elevation-z8">
+  </div>
+</div>
+
+<div class="animate-fadeIn">
+  <div class="mat-elevation-z8">
     <div class="example-table-container">
       <table mat-table [dataSource]="dataSource()">
         <ng-container matColumnDef="nombre">

@@ -20,6 +20,7 @@
           <th mat-header-cell *matHeaderCellDef>Alterno</th>
           <td mat-cell *matCellDef="let row" [id]="row._id">
             <a
+              class="underline text-blue-600"
               [routerLink]="['/home/external', row.group, row._id]"
               [queryParams]="PageParam"
             >

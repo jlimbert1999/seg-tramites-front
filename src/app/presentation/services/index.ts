@@ -6,7 +6,7 @@ export * from './appearance.service';
 
 export * from './auth/auth.service';
 export * from '../../administration/presentation/services/account.service';
-export * from './administration/officer.service';
+export * from '../../administration/presentation/services/officer.service';
 
 export * from './procedures/external.service';
 export * from './procedures/internal.service';

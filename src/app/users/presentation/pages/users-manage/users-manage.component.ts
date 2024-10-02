@@ -66,6 +66,7 @@ export default class UsersManageComponent implements OnInit {
     this.userService
       .findAll(this.limit(), this.offset(), this.term())
       .subscribe(({ users, length }) => {
+        console.log(users);
         this.datasource.set(users);
         this.datasize.set(length);
       });

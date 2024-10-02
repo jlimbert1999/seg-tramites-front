@@ -2,6 +2,9 @@ import { Injectable, inject } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
 import Swal from 'sweetalert2';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatDialog } from '@angular/material/dialog';
+import { ConfirmDialogComponent, confirmDialogData } from '../../shared';
+import { Observable } from 'rxjs';
 
 interface AlertOptions {
   title: string;
@@ -39,6 +42,7 @@ interface SnackbarOptions {
 export class AlertService {
   private toast = inject(ToastrService);
   private snackBar = inject(MatSnackBar);
+  private dialog = inject(MatDialog);
 
   Alert({ icon = 'info', title, text }: AlertOptions) {
     Swal.fire({
@@ -48,6 +52,17 @@ export class AlertService {
       confirmButtonText: 'Aceptar',
     });
   }
+
+  confirmDialog(data: confirmDialogData): Observable<boolean> {
+    return this.dialog
+      .open(ConfirmDialogComponent, {
+        data: data,
+        disableClose: true,
+        width: '400px',
+      })
+      .afterClosed();
+  }
+
   QuestionAlert({ title, text, callback }: QuestionAlertOptions) {
     Swal.fire({
       title: title,

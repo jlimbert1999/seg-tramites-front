@@ -7,8 +7,9 @@ import {
   signal,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { FormsModule } from '@angular/forms';
 import { OverlayModule } from '@angular/cdk/overlay';
+import { FormsModule } from '@angular/forms';
+
 import { CreateAccountComponent } from './create-account/create-account.component';
 
 import { EditAccountComponent } from './edit-account/edit-account.component';
@@ -38,10 +39,10 @@ import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
     OverlayModule,
     PaginatorComponent,
     MatPaginatorModule,
+    SearchInputComponent,
     SidenavButtonComponent,
     ServerSelectSearchComponent,
     SimpleSelectSearchComponent,
-    SearchInputComponent,
   ],
   templateUrl: './accounts-manage.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -54,6 +55,7 @@ export default class AccountsManageComponent {
     'nombre',
     'jobtitle',
     'dependency',
+    'state',
     'options',
   ];
 
@@ -160,26 +162,6 @@ export default class AccountsManageComponent {
     this.index.set(0);
     this.getData();
     this.isOpen = false;
-  }
-
-  toggleVisibility(account: Account) {
-    this.accountService.toggleVisibility(account._id).subscribe((state) => {
-      this.datasource.update((values) => {
-        const index = values.findIndex((item) => item._id === account._id);
-        values[index].isVisible = state;
-        return [...values];
-      });
-    });
-  }
-
-  disable(account: Account) {
-    this.accountService.disable(account._id).subscribe((activo) => {
-      this.datasource.update((values) => {
-        const index = values.findIndex((item) => item._id === account._id);
-        // values[index].activo = activo;
-        return [...values];
-      });
-    });
   }
 
   onPageChange({ pageIndex, pageSize }: PageEvent) {

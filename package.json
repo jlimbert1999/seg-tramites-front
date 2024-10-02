@@ -23,7 +23,7 @@
     "@swimlane/ngx-graph": "^8.4.0",
     "@types/d3": "^7.4.3",
     "@types/pdfmake": "^0.2.9",
-    "bootstrap": "^5.3.2",
+    "bootstrap": "^5.3.3",
     "jspdf": "^2.5.1",
     "jwt-decode": "^4.0.0",
     "moment": "^2.30.1",

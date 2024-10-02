@@ -37,6 +37,6 @@ export class RoleService {
 
   edit(id: string, name: string, resources: resource[]) {
     const Role = RoleDto.toModel(name, resources);
-    return this.http.put<role>(`${this.url}/${id}`, Role);
+    return this.http.patch<role>(`${this.url}/${id}`, Role);
   }
 }

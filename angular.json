@@ -32,7 +32,8 @@
             "styles": [
               "@angular/material/prebuilt-themes/azure-blue.css",
               "src/styles.scss",
-              "src/theme.scss"
+              "src/theme.scss",
+              "node_modules/bootstrap/dist/css/bootstrap.min.css"
             ],
             "allowedCommonJsDependencies": [
               "sweetalert2",
@@ -41,7 +42,7 @@
               "moment",
               "dagre",
               "webcola"
-           ]
+            ]
           },
           "configurations": {
             "production": {

@@ -122,11 +122,11 @@ export class CreateAccountComponent {
   }
 
   searchJob(value: string) {
-    this.officerService.searchJobs(value).subscribe((jobs) => {
-      this.jobs.set(
-        jobs.map(({ _id, nombre }) => ({ value: _id, text: nombre }))
-      );
-    });
+    // this.officerService.searchJobs(value).subscribe((jobs) => {
+    //   this.jobs.set(
+    //     jobs.map(({ _id, nombre }) => ({ value: _id, text: nombre }))
+    //   );
+    // });
   }
 
   selectJob(id: string | undefined) {

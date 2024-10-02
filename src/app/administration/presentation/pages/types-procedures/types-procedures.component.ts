@@ -21,7 +21,8 @@ import { typeProcedureResponse } from '../../../../infraestructure/interfaces';
 import {
   PaginatorComponent,
   SidenavButtonComponent,
-} from '../../../components';
+} from '../../../../presentation/components';
+import { SearchInputComponent } from '../../../../shared';
 
 interface PageProps {
   limit: number;
@@ -42,18 +43,20 @@ interface PageProps {
     MatButtonModule,
     PaginatorComponent,
     SidenavButtonComponent,
+    SearchInputComponent,
   ],
   templateUrl: './types-procedures.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class TypesProceduresComponent {
+export default class TypesProceduresComponent {
   public dataSource = signal<typeProcedureResponse[]>([]);
   public displayedColumns = ['nombre', 'segmento', 'activo', 'menu'];
   public length = signal<number>(10);
   public limit = signal<number>(10);
   public index = signal<number>(0);
   public offset = computed<number>(() => this.limit() * this.index());
-  term: string = '';
+
+  term = signal<string>('');
 
   private dialog = inject(MatDialog);
   private typeService = inject(TypeProcedureService);
@@ -64,8 +67,8 @@ export class TypesProceduresComponent {
 
   getData() {
     const subscription =
-      this.term !== ''
-        ? this.typeService.search(this.term, this.limit(), this.offset())
+      this.term() !== ''
+        ? this.typeService.search(this.term(), this.limit(), this.offset())
         : this.typeService.findAll(this.limit(), this.offset());
     subscription.subscribe((data) => {
       this.dataSource.set(data.types);
@@ -73,10 +76,9 @@ export class TypesProceduresComponent {
     });
   }
 
-  add() {
+  create() {
     const dialogRef = this.dialog.open(TypeProcedureComponent, {
-      maxWidth: '1200px',
-      width: '1200px',
+      minWidth: '900px',
     });
     dialogRef.afterClosed().subscribe((result: typeProcedureResponse) => {
       if (!result) return;
@@ -87,8 +89,7 @@ export class TypesProceduresComponent {
 
   edit(type: typeProcedureResponse) {
     const dialogRef = this.dialog.open(TypeProcedureComponent, {
-      maxWidth: '1200px',
-      width: '1200px',
+      minWidth: '900px',
       data: type,
     });
     dialogRef.afterClosed().subscribe((result: typeProcedureResponse) => {
@@ -111,16 +112,12 @@ export class TypesProceduresComponent {
     });
   }
 
-  applyFilter(event: Event) {
+  search(term: string) {
+    this.term.set(term);
     this.index.set(0);
-    this.term = (event.target as HTMLInputElement).value;
     this.getData();
   }
-  cancelSearch() {
-    this.index.set(0);
-    this.term = '';
-    this.getData();
-  }
+
   onPageChage({ limit, index }: PageProps) {
     this.limit.set(limit);
     this.index.set(index);

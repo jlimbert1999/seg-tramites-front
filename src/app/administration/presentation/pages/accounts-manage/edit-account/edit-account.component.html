@@ -2,84 +2,33 @@
 <mat-dialog-content>
   <mat-tab-group mat-stretch-tabs="false" mat-align-tabs="start">
     <mat-tab label="Cuenta">
-      <!-- @if (account().funcionario) {
-        <div class="d-flex border rounded-2 p-2 mb-4">
-          <div class="flex-shrink-0">
-            <img src="../../../../../../assets/img/account.png" style="width: 40px" />
-          </div>
-          <div class="flex-grow-1 ms-3">
-            <div class="d-flex flex-column">
-              <span class="fw-bold">{{ account().funcionario?.fullname }}</span>
-              <span>{{ account().funcionario?.jobtitle }}</span>
-            </div>
-          </div>
-          <div class="ms-auto">
-            <button
-              mat-mini-fab
-              color="primary"
-              matTooltip="Desvincular"
-              (click)="unlink()"
-            >
-              <mat-icon>person_off</mat-icon>
-            </button>
-          </div>
-        </div>
+      <form [formGroup]="FormAccount" class="mt-2">
+        @if (data().funcionario) {
+        <mat-form-field>
+          <mat-label>Funcionario</mat-label>
+          <input
+            matInput
+            type="text"
+            [value]="data().funcionario?.fullname"
+            readonly
+          />
+          <button
+            matSuffix
+            mat-icon-button
+            aria-label="Clear"
+            (click)="unlink()"
+          >
+            <mat-icon>close</mat-icon>
+          </button>
+        </mat-form-field>
         } @else {
         <server-select-search
           placeholder="Buscar funcionario"
-          (onSearch)="searchOfficer($event)"
-          (onSelect)="selectOfficer($event)"
           [elements]="officers()"
+          (onSearch)="searchOfficer($event)"
+          (onSelect)="onSelectOfficer($event)"
         />
-        } -->
-      <!-- <div class="row m-0">
-        <div class="col-md-5 border rounded-2 p-3">
-          <p class="fw-bold">PROPIEDADES BANDEJA</p>
-          <dl class="row">
-            @for (item of communications(); track $index) {
-            <dt class="col-6">{{ item.label }}</dt>
-            <dd class="col-6">{{ item.count }}</dd>
-            } @empty {
-            <p class="p-2">CARGANDO...</p>
-            }
-          </dl>
-        </div>
-        <div class="col-md-7">
-         
-        </div>
-      </div> -->
-      <!-- <mat-form-field class="example-form-field">
-        <mat-label>Clearable input</mat-label>
-        <input matInput type="text" [(ngModel)]="value">
-        @if (value) {
-          <button matSuffix mat-icon-button aria-label="Clear" (click)="value=''">
-            <mat-icon>close</mat-icon>
-          </button>
         }
-      </mat-form-field> -->
-      @if (FormAccount.get('funcionario')?.value) {
-      <mat-form-field class="example-form-field">
-        <mat-label>Funcionario</mat-label>
-        <input
-          matInput
-          type="text"
-          [value]="account().funcionario?.fullname"
-          readonly
-        />
-        <button matSuffix mat-icon-button aria-label="Clear" (click)="unlink()">
-          <mat-icon>close</mat-icon>
-        </button>
-      </mat-form-field>
-      } @else {
-      <server-select-search
-        placeholder="Buscar funcionario"
-        [elements]="officers()"
-        (onSearch)="searchOfficer($event)"
-        (onSelect)="onSselectOfficer($event)"
-      />
-      }
-
-      <form [formGroup]="FormAccount" class="mt-2">
         <mat-form-field>
           <mat-label>Cargo</mat-label>
           <input formControlName="jobtitle" matInput />

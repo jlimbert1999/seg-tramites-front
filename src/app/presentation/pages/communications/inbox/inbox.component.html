@@ -37,6 +37,7 @@
           <th mat-header-cell *matHeaderCellDef>Alterno</th>
           <td mat-cell *matCellDef="let mail">
             <a
+              class="underline text-blue-600"
               [routerLink]="['/home/inbox', mail._id]"
               [queryParams]="{limit, index}"
             >

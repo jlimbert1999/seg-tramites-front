@@ -52,9 +52,7 @@ export class AccountService {
       );
   }
 
-  unlink(id: string) {
-    return this.http.delete<{ message: string }>(`${this.url}/unlink/${id}`);
-  }
+
 
   findAll({ limit, offset, term, dependency }: FilterAccountsParams) {
     const params = new HttpParams({
@@ -95,14 +93,17 @@ export class AccountService {
 
   edit(id: string, form: Record<string, any>) {
     if (form['password'] === '') delete form['password'];
+    if (form['officer'] === '') delete form['officer'];
     return this.http
-      .patch<account>(`${this.url}/${id}`, form)
+      .patch<account>(`${this.url}/${id}`, { ...form })
       .pipe(map((resp) => AccountMapper.fromResponse(resp)));
   }
 
-  disable(id: string) {
-    return this.http.delete<boolean>(`${this.url}/${id}`);
+  unlink(id: string) {
+    return this.http.delete<{ message: string }>(`${this.url}/unlink/${id}`);
   }
+
+
 
   getDetails(id_cuenta: string) {
     return this.http
@@ -121,7 +122,5 @@ export class AccountService {
         })
       );
   }
-  toggleVisibility(id: string) {
-    return this.http.put<boolean>(`${this.url}/visibility/${id}`, undefined);
-  }
+
 }
