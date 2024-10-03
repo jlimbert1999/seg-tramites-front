@@ -9,6 +9,9 @@ export interface publication {
   priority: string;
   createdAt: Date;
   updatedAt: Date;
+  image: string | null;
+  startDate: Date;
+  expirationDate: Date;
 }
 
 export interface Attachment {

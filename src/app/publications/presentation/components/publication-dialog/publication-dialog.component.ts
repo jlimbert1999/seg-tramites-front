@@ -56,7 +56,6 @@ export class PublicationDialogComponent {
 
   constructor() {
     this.publications.set(this.data);
-    console.log(this.publications());
   }
 
   loadMorePublications() {

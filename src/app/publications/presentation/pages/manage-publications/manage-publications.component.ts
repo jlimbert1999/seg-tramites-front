@@ -62,11 +62,21 @@ export default class ManagePublicationsComponent implements OnInit {
 
   create(): void {
     const dialogRef = this.dialogRef.open(CreatePostComponent, {
-      minWidth: '700px',
+      minWidth: '800px',
     });
     dialogRef.afterClosed().subscribe((result) => {
       if (!result) return;
       this.datasource.update((values) => [result, ...values]);
+    });
+  }
+
+  update(publication: publication): void {
+    const dialogRef = this.dialogRef.open(CreatePostComponent, {
+      minWidth: '800px',
+      data: publication,
+    });
+    dialogRef.afterClosed().subscribe((result) => {
+      if (!result) return;
     });
   }
 

@@ -7,9 +7,12 @@ interface attachmentProps {
   title: string;
   filename: string;
 }
-interface paginationParams {
-  limit: number;
-  offset: number;
+
+interface updatePublicationProps {
+  id: string;
+  form: Object;
+  attachments: attachmentProps[];
+  image?: string;
 }
 @Injectable({
   providedIn: 'root',
@@ -28,8 +31,24 @@ export class PostService {
     );
   }
 
-  create(form: Object, attachments: attachmentProps[]) {
-    return this.http.post<publication>(this.url, { ...form, attachments });
+  create(
+    form: Object,
+    attachments: attachmentProps[],
+    image: attachmentProps | null
+  ) {
+    return this.http.post<publication>(this.url, {
+      ...form,
+      image: image?.filename,
+      attachments,
+    });
+  }
+
+  updated({ id, attachments, image, form }: updatePublicationProps) {
+    return this.http.patch<publication>(`${this.url}/${id}`, {
+      ...form,
+      image,
+      attachments,
+    });
   }
 
   delete(id: string) {
