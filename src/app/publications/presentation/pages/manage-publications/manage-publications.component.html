@@ -52,18 +52,21 @@
       <td mat-cell *matCellDef="let element" class="w-8">
         <button
           mat-icon-button
-          aria-label="Delete publication"
-          (click)="delete(element._id)"
+          [matMenuTriggerFor]="menu"
+          aria-label="Menu options"
         >
-          <mat-icon>delete</mat-icon>
+          <mat-icon>more_vert</mat-icon>
         </button>
-        <button
-          mat-icon-button
-          aria-label="Delete publication"
-          (click)="update(element)"
-        >
-          <mat-icon>edit</mat-icon>
-        </button>
+        <mat-menu #menu="matMenu">
+          <button mat-menu-item (click)="update(element)">
+            <mat-icon>edit</mat-icon>
+            <span>Editar</span>
+          </button>
+          <button mat-menu-item (click)="delete(element)">
+            <mat-icon>delete</mat-icon>
+            <span>Eliminar</span>
+          </button>
+        </mat-menu>
       </td>
     </ng-container>
 

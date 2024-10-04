@@ -8,11 +8,12 @@ import {
 import { MatCardModule } from '@angular/material/card';
 import { publication } from '../../../infrastructure/interfaces/publications.interface';
 import { PostService } from '../../services/post.service';
+import { ImageViewerComponent } from '../../../../shared';
 
 @Component({
   selector: 'publication-card',
   standalone: true,
-  imports: [CommonModule, MatCardModule, CommonModule],
+  imports: [CommonModule, MatCardModule, CommonModule, ImageViewerComponent],
   template: `
     <mat-card class="w-full" appearance="outlined">
       <mat-card-header>
@@ -28,7 +29,9 @@ import { PostService } from '../../services/post.service';
         <mat-card-title> Administrador </mat-card-title>
         }
       </mat-card-header>
+
       <mat-card-content>
+        <image-viewer [url]="publication().image" />
         <p class="text-2xl font-bold">{{ publication().title }}</p>
         <p>{{ publication().content }}</p>
         <ul class="list-disc px-4">

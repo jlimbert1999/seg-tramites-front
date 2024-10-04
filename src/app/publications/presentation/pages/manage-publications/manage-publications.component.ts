@@ -18,6 +18,7 @@ import { CreatePostComponent } from './create-post/create-post.component';
 import { SearchInputComponent } from '../../../../shared';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { AlertService } from '../../../../presentation/services';
+import { MatMenuModule } from '@angular/material/menu';
 
 @Component({
   selector: 'app-manage-publications',
@@ -29,6 +30,7 @@ import { AlertService } from '../../../../presentation/services';
     MatButtonModule,
     MatIconModule,
     MatPaginatorModule,
+    MatMenuModule,
     SearchInputComponent,
   ],
   templateUrl: './manage-publications.component.html',
@@ -63,6 +65,7 @@ export default class ManagePublicationsComponent implements OnInit {
   create(): void {
     const dialogRef = this.dialogRef.open(CreatePostComponent, {
       minWidth: '800px',
+      autoFocus: false,
     });
     dialogRef.afterClosed().subscribe((result) => {
       if (!result) return;
@@ -73,21 +76,27 @@ export default class ManagePublicationsComponent implements OnInit {
   update(publication: publication): void {
     const dialogRef = this.dialogRef.open(CreatePostComponent, {
       minWidth: '800px',
-      data: publication,
+      data: { ...publication },
+      autoFocus: false,
     });
-    dialogRef.afterClosed().subscribe((result) => {
+    dialogRef.afterClosed().subscribe((result: publication) => {
       if (!result) return;
+      this.datasource.update((values) => {
+        const index = values.findIndex((el) => el._id === result._id);
+        values[index] = result;
+        return [...values];
+      });
     });
   }
 
-  delete(id: string) {
+  delete(publication: publication) {
     this.alertService.QuestionAlert({
       title: `¿Eliminar Comunicado?`,
       text: 'Esta accion no se puede deshacer',
       callback: () => {
-        this.publicationService.delete(id).subscribe(() => {
+        this.publicationService.delete(publication._id).subscribe(() => {
           this.datasource.update((values) =>
-            values.filter(({ _id }) => _id !== id)
+            values.filter(({ _id }) => _id !== publication._id)
           );
           this.datasize.update((value) => (value -= 1));
         });

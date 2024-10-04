@@ -29,17 +29,26 @@ import { MatInputModule } from '@angular/material/input';
 import { MatListModule } from '@angular/material/list';
 import { MatIconModule } from '@angular/material/icon';
 
-import { forkJoin, of, switchMap } from 'rxjs';
+import { forkJoin, of, switchMap, tap } from 'rxjs';
 
-import { PostService } from '../../../services/post.service';
+import { attachmentProps, PostService } from '../../../services/post.service';
 import { publication } from '../../../../infrastructure';
+import {
+  FileUploadComponent,
+  ImageViewerComponent,
+} from '../../../../../shared';
+import { CommonModule } from '@angular/common';
 
+interface fileProps {
+  attachments: attachmentProps[];
+  image: string | null;
+}
 @Component({
   selector: 'app-create-post',
   standalone: true,
   imports: [
     ReactiveFormsModule,
-
+    CommonModule,
     MatDialogModule,
     MatButtonModule,
     MatIconModule,
@@ -49,6 +58,9 @@ import { publication } from '../../../../infrastructure';
     MatListModule,
     MatRadioModule,
     MatDatepickerModule,
+    ImageViewerComponent,
+    FileUploadComponent,
+    ImageViewerComponent,
   ],
   templateUrl: './create-post.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -57,8 +69,8 @@ import { publication } from '../../../../infrastructure';
 export class CreatePostComponent {
   private formBuilder = inject(FormBuilder);
   private postService = inject(PostService);
-  private readonly dialogRef = inject(MatDialogRef<CreatePostComponent>);
-  private data?: publication = inject(MAT_DIALOG_DATA);
+  private dialogRef = inject(MatDialogRef<CreatePostComponent>);
+  data?: publication = inject(MAT_DIALOG_DATA);
 
   readonly minDate = new Date();
   readonly prioritys = [
@@ -68,11 +80,13 @@ export class CreatePostComponent {
   ];
 
   constructor() {
-    this.loadForm();
+    this._loadForm();
   }
 
+  // Files
   files = signal<File[]>([]);
   imageFile = signal<File | undefined>(undefined);
+
   form: FormGroup = this.formBuilder.group({
     title: ['', Validators.required],
     content: ['', Validators.required],
@@ -81,91 +95,77 @@ export class CreatePostComponent {
     expirationDate: [, Validators.required],
   });
 
+  uploaded = signal<fileProps>({
+    attachments: [],
+    image: null,
+  });
+
   preview = signal<string | null>(null);
-  isImageRemoved = signal<boolean>(false);
 
   create() {
     if (this.form.invalid) return;
-    const subscription = forkJoin([
+    const fileUploadTask = forkJoin([
       this.imageFile()
         ? this.postService.uploadFile(this.imageFile()!)
         : of(null),
       ...this.files().map((file) => this.postService.uploadFile(file)),
-    ]).pipe(
-      switchMap(([image, ...attachmets]) =>
-        this.data
-          ? this.postService.updated({
-              id: this.data._id,
-              form: this.form.value,
-              image: image
-                ? image.filename
-                : this.isImageRemoved()
-                ? ''
-                : undefined,
-              attachments: attachmets,
-            })
-          : this.postService.create(this.form.value, attachmets, image)
+    ]);
+
+    fileUploadTask
+      .pipe(
+        switchMap(([image, ...attachments]) =>
+          this.data
+            ? this.postService.updated({
+                id: this.data._id,
+                form: this.form.value,
+                attachments: [
+                  ...this.uploaded().attachments.map(({ filename, title }) => ({
+                    filename: filename.split('/').pop() ?? '',
+                    title,
+                  })),
+                  ...attachments,
+                ],
+                image: image ? image.filename : this.uploaded().image,
+              })
+            : this.postService.create(
+                this.form.value,
+                attachments,
+                image?.filename
+              )
+        )
       )
-    );
-    subscription.subscribe((resp) => {
-      this.dialogRef.close(resp);
-    });
+      .subscribe((resp) => {
+        this.dialogRef.close(resp);
+      });
   }
 
   selectImage(event: Event): void {
     const inputElement = event.target as HTMLInputElement;
     const image = inputElement.files?.[0];
     if (!image) return;
-    this._setImage(image);
-  }
-
-  removeImage() {
-    this.imageFile.set(undefined);
-    this.preview.set(null);
-    this.isImageRemoved.set(true);
-  }
-
-  addFile(event: Event): void {
-    const files = this._onInputFileSelect(event);
-    if (!files) return;
-    this.files.update((values) => [...files, ...values]);
-  }
-
-  removeFile(index: number) {
-    this.files.update((values) => {
-      values.splice(index, 1);
-      return [...values];
+    this.imageFile.set(image);
+    this.preview.update((valu) => {
+      if (valu?.startsWith('blob:')) URL.revokeObjectURL(valu);
+      console.log(valu);
+      return URL.createObjectURL(image);
     });
   }
 
-  private _onInputFileSelect(event: Event): File[] {
-    const inputElement = event.target as HTMLInputElement;
-    if (!inputElement.files || inputElement.files.length === 0) return [];
-    const list = inputElement.files;
-    const files: File[] = [];
-    for (let i = 0; i < list.length; i++) {
-      files.push(list[i]);
-    }
-    return files;
+  removeImage(): void {
+    this.uploaded.update((values) => {
+      values.image = '';
+      return { ...values };
+    });
+    this.preview.set(null)
   }
 
-  private _setImage(image: File): void {
-    const temp = this.preview();
-    if (temp && temp.startsWith('blob:')) {
-      URL.revokeObjectURL(temp);
-    }
-    this.preview.set(URL.createObjectURL(image));
-    this.imageFile.set(image);
-  }
-
-  private loadForm() {
+  private _loadForm(): void {
     if (!this.data) return;
     const { image, attachments, ...props } = this.data;
     this.form.patchValue(props);
-    if (image) {
-      this.postService.getFile(image).subscribe((resp) => {
-        this.preview.set(URL.createObjectURL(resp));
-      });
-    }
+    this.uploaded.set({ attachments: [...attachments], image });
+    this.preview.set(image);
+    // this.attachments.set(attachments);
+    // this.image.set(image ?? undefined);
   }
 }

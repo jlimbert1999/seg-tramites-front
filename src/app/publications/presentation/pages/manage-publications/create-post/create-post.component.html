@@ -1,45 +1,44 @@
 <h2 mat-dialog-title>Crear Comunicado</h2>
 <mat-dialog-content>
-  <div class="flex w-full flex-col mb-4 border-2">
-    @if(preview()){
+  <image-viewer [url]="preview()" />
+  <!-- <div class="flex w-full flex-col mb-4 border-2">
+    @if(data?.image!=="" && !imageFile()){
+    <p>iamgen</p>
+    <image-viewer [path]="data?.image!" />
+    } @else { @if(image()){
     <div class="flex justify-center">
       <img
-        [src]="preview()"
+        [src]="image()"
         alt="Image publications"
         class="object-scale-down h-52 w-96 rounded-lg"
       />
     </div>
-    }
-    <div class="flex items-center justify-between">
-      <div class="text-xl">Imagen</div>
-      <div class="flex gap-x-2">
-        <button
-          mat-icon-button
-          aria-label="Remove image"
-          (click)="removeImage()"
-        >
-          <mat-icon>delete</mat-icon>
-        </button>
+    } }
+    -->
+  <div class="flex items-center justify-end">
+    <div class="text-xl">Imagen</div>
+    <div class="flex gap-x-2">
+      <button mat-icon-button aria-label="Remove image" (click)="removeImage()">
+        <mat-icon>delete</mat-icon>
+      </button>
 
-        <button
-          mat-icon-button
-          aria-label="Attach image"
-          (click)="imageInput.click()"
-        >
-          <mat-icon>add_photo_alternate</mat-icon>
-        </button>
-        <input
-          #imageInput
-          [hidden]="true"
-          type="file"
-          [multiple]="true"
-          accept="image/*"
-          (change)="selectImage($event)"
-        />
-      </div>
+      <button
+        mat-icon-button
+        aria-label="Attach image"
+        (click)="imageInput.click()"
+      >
+        <mat-icon>add_photo_alternate</mat-icon>
+      </button>
+      <input
+        #imageInput
+        [hidden]="true"
+        type="file"
+        [multiple]="true"
+        accept="image/*"
+        (change)="selectImage($event)"
+      />
     </div>
   </div>
-
   <form [formGroup]="form">
     <div class="grid grid-cols-2 gap-x-2">
       <div class="col-span-2 border-1">
@@ -89,7 +88,7 @@
         </mat-form-field>
       </div>
     </div>
-
+    <!-- 
     <div class="flex justify-between items-center p-2">
       <span>Archivos:</span>
       <button mat-mini-fab aria-label="Attach file" (click)="fileInput.click()">
@@ -107,23 +106,39 @@
     <div></div>
     <div class="col-span-2">
       <mat-list class="overflow-y-auto max-h-52 w-full rounded-lg border-2">
-        @for (file of files(); track $index) {
+        @for (file of attachments(); track $index) {
+        <mat-list-item>
+          <mat-icon matListItemIcon>description</mat-icon>
+          <div matListItemTitle>{{ file.title }}</div>
+          <div matListItemLine>
+            <span class="text-emerald-600">Completado</span>
+          </div>
+          <button
+            mat-icon-button
+            (click)="removeAttachment($index)"
+            matListItemMeta
+          >
+            <mat-icon>delete</mat-icon>
+          </button>
+        </mat-list-item>
+        } @for (file of files(); track $index) {
         <mat-list-item>
           <mat-icon matListItemIcon>description</mat-icon>
           <div matListItemTitle>{{ file.name }}</div>
           <div matListItemLine>
-            {{ (file.size / 1024 / 1024).toFixed(2) }} MB
+            <span class="text-orange-500">Pendiente</span>
           </div>
           <button mat-icon-button (click)="removeFile($index)" matListItemMeta>
             <mat-icon>delete</mat-icon>
           </button>
         </mat-list-item>
-        } @empty {
-        <span class="px-3">Sin archivos adjuntos</span>
         }
       </mat-list>
-    </div>
+    </div> -->
   </form>
+  <div>
+    <file-upload [(files)]="files" [(attachments)]="uploaded().attachments" />
+  </div>
 </mat-dialog-content>
 <mat-dialog-actions align="end">
   <button mat-button color="warn" mat-dialog-close>Cancelar</button>

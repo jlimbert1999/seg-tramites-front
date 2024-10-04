@@ -2,8 +2,9 @@ import { inject, Injectable } from '@angular/core';
 import { environment } from '../../../../environments/environment';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { publication } from '../../infrastructure/interfaces/publications.interface';
+import { map } from 'd3';
 
-interface attachmentProps {
+export interface attachmentProps {
   title: string;
   filename: string;
 }
@@ -12,7 +13,7 @@ interface updatePublicationProps {
   id: string;
   form: Object;
   attachments: attachmentProps[];
-  image?: string;
+  image: string | null;
 }
 @Injectable({
   providedIn: 'root',
@@ -31,14 +32,10 @@ export class PostService {
     );
   }
 
-  create(
-    form: Object,
-    attachments: attachmentProps[],
-    image: attachmentProps | null
-  ) {
+  create(form: Object, attachments: attachmentProps[], image?: string) {
     return this.http.post<publication>(this.url, {
       ...form,
-      image: image?.filename,
+      image,
       attachments,
     });
   }
