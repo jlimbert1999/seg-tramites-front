@@ -51,18 +51,23 @@
           >
             @for (user of filteredReceivers$ | async; track user.id_account) {
             <mat-option [value]="user">
-              <img
-                class="option-img"
-                src="../../../../../../assets/img/account.png"
-                height="25"
-              />
-              <span>{{ user.officer.fullname | titlecase }} </span>
-              <small>({{ user.officer.jobtitle | uppercase }})</small>
-              <span
-                class="c-pill"
-                [ngClass]="user.online ? 'c-pill--success' : 'c-pill--danger'"
-                >{{ user.online ? "Conectado" : "Sin conexion" }}</span
-              >
+              <div class="flex">
+                <img
+                  class="h-6 mr-2"
+                  src="../../../../../../assets/img/account.png"
+                />
+                <div>
+                  <span>{{ user.officer.fullname | titlecase }} </span>
+                  <small>({{ user.officer.jobtitle | uppercase }})</small>
+                  <span
+                    class="c-pill"
+                    [ngClass]="
+                      user.online ? 'c-pill--success' : 'c-pill--danger'
+                    "
+                    >{{ user.online ? "Conectado" : "Sin conexion" }}</span
+                  >
+                </div>
+              </div>
             </mat-option>
             }
           </mat-autocomplete>
