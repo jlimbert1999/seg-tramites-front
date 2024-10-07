@@ -7,18 +7,20 @@ import {
   OnInit,
   signal,
 } from '@angular/core';
+import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatToolbarModule } from '@angular/material/toolbar';
-import { PostService } from '../../services/post.service';
-import { publication } from '../../../infrastructure/interfaces/publications.interface';
-import { MatTableModule } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
+import { MatTableModule } from '@angular/material/table';
+import { MatMenuModule } from '@angular/material/menu';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDialog } from '@angular/material/dialog';
-import { CreatePostComponent } from './create-post/create-post.component';
+
+import { PostService } from '../../services/post.service';
+import { publication } from '../../../infrastructure';
+
+import { PublicationDialogComponent } from './publication-dialog/publication-dialog.component';
 import { SearchInputComponent } from '../../../../shared';
-import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { AlertService } from '../../../../presentation/services';
-import { MatMenuModule } from '@angular/material/menu';
 
 @Component({
   selector: 'app-manage-publications',
@@ -49,6 +51,7 @@ export default class ManagePublicationsComponent implements OnInit {
   public limit = signal<number>(10);
   public index = signal<number>(0);
   public offset = computed<number>(() => this.limit() * this.index());
+  
   ngOnInit(): void {
     this.getData();
   }
@@ -63,7 +66,7 @@ export default class ManagePublicationsComponent implements OnInit {
   }
 
   create(): void {
-    const dialogRef = this.dialogRef.open(CreatePostComponent, {
+    const dialogRef = this.dialogRef.open(PublicationDialogComponent, {
       minWidth: '800px',
       autoFocus: false,
     });
@@ -74,7 +77,7 @@ export default class ManagePublicationsComponent implements OnInit {
   }
 
   update(publication: publication): void {
-    const dialogRef = this.dialogRef.open(CreatePostComponent, {
+    const dialogRef = this.dialogRef.open(PublicationDialogComponent, {
       minWidth: '800px',
       data: { ...publication },
       autoFocus: false,

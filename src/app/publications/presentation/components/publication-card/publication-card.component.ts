@@ -4,16 +4,17 @@ import {
   Component,
   inject,
   input,
+  OnInit,
+  signal,
 } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { publication } from '../../../infrastructure/interfaces/publications.interface';
 import { PostService } from '../../services/post.service';
-import { ImageViewerComponent } from '../../../../shared';
 
 @Component({
   selector: 'publication-card',
   standalone: true,
-  imports: [CommonModule, MatCardModule, CommonModule, ImageViewerComponent],
+  imports: [CommonModule, MatCardModule, CommonModule],
   template: `
     <mat-card class="w-full" appearance="outlined">
       <mat-card-header>
@@ -31,9 +32,17 @@ import { ImageViewerComponent } from '../../../../shared';
       </mat-card-header>
 
       <mat-card-content>
-        <image-viewer [url]="publication().image" />
         <p class="text-2xl font-bold">{{ publication().title }}</p>
         <p>{{ publication().content }}</p>
+        @if(url()){
+        <figure class="flex justify-center items-center rounded-2xl px-4">
+          <img
+            [src]="url()"
+            alt="Image preview"
+            class="object-scale-down rounded-2xl"
+          />
+        </figure>
+        }
         <ul class="list-disc px-4">
           @for (item of publication().attachments; track $index) {
           <li>
@@ -57,10 +66,22 @@ import { ImageViewerComponent } from '../../../../shared';
 
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class PublicationCardComponent {
+export class PublicationCardComponent implements OnInit {
   private postService = inject(PostService);
 
   publication = input.required<publication>();
+  url = signal<string | null>(null);
+
+  ngOnInit(): void {
+    if (!this.publication().image) return;
+    this.postService.getFile(this.publication().image!).subscribe((blob) => {
+      const reader = new FileReader();
+      reader.onload = (e: any) => {
+        this.url.set(e.target.result);
+      };
+      reader.readAsDataURL(blob);
+    });
+  }
 
   openFile(url: string): void {
     this.postService.getFile(url).subscribe((blob) => {

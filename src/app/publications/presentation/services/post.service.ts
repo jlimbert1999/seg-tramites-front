@@ -32,7 +32,7 @@ export class PostService {
     );
   }
 
-  create(form: Object, attachments: attachmentProps[], image?: string) {
+  create(form: Object, attachments: attachmentProps[], image: string | null) {
     return this.http.post<publication>(this.url, {
       ...form,
       image,
@@ -40,7 +40,7 @@ export class PostService {
     });
   }
 
-  updated({ id, attachments, image, form }: updatePublicationProps) {
+  update({ id, attachments, image, form }: updatePublicationProps) {
     return this.http.patch<publication>(`${this.url}/${id}`, {
       ...form,
       image,

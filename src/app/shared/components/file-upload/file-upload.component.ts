@@ -14,7 +14,7 @@ interface attachments {
   imports: [MatButtonModule, MatListModule, MatIconModule],
   template: `
     <div class="flex justify-between items-center p-2">
-      <span>Archivos:</span>
+      <span class="text-lg">Archivos: {{ files().length }}</span>
       <button mat-mini-fab aria-label="Attach file" (click)="fileInput.click()">
         <mat-icon>attach_file</mat-icon>
       </button>
@@ -23,6 +23,7 @@ interface attachments {
         [hidden]="true"
         [multiple]="true"
         type="file"
+        accept=".jpg,.jpeg,.png,.pdf"
         (change)="add($event)"
       />
     </div>
