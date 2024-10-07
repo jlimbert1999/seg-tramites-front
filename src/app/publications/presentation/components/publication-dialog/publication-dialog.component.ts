@@ -23,7 +23,7 @@ import { PublicationListComponent } from '..';
     PublicationListComponent,
   ],
   template: `
-    <h2 mat-dialog-title class="text-center tonal">
+    <h2 mat-dialog-title class="text-center bg-blue-500 text-white pb-1">
       Comunicados ({{ data.length }})
     </h2>
     <mat-dialog-content>
@@ -42,6 +42,11 @@ import { PublicationListComponent } from '..';
     </mat-dialog-actions>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
+  styles:`
+  .mdc-dialog__title::before {
+    display: none;
+}
+  `
 })
 export class PublicationDialogComponent {
   private publicationService = inject(PostService);

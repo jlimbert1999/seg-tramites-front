@@ -78,8 +78,8 @@ export class PublicationDialogComponent implements OnInit {
   imageFile = signal<File | undefined>(undefined);
 
   form: FormGroup = this.formBuilder.group({
-    title: ['', Validators.required],
-    content: ['', Validators.required],
+    title: [''],
+    content: [''],
     priority: [1, Validators.required],
     startDate: [this.minDate, Validators.required],
     expirationDate: [null, Validators.required],

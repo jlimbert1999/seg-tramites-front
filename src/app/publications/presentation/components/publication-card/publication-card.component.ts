@@ -20,10 +20,12 @@ import { PostService } from '../../services/post.service';
       <mat-card-header>
         <img mat-card-avatar src="/assets/img/account.png" />
         @if(publication().user.funcionario){
-        <mat-card-title>
-          {{ publication().user.funcionario.nombre | titlecase }}
-          {{ publication().user.funcionario.paterno | titlecase }}
-          {{ publication().user.funcionario.materno | titlecase }}
+        <mat-card-title class="font-bold">
+          <small>
+            {{ publication().user.funcionario.nombre | titlecase }}
+            {{ publication().user.funcionario.paterno | titlecase }}
+            {{ publication().user.funcionario.materno | titlecase }}
+          </small>
         </mat-card-title>
 
         } @else {
@@ -31,15 +33,17 @@ import { PostService } from '../../services/post.service';
         }
       </mat-card-header>
 
-      <mat-card-content>
+      <mat-card-content class="p-0 m-0">
+        @if( publication().title!==""){
         <p class="text-2xl font-bold">{{ publication().title }}</p>
+        } @if( publication().content!==""){
         <p>{{ publication().content }}</p>
-        @if(url()){
-        <figure class="flex justify-center items-center rounded-2xl px-4">
+        } @if(url()){
+        <figure class="flex justify-center items-center rounded-2xl">
           <img
             [src]="url()"
             alt="Image preview"
-            class="object-scale-down rounded-2xl"
+            class="rounded-2xl object-cover max-w-screen-md max-h-80"
           />
         </figure>
         }
@@ -57,7 +61,7 @@ import { PostService } from '../../services/post.service';
         </ul>
       </mat-card-content>
       <mat-card-actions>
-        <span class="px-2 mt-4">
+        <span class="px-2 mt-0">
           {{ publication().createdAt | date : 'medium' }}
         </span>
       </mat-card-actions>
