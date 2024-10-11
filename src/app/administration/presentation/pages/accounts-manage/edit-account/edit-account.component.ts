@@ -16,19 +16,19 @@ import {
   MatDialogModule,
   MatDialogRef,
 } from '@angular/material/dialog';
-import { toSignal } from '@angular/core/rxjs-interop';
 
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatStepperModule } from '@angular/material/stepper';
 import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatIconModule } from '@angular/material/icon';
-import { filter, map, switchMap, takeWhile } from 'rxjs';
 
 import {
   ServerSelectOption,
   ServerSelectSearchComponent,
+  SimpleSelectOption,
   SimpleSelectSearchComponent,
 } from '../../../../../shared';
 import {
@@ -38,6 +38,8 @@ import {
   ReportService,
 } from '../../../../../presentation/services';
 import { Account, Officer } from '../../../../domain';
+import { CustomValidators } from '../../../../../../helpers';
+import { filter, pipe, switchMap } from 'rxjs';
 
 @Component({
   selector: 'app-edit-account',
@@ -52,6 +54,7 @@ import { Account, Officer } from '../../../../domain';
     MatButtonModule,
     MatCheckboxModule,
     MatTabsModule,
+    MatStepperModule,
     ServerSelectSearchComponent,
     SimpleSelectSearchComponent,
   ],
@@ -59,7 +62,7 @@ import { Account, Officer } from '../../../../domain';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class EditAccountComponent {
-  private fb = inject(FormBuilder);
+  private formBuilder = inject(FormBuilder);
   private dialogRef = inject(MatDialogRef<EditAccountComponent>);
   private alertService = inject(AlertService);
   private accountService = inject(AccountService);
@@ -68,65 +71,55 @@ export class EditAccountComponent {
 
   public data = signal(inject<Account>(MAT_DIALOG_DATA));
   public hidePassword = true;
-  public updatePassword = false;
-  public officers = signal<ServerSelectOption<Officer>[]>([]);
-  public communications = signal<{ label: string; count: number }[]>([]);
 
-  public FormAccount: FormGroup = this.fb.group({
-    login: ['', [Validators.required, Validators.pattern(/^[a-zA-Z0-9]+$/)]],
-    password: ['', Validators.pattern(/^\S+$/)],
+  officers = signal<ServerSelectOption<Officer>[]>([]);
+  roles = signal<SimpleSelectOption<string>[]>([]);
+
+  formUser: FormGroup = this.formBuilder.group({
+    fullname: [''],
+    password: [''],
+    login: ['', [Validators.required, CustomValidators.login]],
     role: ['', Validators.required],
-    jobtitle: ['', Validators.required],
-    isVisible: [true, Validators.required],
-    isActive: [true, Validators.required],
-    officer: [''],
+    isActive: [true],
   });
 
-  roles = toSignal(
-    this.accountService.getRoles().pipe(
-      map((resp) =>
-        resp.map(({ _id, name }) => ({
-          value: _id,
-          text: name,
-        }))
-      )
-    ),
-    { initialValue: [] }
-  );
+  formAccount = this.formBuilder.group({
+    jobtitle: ['', Validators.required],
+    officer: [''],
+    isVisible: [true],
+  });
 
   ngOnInit(): void {
+    this._getRequiredProps();
     this._loadForm();
+    // TODO get inbox details
   }
 
   save() {
-    this.accountService
-      .edit(this.data()._id, this.FormAccount.value)
-      .subscribe((account) => {
-        // this.account.set(account as any);
-        // const passwordCtrl = this.FormAccount.get('password');
-        // if (account.funcionario && passwordCtrl) {
-        //   this.pdfService.createAccountSheet(account, '', passwordCtrl?.value);
-        // }
-        this.dialogRef.close(account);
-      });
+    const updateTask = this.accountService.edit(
+      this.data()._id,
+      this.formUser.value,
+      this.formAccount.value
+    );
+    const subscription =
+      this.formAccount.get('officer')?.value === null
+        ? this.alertService
+            .confirmDialog({
+              title: '¿Desvincular Funcionario?',
+              description: `${this.data().officer?.fullname} sera desvinculado`,
+            })
+            .pipe(
+              filter((result) => result),
+              switchMap(() => updateTask)
+            )
+        : updateTask;
+    subscription.subscribe((account) => {
+      this.dialogRef.close(account);
+    });
   }
 
-  unlink() {
-    this.alertService
-      .confirmDialog({
-        title: '¿Desvincular Cuenta?',
-        description: 'El funcionario ya no podra crear ni recibir tramites',
-      })
-      .pipe(
-        takeWhile((result) => result),
-        switchMap(() => this.accountService.unlink(this.data()._id))
-      )
-      .subscribe(() => {
-        this.data.update((values) => {
-          delete values.funcionario;
-          return new Account(values);
-        });
-      });
+  unlink(): void {
+    this.formAccount.get('officer')?.setValue(null);
   }
 
   searchOfficer(text: string) {
@@ -139,21 +132,26 @@ export class EditAccountComponent {
     });
   }
 
-  onSelectOfficer({ _id, dni, nombre, paterno, materno }: Officer): void {
-    const login = nombre.charAt(0) + materno + paterno.charAt(0);
-    this.FormAccount.patchValue({
-      officer: _id,
-      login: login.trim(),
-      password: dni.trim(),
+  onSelectOfficer(officer: Officer): void {
+    const { login, password } = officer.generateCredentials();
+    this.formUser.patchValue({
+      fullname: officer.fullname,
+      login,
+      password,
     });
   }
 
-  close() {
-    this.dialogRef.close(this.data());
+  private _loadForm(): void {
+    const { user, officer, ...props } = this.data();
+    this.formUser.patchValue(user);
+    this.formAccount.patchValue({ ...props, officer: officer?._id });
   }
 
-  private _loadForm() {
-    const { user, ...props } = this.data();
-    this.FormAccount.patchValue({ ...user, ...props });
+  private _getRequiredProps(): void {
+    this.accountService.getRoles().subscribe((roles) => {
+      this.roles.set(
+        roles.map(({ _id, name }) => ({ value: _id, text: name }))
+      );
+    });
   }
 }

@@ -78,4 +78,6 @@ export class Officer {
       .join(' ');
     return `${titleCaseFullname} (${this.jobtitle.toUpperCase()})`;
   }
+
+
 }

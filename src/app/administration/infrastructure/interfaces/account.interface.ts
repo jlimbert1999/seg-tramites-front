@@ -5,7 +5,7 @@ import { officer } from './officer.interface';
 export interface account {
   _id: string;
   dependencia: dependency;
-  funcionario?: officer;
+  officer?: officer;
   jobtitle: string;
   isVisible: boolean;
   user: user;

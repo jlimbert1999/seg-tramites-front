@@ -10,11 +10,9 @@ import { MatDialog } from '@angular/material/dialog';
 import { OverlayModule } from '@angular/cdk/overlay';
 import { FormsModule } from '@angular/forms';
 
-import { CreateAccountComponent } from './create-account/create-account.component';
-
 import { EditAccountComponent } from './edit-account/edit-account.component';
 import { MaterialModule } from '../../../../material.module';
-import { AssignAccountComponent } from './assign-account/assign-account.component';
+import { CreateAccountDialogComponent } from './create-account-dialog/create-account-dialog.component';
 import {
   PaginatorComponent,
   SidenavButtonComponent,
@@ -105,20 +103,9 @@ export default class AccountsManageComponent {
     this.getData();
   }
 
-  add() {
-    const dialogRef = this.dialog.open(CreateAccountComponent, {
-      maxWidth: '800px',
-    });
-    dialogRef.afterClosed().subscribe((result: Account) => {
-      if (!result) return;
-      this.datasource.update((values) => [result, ...values]);
-      this.datasize.update((value) => (value += 1));
-    });
-  }
-
-  assign() {
-    const dialogRef = this.dialog.open(AssignAccountComponent, {
-      width: '600px',
+  create() {
+    const dialogRef = this.dialog.open(CreateAccountDialogComponent, {
+      width: '700px',
     });
     dialogRef.afterClosed().subscribe((result?: Account) => {
       if (!result) return;
@@ -130,9 +117,9 @@ export default class AccountsManageComponent {
     });
   }
 
-  edit(account: Account) {
+  update(account: Account) {
     const dialogRef = this.dialog.open(EditAccountComponent, {
-      width: '800px',
+      width: '700px',
       data: account,
       disableClose: true,
     });

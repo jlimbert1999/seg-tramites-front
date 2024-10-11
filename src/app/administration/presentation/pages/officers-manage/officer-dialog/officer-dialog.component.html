@@ -1,26 +1,29 @@
 <h2 mat-dialog-title>{{ data ? "Edicion" : "Creacion" }} Funcionario</h2>
 <mat-dialog-content>
-  <form [formGroup]="FormOfficer">
+  <form [formGroup]="formOfficer">
     <mat-form-field>
       <mat-label>Nombre</mat-label>
-      <input class="uppercase" formControlName="nombre" matInput />
+      <input formControlName="nombre" matInput />
     </mat-form-field>
     <mat-form-field>
       <mat-label>Apellido paterno</mat-label>
-      <input class="uppercase" formControlName="paterno" matInput />
+      <input formControlName="paterno" matInput />
     </mat-form-field>
     <mat-form-field>
       <mat-label>Apellido materno</mat-label>
-      <input class="uppercase" formControlName="materno" matInput />
+      <input formControlName="materno" matInput />
     </mat-form-field>
-    <mat-form-field>
-      <mat-label>Dni</mat-label>
-      <input formControlName="dni" matInput />
-    </mat-form-field>
-    <mat-form-field>
-      <mat-label>Telefono</mat-label>
-      <input formControlName="telefono" matInput />
-    </mat-form-field>
+    <div class="flex gap-x-2">
+      <mat-form-field>
+        <mat-label>Dni</mat-label>
+        <input formControlName="dni" matInput />
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>Telefono</mat-label>
+        <input formControlName="telefono" matInput />
+      </mat-form-field>
+    </div>
+    <mat-checkbox formControlName="activo"> Habilitado </mat-checkbox>
   </form>
 </mat-dialog-content>
 <mat-dialog-actions align="end">
@@ -28,7 +31,7 @@
   <button
     mat-button
     color="primary"
-    [disabled]="FormOfficer.invalid"
+    [disabled]="formOfficer.invalid"
     (click)="save()"
   >
     Guardar

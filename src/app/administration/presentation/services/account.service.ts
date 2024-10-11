@@ -52,8 +52,6 @@ export class AccountService {
       );
   }
 
-
-
   findAll({ limit, offset, term, dependency }: FilterAccountsParams) {
     const params = new HttpParams({
       fromObject: {
@@ -77,33 +75,25 @@ export class AccountService {
       );
   }
 
-  create(formAccount: Object, formOfficer: Object) {
-    // const account = AccountDto.toModel(formAccount);
-    // const officer = OfficerDto.toModel(formOfficer);
+  create(formUser: Object, formAccount: Object) {
     return this.http
-      .post<account>(`${this.url}`, { formAccount, formOfficer })
+      .post<account>(this.url, { user: formUser, account: formAccount })
       .pipe(map((resp) => AccountMapper.fromResponse(resp)));
   }
 
-  assign(form: Object) {
+  edit(id: string, formUser: Record<string, any>, formAccount: Object) {
+    if (formUser['password'] === '') delete formUser['password'];
     return this.http
-      .post<account>(`${this.url}/assign`, form)
-      .pipe(map((resp) => AccountMapper.fromResponse(resp)));
-  }
-
-  edit(id: string, form: Record<string, any>) {
-    if (form['password'] === '') delete form['password'];
-    if (form['officer'] === '') delete form['officer'];
-    return this.http
-      .patch<account>(`${this.url}/${id}`, { ...form })
+      .patch<account>(`${this.url}/${id}`, {
+        user: formUser,
+        account: formAccount,
+      })
       .pipe(map((resp) => AccountMapper.fromResponse(resp)));
   }
 
   unlink(id: string) {
     return this.http.delete<{ message: string }>(`${this.url}/unlink/${id}`);
   }
-
-
 
   getDetails(id_cuenta: string) {
     return this.http
@@ -122,5 +112,4 @@ export class AccountService {
         })
       );
   }
-
 }

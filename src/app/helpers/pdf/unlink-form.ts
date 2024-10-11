@@ -6,7 +6,7 @@ import {
 import { StatusMail } from '../../domain/models';
 
 function CreateSectionDetails(
-  { funcionario, dependencia }: account,
+  { officer, dependencia }: account,
   date: Date,
   inbox: communicationResponse[]
 ): Content[] {
@@ -26,8 +26,8 @@ function CreateSectionDetails(
             },
             {
               text: `${
-                funcionario
-                  ? `${funcionario.nombre} ${funcionario.paterno} ${funcionario.materno}`
+                officer
+                  ? `${officer.nombre} ${officer.paterno} ${officer.materno}`
                   : 'SIN FUNCIONARIO'
               }`.toUpperCase(),
             },

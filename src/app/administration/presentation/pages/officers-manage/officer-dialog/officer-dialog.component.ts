@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import {
   ReactiveFormsModule,
@@ -16,22 +15,21 @@ import {
   MatDialogRef,
 } from '@angular/material/dialog';
 
-import { ServerSelectSearchComponent } from '../../../../../shared';
 import { OfficerService } from '../../../services';
 import { Officer } from '../../../../domain';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 
 @Component({
   selector: 'app-officer-dialog',
   standalone: true,
   imports: [
-    CommonModule,
     ReactiveFormsModule,
     MatDialogModule,
     MatButtonModule,
     MatFormFieldModule,
     MatInputModule,
     MatIconModule,
-    ServerSelectSearchComponent,
+    MatCheckboxModule,
   ],
   templateUrl: './officer-dialog.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -41,29 +39,24 @@ export class OfficerDialogComponent {
   private dialogRef = inject(MatDialogRef);
   private officerService = inject(OfficerService);
 
-  public data: Officer = inject(MAT_DIALOG_DATA);
-  public FormOfficer: FormGroup = this.fb.group({
+  public data?: Officer = inject(MAT_DIALOG_DATA);
+  public formOfficer: FormGroup = this.fb.group({
     nombre: ['', Validators.required],
     paterno: ['', Validators.required],
     materno: [''],
-    dni: [
-      '',
-      [Validators.required, Validators.minLength(6), Validators.maxLength(8)],
-    ],
-    telefono: [
-      '',
-      [Validators.required, Validators.minLength(6), Validators.maxLength(8)],
-    ],
+    dni: ['', Validators.required],
+    telefono: ['', Validators.required],
+    activo: [true, Validators.required],
   });
 
   ngOnInit(): void {
-    this.FormOfficer.patchValue(this.data);
+    this.formOfficer.patchValue(this.data ?? {});
   }
 
   save() {
     const subscription = this.data
-      ? this.officerService.update(this.data._id, this.FormOfficer.value)
-      : this.officerService.create(this.FormOfficer.value);
+      ? this.officerService.update(this.data._id, this.formOfficer.value)
+      : this.officerService.create(this.formOfficer.value);
     subscription.subscribe((officer) => {
       this.dialogRef.close(officer);
     });

@@ -7,6 +7,11 @@ interface OfficerProps {
   telefono: number;
   activo: boolean;
 }
+
+interface credentials {
+  login: string;
+  password: string;
+}
 export class Officer {
   public _id: string;
   public nombre: string;
@@ -32,6 +37,15 @@ export class Officer {
     this.dni = dni;
     this.telefono = telefono;
     this.activo = activo;
+  }
+
+  generateCredentials(): credentials {
+    return {
+      login: `${
+        this.nombre.charAt(0) + this.paterno + this.materno.charAt(0)
+      }`.trim(),
+      password: this.dni.trim(),
+    };
   }
 
   get fullname() {

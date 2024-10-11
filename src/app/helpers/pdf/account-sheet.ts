@@ -60,7 +60,7 @@ function createContent(
       marginBottom: 50,
     },
     {
-      qr: `${account.fullnameManager()} Dni: ${account.funcionario?.dni}`,
+      qr: `${account.fullnameManager()} Dni: ${account.officer?.dni}`,
       alignment: 'right',
       fit: 100,
     },

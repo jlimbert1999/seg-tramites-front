@@ -46,7 +46,7 @@ export class InboxService {
       .get<account[]>(`${this.url}/accounts/${id_dependency}`)
       .pipe(
         map((resp) =>
-          resp.map(({ _id, funcionario }) => ({
+          resp.map(({ _id, officer }) => ({
             id_account: _id,
             officer: {} as any,
             online: false,

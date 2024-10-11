@@ -1,4 +1,4 @@
-import { Officer } from '../../../domain/models';
+import { Officer } from '../../domain';
 import { officer } from '../interfaces/officer.interface';
 
 export class OfficerMapper {

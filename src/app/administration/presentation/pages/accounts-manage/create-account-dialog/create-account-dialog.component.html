@@ -1,0 +1,102 @@
+<h2 mat-dialog-title>Crear Cuenta</h2>
+<mat-dialog-content>
+  <mat-stepper orientation="vertical" [linear]="false" #stepper>
+    <mat-step [stepControl]="formAccount" label="Detalles Cuenta">
+      <form [formGroup]="formAccount" class="py-2">
+        <simple-select-search
+          placeholder="Seleccione la institucion"
+          [elements]="institutions()"
+          (onSelect)="onSelectInstitution($event)"
+        />
+        <simple-select-search
+          placeholder="Buscar dependencia"
+          [elements]="dependencies()"
+          (onSelect)="formAccount.get('dependency')?.setValue($event)"
+        />
+        <server-select-search
+          placeholder="Buscar funcionario"
+          [elements]="officers()"
+          (onSearch)="searchOfficer($event)"
+          (onSelect)="onSelectOfficer($event)"
+        />
+        <mat-form-field>
+          <mat-label>Cargo</mat-label>
+          <input
+            formControlName="jobtitle"
+            matInput
+            placeholder="Ingrese el cargo"
+          />
+        </mat-form-field>
+        <mat-checkbox formControlName="isVisible"> Visible </mat-checkbox>
+        <div class="flex justify-end">
+          <button mat-button matStepperNext>Siguiente</button>
+        </div>
+      </form>
+    </mat-step>
+    <mat-step [stepControl]="formUser" label="Detalles Usuario">
+      <form [formGroup]="formUser" class="py-2">
+        <div class="grid grid-cols-2 gap-x-2">
+          <div class="col-span-2">
+            <mat-form-field>
+              <mat-label>Nombre de usuario</mat-label>
+              <input
+                matInput
+                formControlName="fullname"
+                placeholder="Ingrese un nombre"
+              />
+            </mat-form-field>
+          </div>
+          <div class="col-span-2">
+            <simple-select-search
+              placeholder="Seleccione un rol"
+              [elements]="roles()"
+              (onSelect)="formUser.get('role')?.setValue($event)"
+            />
+          </div>
+          <div>
+            <mat-form-field>
+              <mat-label>Login</mat-label>
+              <input
+                matInput
+                formControlName="login"
+                placeholder="Ingrese el login"
+              />
+            </mat-form-field>
+          </div>
+          <div>
+            <mat-form-field>
+              <mat-label>Contraseña</mat-label>
+              <input
+                matInput
+                [type]="hidePassword ? 'password' : 'text'"
+                placeholder="Ingrese una contraseña"
+                formControlName="password"
+              />
+              <button
+                mat-icon-button
+                matSuffix
+                (click)="hidePassword = !hidePassword"
+                [attr.aria-label]="'Hide password'"
+                [attr.aria-pressed]="hidePassword"
+              >
+                <mat-icon>{{
+                  hidePassword ? "visibility_off" : "visibility"
+                }}</mat-icon>
+              </button>
+            </mat-form-field>
+          </div>
+          <mat-checkbox formControlName="isActive"> Habilitado </mat-checkbox>
+        </div>
+        <div class="flex justify-end">
+          <button mat-button matStepperPrevious>Atras</button>
+        </div>
+      </form>
+    </mat-step>
+  </mat-stepper>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button color="warn" mat-dialog-close>Cancelar</button>
+  <button mat-button color="primary" (click)="save()" [disabled]="!isFormValid">
+    Guardar
+  </button>
+</mat-dialog-actions>

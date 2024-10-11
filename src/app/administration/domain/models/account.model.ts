@@ -2,7 +2,7 @@ import { Officer } from './officer.model';
 
 interface AccountProps {
   _id: string;
-  funcionario?: Officer;
+  officer?: Officer;
   isVisible: boolean;
   dependencia: dependency;
   user: user;
@@ -23,7 +23,7 @@ interface user {
 export class Account {
   _id: string;
 
-  funcionario?: Officer;
+  officer?: Officer;
   isVisible: boolean;
   dependencia: dependency;
   jobtitle: string;
@@ -31,14 +31,14 @@ export class Account {
 
   constructor({
     _id,
-    funcionario,
+    officer,
     isVisible,
     dependencia,
     jobtitle,
     user,
   }: AccountProps) {
     this._id = _id;
-    this.funcionario = funcionario;
+    this.officer = officer;
     this.dependencia = dependencia;
     this.isVisible = isVisible;
     this.jobtitle = jobtitle;
@@ -46,6 +46,6 @@ export class Account {
   }
 
   fullnameManager(): string {
-    return this.funcionario ? this.funcionario.fullname : 'DESVINCULADO';
+    return this.officer ? this.officer.fullname : 'DESVINCULADO';
   }
 }

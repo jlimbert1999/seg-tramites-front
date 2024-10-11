@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -17,24 +16,23 @@ import { MatInputModule } from '@angular/material/input';
 import { MatTableModule } from '@angular/material/table';
 
 import { DependencyDialogComponent } from './dependency-dialog/dependency-dialog.component';
+import { SearchInputComponent } from '../../../../shared';
 import { DependencyService } from '../../services';
 import { dependency } from '../../../infrastructure';
-import { SearchInputComponent } from '../../../../shared';
 
 @Component({
   selector: 'app-dependencies-manage',
   standalone: true,
   imports: [
+    FormsModule,
     MatToolbarModule,
     MatDialogModule,
     MatInputModule,
     MatTableModule,
-    CommonModule,
     MatIconModule,
-    FormsModule,
     MatButtonModule,
     MatPaginatorModule,
-    SearchInputComponent
+    SearchInputComponent,
   ],
   templateUrl: './dependencies-manage.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -62,7 +60,8 @@ export default class DependenciesManageComponent {
   ngOnInit(): void {
     this.getData();
   }
-  getData() {
+
+  getData(): void {
     this.dependencyService
       .findAll(this.limit(), this.offset(), this.term())
       .subscribe((data) => {
@@ -97,10 +96,10 @@ export default class DependenciesManageComponent {
     });
   }
 
-  search(term:string){
-    this.index.set(0)
-    this.term.set(term)
-    this.getData()
+  search(term: string) {
+    this.index.set(0);
+    this.term.set(term);
+    this.getData();
   }
 
   onPageChange({ pageIndex, pageSize }: PageEvent) {

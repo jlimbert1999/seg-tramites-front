@@ -10,6 +10,8 @@ import { MatDialog } from '@angular/material/dialog';
 
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
 import { MatTableModule } from '@angular/material/table';
 import { MatIconModule } from '@angular/material/icon';
@@ -28,7 +30,9 @@ import { Officer } from '../../../domain';
     MatFormFieldModule,
     MatInputModule,
     MatIconModule,
+    MatButtonModule,
     MatPaginatorModule,
+    MatToolbarModule,
     SearchInputComponent,
   ],
   templateUrl: './officers-manage.component.html',
@@ -62,7 +66,7 @@ export default class OfficersManageComponent {
 
   create() {
     const dialogRef = this.dialog.open(OfficerDialogComponent, {
-      width: '400px',
+      width: '500px',
     });
     dialogRef.afterClosed().subscribe((result: Officer) => {
       if (!result) return;
@@ -76,13 +80,13 @@ export default class OfficersManageComponent {
 
   edit(officer: Officer) {
     const dialogRef = this.dialog.open(OfficerDialogComponent, {
-      width: '400px',
+      width: '500px',
       data: officer,
     });
     dialogRef.afterClosed().subscribe((result) => {
       if (!result) return;
       this.datasource.update((values) => {
-        const index = values.findIndex((value) => value._id === result._id);
+        const index = values.findIndex(({ _id }) => _id === result._id);
         values[index] = result;
         return [...values];
       });
