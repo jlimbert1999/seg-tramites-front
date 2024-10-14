@@ -6,17 +6,14 @@ import {
   inject,
   signal,
 } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatDialog } from '@angular/material/dialog';
 import { OverlayModule } from '@angular/cdk/overlay';
-import { FormsModule } from '@angular/forms';
 
-import { EditAccountComponent } from './edit-account/edit-account.component';
+import { UpdateAccountDialogComponent } from './update-account-dialog/update-account-dialog.component';
 import { MaterialModule } from '../../../../material.module';
 import { CreateAccountDialogComponent } from './create-account-dialog/create-account-dialog.component';
-import {
-  PaginatorComponent,
-  SidenavButtonComponent,
-} from '../../../../presentation/components';
 import {
   SearchInputComponent,
   ServerSelectSearchComponent,
@@ -25,7 +22,6 @@ import {
 } from '../../../../shared';
 import { AccountService } from '../../services';
 import { Account } from '../../../domain';
-import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 
 @Component({
   selector: 'app-accounts-manage',
@@ -35,10 +31,8 @@ import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
     FormsModule,
     MaterialModule,
     OverlayModule,
-    PaginatorComponent,
     MatPaginatorModule,
     SearchInputComponent,
-    SidenavButtonComponent,
     ServerSelectSearchComponent,
     SimpleSelectSearchComponent,
   ],
@@ -48,32 +42,31 @@ import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 export default class AccountsManageComponent {
   private dialog = inject(MatDialog);
   private accountService = inject(AccountService);
-  public displayedColumns = [
+  displayedColumns = [
     'visibility',
-    'nombre',
+    'fullname',
     'jobtitle',
     'dependency',
     'state',
     'options',
   ];
 
-  public text: string = '';
-
-  datasource = signal<Account[]>([]);
-  datasize = signal<number>(10);
-  limit = signal<number>(10);
-  index = signal<number>(0);
-  offset = computed<number>(() => this.limit() * this.index());
-  term = signal<string>('');
   isOpen = false;
-
   institutions = signal<SimpleSelectOption<string>[]>([]);
   dependencies = signal<SimpleSelectOption<string>[]>([]);
   institution = signal<string | undefined>(undefined);
   dependency = signal<string | undefined>(undefined);
 
+  datasource = signal<Account[]>([]);
+  datasize = signal<number>(10);
+
+  limit = signal<number>(10);
+  index = signal<number>(0);
+  offset = computed<number>(() => this.limit() * this.index());
+  term = signal<string>('');
+
   ngOnInit(): void {
-    this.getInstitutions();
+    this._getRequiredProps();
     this.getData();
   }
 
@@ -91,18 +84,6 @@ export default class AccountsManageComponent {
       });
   }
 
-  appliFilterByText() {
-    if (this.text === '') return;
-    this.index.set(0);
-    this.getData();
-  }
-
-  applyFilterByDependency(dependency: string | undefined) {
-    this.index.set(0);
-    // this.dependency = dependency;
-    this.getData();
-  }
-
   create() {
     const dialogRef = this.dialog.open(CreateAccountDialogComponent, {
       width: '700px',
@@ -118,9 +99,9 @@ export default class AccountsManageComponent {
   }
 
   update(account: Account) {
-    const dialogRef = this.dialog.open(EditAccountComponent, {
+    const dialogRef = this.dialog.open(UpdateAccountDialogComponent, {
       width: '700px',
-      data: account,
+      data: { ...account },
       disableClose: true,
     });
     dialogRef.afterClosed().subscribe((result?: Account) => {
@@ -133,22 +114,10 @@ export default class AccountsManageComponent {
     });
   }
 
-  cancelSearch() {
-    this.index.set(0);
-    this.text = '';
-    this.getData();
-  }
-
   search(term: string) {
     this.index.set(0);
     this.term.set(term);
     this.getData();
-  }
-
-  filter() {
-    this.index.set(0);
-    this.getData();
-    this.isOpen = false;
   }
 
   onPageChange({ pageIndex, pageSize }: PageEvent) {
@@ -157,7 +126,31 @@ export default class AccountsManageComponent {
     this.getData();
   }
 
-  getInstitutions() {
+  onSelectInstitution(id: string): void {
+    this.institution.set(id);
+    this.dependency.set(undefined);
+    this.dependencies.set([]);
+    this.accountService.getDependenciesOfInstitution(id).subscribe((data) => {
+      this.dependencies.set(
+        data.map(({ _id, nombre }) => ({ value: _id, text: nombre }))
+      );
+    });
+  }
+
+  filter() {
+    this.index.set(0);
+    this.isOpen = false;
+    this.getData();
+  }
+
+  reset() {
+    this.institution.set(undefined);
+    this.dependency.set(undefined);
+    this.isOpen = false;
+    this.getData();
+  }
+
+  private _getRequiredProps(): void {
     this.accountService.getInstitutions().subscribe((data) => {
       this.institutions.set(
         data.map(({ _id, nombre }) => ({
@@ -166,23 +159,5 @@ export default class AccountsManageComponent {
         }))
       );
     });
-  }
-
-  selectInstitution(id: string) {
-    this.institution.set(id);
-    this.dependencies.set([]);
-    this.dependency.set(undefined);
-    this.accountService.getDependenciesOfInstitution(id).subscribe((data) => {
-      this.dependencies.set(
-        data.map(({ _id, nombre }) => ({ value: _id, text: nombre }))
-      );
-    });
-  }
-
-  reset() {
-    this.institution.set(undefined);
-    this.dependency.set(undefined);
-    this.dependencies.set([]);
-    this.institutions.set([]);
   }
 }

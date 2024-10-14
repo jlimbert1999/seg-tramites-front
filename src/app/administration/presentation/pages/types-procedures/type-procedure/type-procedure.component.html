@@ -1,27 +1,26 @@
-<h1 mat-dialog-title>Tipo de tramite</h1>
+<h2 mat-dialog-title>{{ data ? "Edicion" : "Creacion" }} Tipo de Tramite</h2>
 <mat-dialog-content>
-  <form [formGroup]="FormTypeProcedure">
+  <form [formGroup]="formTypeProcedure">
     <mat-form-field>
       <mat-label>Nombre</mat-label>
       <input formControlName="nombre" matInput />
     </mat-form-field>
 
-    @if(!typeProcedure){
+    @if(!data){
     <div class="flex gap-x-2">
       <mat-form-field>
         <mat-label>Segmento</mat-label>
-        <input formControlName="segmento" matInput [matAutocomplete]="auto" />
+        <input matInput formControlName="segmento" [matAutocomplete]="auto" />
         <mat-autocomplete #auto="matAutocomplete">
-          <mat-option
-            *ngFor="let segment of filteredSegments | async"
-            [value]="segment"
-          >
+          @for (segment of filteredSegments | async; track $index) {
+          <mat-option [value]="segment">
             {{ segment }}
           </mat-option>
+          }
         </mat-autocomplete>
       </mat-form-field>
-      <mat-form-field appearance="fill">
-        <mat-label>Grupo </mat-label>
+      <mat-form-field>
+        <mat-label>Grupo</mat-label>
         <mat-select formControlName="tipo">
           <mat-option value="EXTERNO">EXTERNO</mat-option>
           <mat-option value="INTERNO">INTERNO</mat-option>
@@ -29,22 +28,31 @@
       </mat-form-field>
     </div>
     }
-    <button
-      [disabled]="denieRequirements"
-      matTooltip="Agregar"
-      (click)="addRequirement()"
-      mat-icon-button
-    >
-      <mat-icon>add</mat-icon>
-    </button>
-    <button matTooltip="Cargar" (click)="upload()" mat-icon-button>
-      <mat-icon>upload</mat-icon>
-    </button>
-    <div formArrayName="requerimientos">
-      <hr />
-      @if( requeriments.controls.length>0){
+    <mat-checkbox formControlName="activo"> Habilitado </mat-checkbox>
+    <div class="flex items-center px-2 mt-3">
+      <p class="text-lg">Requerimientos: {{ requeriments.length }}</p>
+      <span class="flex-1"></span>
+      <button mat-icon-button (click)="addRequirement()">
+        <mat-icon>add</mat-icon>
+      </button>
+      <button mat-icon-button (click)="fileInput.click()">
+        <mat-icon>upload</mat-icon>
+      </button>
+      <input
+        type="file"
+        #fileInput
+        [hidden]="true"
+        [multiple]="true"
+        accept=".xlsx, .ods"
+        (change)="loadExcel($event)"
+      />
+    </div>
+    <div formArrayName="requerimientos" class="overflow-y-scroll max-h-64">
       <div *ngFor="let control of requeriments.controls; let i = index">
-        <div class="flex gap-x-4 items-center" [formGroupName]="i">
+        <div class="flex gap-x-2 gap-y-1 items-center" [formGroupName]="i">
+          <div class="flex-none h-12">
+            <mat-checkbox formControlName="activo" />
+          </div>
           <div class="flex-1">
             <mat-form-field>
               <mat-label>Requerimiento {{ i + 1 }}</mat-label>
@@ -55,19 +63,13 @@
               />
             </mat-form-field>
           </div>
-          <div>
-            <mat-checkbox formControlName="activo">Habilitado</mat-checkbox>
-          </div>
-          <div>
+          <div class="h-12">
             <button mat-icon-button (click)="removeRequirement(i)">
               <mat-icon>delete</mat-icon>
             </button>
           </div>
         </div>
       </div>
-      }@else {
-      <p class="fw-bold p-2">SIN REQUERIMIENTOS</p>
-      }
     </div>
   </form>
 </mat-dialog-content>
@@ -76,7 +78,7 @@
   <button
     mat-button
     color="primary"
-    [disabled]="FormTypeProcedure.invalid"
+    [disabled]="formTypeProcedure.invalid"
     (click)="save()"
   >
     Guardar

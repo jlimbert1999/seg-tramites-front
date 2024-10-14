@@ -1,8 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { TypeProcedureDto } from '../dtos/type-procedure.dto';
-import { environment } from '../../../../../../environments/environment';
-import { typeProcedureResponse } from '../../../../../infraestructure/interfaces';
+import { environment } from '../../../../environments/environment';
+import { typeProcedureResponse } from '../../../infraestructure/interfaces';
 
 @Injectable({
   providedIn: 'root',
@@ -25,8 +24,10 @@ export class TypeProcedureService {
     );
   }
 
-  findAll(limit: number, offset: number) {
-    const params = new HttpParams({ fromObject: { limit, offset } });
+  findAll(limit: number, offset: number, term: string) {
+    const params = new HttpParams({
+      fromObject: { limit, offset, ...(term && { term }) },
+    });
     return this.http.get<{ types: typeProcedureResponse[]; length: number }>(
       `${this.url}`,
       {
@@ -35,21 +36,11 @@ export class TypeProcedureService {
     );
   }
 
-  add(form: Object) {
-    const type = TypeProcedureDto.FormToModel(form);
-    return this.http.post<typeProcedureResponse>(`${this.url}`, type);
+  create(form: Object) {
+    return this.http.post<typeProcedureResponse>(`${this.url}`, form);
   }
 
-  edit(id: string, typeProcedure: Partial<TypeProcedureDto>) {
-    return this.http.put<typeProcedureResponse>(
-      `${this.url}/${id}`,
-      typeProcedure
-    );
-  }
-
-  delete(id_tipoTramite: string) {
-    return this.http.delete<{ activo: boolean }>(
-      `${this.url}/${id_tipoTramite}`
-    );
+  update(id: string, form: Object) {
+    return this.http.put<typeProcedureResponse>(`${this.url}/${id}`, form);
   }
 }

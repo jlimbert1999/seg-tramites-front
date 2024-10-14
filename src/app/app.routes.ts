@@ -33,19 +33,19 @@ export const routes: Routes = [
     children: [
       { path: '', redirectTo: 'main', pathMatch: 'full' },
       {
-        path: 'roles',
-        title: 'Roles',
-        loadComponent: () =>
-          import(
-            './users/presentation/pages/roles-manage/roles-manage.component'
-          ),
-      },
-      {
         path: 'usuarios',
         title: 'Usuarios',
         loadComponent: () =>
           import(
             './users/presentation/pages/users-manage/users-manage.component'
+          ),
+      },
+      {
+        path: 'roles',
+        title: 'Roles',
+        loadComponent: () =>
+          import(
+            './users/presentation/pages/roles-manage/roles-manage.component'
           ),
       },
       {
@@ -88,14 +88,6 @@ export const routes: Routes = [
           import(
             './administration/presentation/pages/types-procedures/types-procedures.component'
           ),
-      },
-
-      {
-        path: 'jobs',
-        loadComponent: () =>
-          import(
-            './presentation/pages/administration/jobs/jobs.component'
-          ).then((c) => c.JobsComponent),
       },
 
       {

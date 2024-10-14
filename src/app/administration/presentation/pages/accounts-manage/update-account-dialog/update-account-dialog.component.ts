@@ -22,15 +22,16 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatStepperModule } from '@angular/material/stepper';
 import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
-import { MatTabsModule } from '@angular/material/tabs';
 import { MatIconModule } from '@angular/material/icon';
+import { filter, switchMap } from 'rxjs';
 
 import {
   ServerSelectOption,
-  ServerSelectSearchComponent,
   SimpleSelectOption,
+  ServerSelectSearchComponent,
   SimpleSelectSearchComponent,
 } from '../../../../../shared';
+
 import {
   AccountService,
   AlertService,
@@ -39,10 +40,9 @@ import {
 } from '../../../../../presentation/services';
 import { Account, Officer } from '../../../../domain';
 import { CustomValidators } from '../../../../../../helpers';
-import { filter, pipe, switchMap } from 'rxjs';
 
 @Component({
-  selector: 'app-edit-account',
+  selector: 'app-update-account-dialog',
   standalone: true,
   imports: [
     CommonModule,
@@ -53,27 +53,28 @@ import { filter, pipe, switchMap } from 'rxjs';
     MatIconModule,
     MatButtonModule,
     MatCheckboxModule,
-    MatTabsModule,
     MatStepperModule,
     ServerSelectSearchComponent,
     SimpleSelectSearchComponent,
   ],
-  templateUrl: './edit-account.component.html',
+  templateUrl: './update-account-dialog.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class EditAccountComponent {
+export class UpdateAccountDialogComponent {
   private formBuilder = inject(FormBuilder);
-  private dialogRef = inject(MatDialogRef<EditAccountComponent>);
+  private dialogRef = inject(MatDialogRef<UpdateAccountDialogComponent>);
   private alertService = inject(AlertService);
   private accountService = inject(AccountService);
   private reportService = inject(ReportService);
   private pdfService = inject(PdfService);
 
-  public data = signal(inject<Account>(MAT_DIALOG_DATA));
-  public hidePassword = true;
-
+  data = signal(inject<Account>(MAT_DIALOG_DATA));
   officers = signal<ServerSelectOption<Officer>[]>([]);
   roles = signal<SimpleSelectOption<string>[]>([]);
+
+  // Current officer full name
+  fullname = signal<string | null>(null);
+  hidePassword = true;
 
   formUser: FormGroup = this.formBuilder.group({
     fullname: [''],
@@ -102,7 +103,7 @@ export class EditAccountComponent {
       this.formAccount.value
     );
     const subscription =
-      this.formAccount.get('officer')?.value === null
+      this.formAccount.get('officer')?.value === null && this.data().officer
         ? this.alertService
             .confirmDialog({
               title: '¿Desvincular Funcionario?',
@@ -114,12 +115,14 @@ export class EditAccountComponent {
             )
         : updateTask;
     subscription.subscribe((account) => {
+      // TODO generate account sheet
       this.dialogRef.close(account);
     });
   }
 
   unlink(): void {
     this.formAccount.get('officer')?.setValue(null);
+    this.fullname.set(null);
   }
 
   searchOfficer(text: string) {
@@ -134,6 +137,8 @@ export class EditAccountComponent {
 
   onSelectOfficer(officer: Officer): void {
     const { login, password } = officer.generateCredentials();
+    this.fullname.set(officer.fullname);
+    this.formAccount.patchValue({ officer: officer._id });
     this.formUser.patchValue({
       fullname: officer.fullname,
       login,
@@ -141,10 +146,15 @@ export class EditAccountComponent {
     });
   }
 
+  get isFormValid() {
+    return this.formAccount.valid && this.formUser.valid;
+  }
+
   private _loadForm(): void {
     const { user, officer, ...props } = this.data();
     this.formUser.patchValue(user);
     this.formAccount.patchValue({ ...props, officer: officer?._id });
+    this.fullname.set(officer?.fullname ?? null);
   }
 
   private _getRequiredProps(): void {

@@ -1,30 +1,32 @@
-<mat-toolbar>
-  <span>Roles</span>
-  <span class="toolbar-spacer"></span>
-  <button (click)="add()" mat-icon-button matTooltip="Crear rol">
-    <mat-icon>add</mat-icon>
-  </button>
-</mat-toolbar>
+<div class="animate-fadeIn">
+  <mat-toolbar>
+    <span>Roles</span>
+    <span class="toolbar-spacer"></span>
+    <button (click)="add()" mat-icon-button matTooltip="Crear rol">
+      <mat-icon>add</mat-icon>
+    </button>
+  </mat-toolbar>
 
-<div class="p-2">
-  <table mat-table [dataSource]="datasource()" class="mat-elevation-z8">
-    <ng-container matColumnDef="rol">
-      <th mat-header-cell *matHeaderCellDef>Rol</th>
-      <td mat-cell *matCellDef="let element">
-        {{ element.name }}
-      </td>
-    </ng-container>
+  <div>
+    <table mat-table [dataSource]="datasource()" class="mat-elevation-z8">
+      <ng-container matColumnDef="rol">
+        <th mat-header-cell *matHeaderCellDef>Rol</th>
+        <td mat-cell *matCellDef="let element">
+          {{ element.name }}
+        </td>
+      </ng-container>
 
-    <ng-container matColumnDef="options">
-      <th mat-header-cell *matHeaderCellDef></th>
-      <td mat-cell *matCellDef="let element"  class="w-8">
-        <button mat-icon-button (click)="edit(element)">
-          <mat-icon>edit</mat-icon>
-        </button>
-      </td>
-    </ng-container>
+      <ng-container matColumnDef="options">
+        <th mat-header-cell *matHeaderCellDef></th>
+        <td mat-cell *matCellDef="let element" class="w-8">
+          <button mat-icon-button (click)="edit(element)">
+            <mat-icon>edit</mat-icon>
+          </button>
+        </td>
+      </ng-container>
 
-    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-    <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
-  </table>
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+    </table>
+  </div>
 </div>

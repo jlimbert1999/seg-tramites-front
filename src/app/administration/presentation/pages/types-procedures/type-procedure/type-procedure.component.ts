@@ -28,14 +28,14 @@ import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
 
 import { Observable, map, startWith } from 'rxjs';
-import { TypeProcedureService } from '../services/type-procedure.service';
-import {
-  typeProcedureResponse,
-  requirement,
-} from '../../../../../infraestructure/interfaces';
-import Swal from 'sweetalert2';
 import { read, utils } from 'xlsx';
 
+import { TypeProcedureService } from '../../../services';
+import { typeProcedure } from '../../../../infrastructure';
+
+interface excelData {
+  nombre: string;
+}
 @Component({
   selector: 'app-type-procedure',
   standalone: true,
@@ -56,70 +56,95 @@ import { read, utils } from 'xlsx';
   changeDetection: ChangeDetectionStrategy.Default,
 })
 export class TypeProcedureComponent {
-  private fb = inject(FormBuilder);
+  private formBuilder = inject(FormBuilder);
   private dialogRef = inject(MatDialogRef<TypeProcedureComponent>);
   private typeService = inject(TypeProcedureService);
   private destroy = inject(DestroyRef);
 
-  public typeProcedure?: typeProcedureResponse = inject(MAT_DIALOG_DATA);
+  public data?: typeProcedure = inject(MAT_DIALOG_DATA);
   public segments = signal<string[]>([]);
-  public FormTypeProcedure: FormGroup = this.fb.group({
+
+  formTypeProcedure: FormGroup = this.formBuilder.nonNullable.group({
     nombre: ['', Validators.required],
     segmento: ['', Validators.required],
     tipo: ['', Validators.required],
-    requerimientos: this.fb.array([]),
+    requerimientos: this.formBuilder.array([]),
+    activo: [true],
   });
 
-  filteredSegments!: Observable<string[]>;
-  dataSource: requirement[] = [];
-  denieRequirements: boolean | undefined;
+  filteredSegments: Observable<string[]>;
 
   ngOnInit(): void {
-    if (this.typeProcedure) {
-      this.FormTypeProcedure.removeControl('tipo');
-      this.FormTypeProcedure.removeControl('segmento');
-      this.typeProcedure.requerimientos.forEach(() => this.addRequirement());
-      this.FormTypeProcedure.patchValue(this.typeProcedure);
-    } else {
-      this.typeService.getSegments().subscribe((segments) => {
-        this.segments.set(segments);
-        this.filteredSegments = this.FormTypeProcedure.get(
-          'segmento'
-        )!.valueChanges.pipe(
-          takeUntilDestroyed(this.destroy),
-          startWith(''),
-          map((value) => this._filterSegments(value || ''))
-        );
-      });
-    }
+    this._gerRequiredProps();
+    this._loadForm();
   }
 
-  save() {
-    const subscription = this.typeProcedure
-      ? this.typeService.edit(
-          this.typeProcedure._id,
-          this.FormTypeProcedure.value
-        )
-      : this.typeService.add(this.FormTypeProcedure.value);
+  save(): void {
+    const subscription = this.data
+      ? this.typeService.update(this.data._id, this.formTypeProcedure.value)
+      : this.typeService.create(this.formTypeProcedure.value);
     subscription.subscribe((resp) => {
       this.dialogRef.close(resp);
     });
   }
 
-  addRequirement() {
+  addRequirement(value?: string) {
     this.requeriments.push(
-      this.fb.group({
-        nombre: ['', Validators.required],
+      this.formBuilder.group({
+        nombre: [value ?? '', Validators.required],
         activo: true,
       })
     );
   }
 
-  get requeriments() {
-    return this.FormTypeProcedure.get('requerimientos') as FormArray;
-  }
   removeRequirement(index: number) {
     this.requeriments.removeAt(index);
+  }
+
+  loadExcel(event: Event): void {
+    const inputElement = event.target as HTMLInputElement | undefined;
+    if (!inputElement?.files) return;
+    const file = inputElement.files[0];
+    const reader = new FileReader();
+    reader.onload = () => {
+      const workbook = read(reader.result, { type: 'binary' });
+      const firstSheetName = workbook.SheetNames[0];
+      const data = utils
+        .sheet_to_json<excelData>(workbook.Sheets[firstSheetName])
+        .filter((item) => item.nombre);
+      data.forEach((item) => this.addRequirement(item.nombre));
+    };
+    reader.readAsBinaryString(file);
+  }
+
+  get requeriments() {
+    return this.formTypeProcedure.get('requerimientos') as FormArray;
+  }
+
+  private _loadForm(): void {
+    if (!this.data) return;
+    this.formTypeProcedure.removeControl('tipo');
+    this.formTypeProcedure.removeControl('segmento');
+
+    this.data.requerimientos.forEach(() => this.addRequirement());
+    this.formTypeProcedure.patchValue(this.data);
+  }
+
+  private _gerRequiredProps(): void {
+    this.typeService.getSegments().subscribe((segments) => {
+      this.segments.set(segments);
+      this._setAutocomplete();
+    });
+  }
+
+  private _setAutocomplete(): void {
+    const control = this.formTypeProcedure.get('segmento');
+    if (!control) return;
+    this.filteredSegments = control.valueChanges.pipe(
+      takeUntilDestroyed(this.destroy),
+      startWith(''),
+      map((value) => (value ? this._filterSegments(value) : this.segments()))
+    );
   }
 
   private _filterSegments(value: string): string[] {
@@ -127,42 +152,5 @@ export class TypeProcedureComponent {
     return this.segments().filter((option) =>
       option.toLowerCase().includes(filterValue)
     );
-  }
-
-  async upload() {
-    const { value: file } = await Swal.fire({
-      title: 'Seleccione el archivo a cargar',
-      text: 'Formatos permitidos :ods, csv, xlsx',
-      input: 'file',
-      showCancelButton: true,
-      confirmButtonText: 'Aceptar',
-      cancelButtonText: 'Cancelar',
-      inputAttributes: {
-        accept: '.xlsx, .xls',
-        'aria-label': 'Cargar archivo excel',
-      },
-    });
-    if (file) {
-      const reader = new FileReader();
-      reader.readAsBinaryString(file);
-      reader.onload = (e) => {
-        const wb = read(reader.result, {
-          type: 'binary',
-          cellDates: true,
-        });
-        const data: { nombre: string }[] = utils.sheet_to_json<any>(
-          wb.Sheets[wb.SheetNames[0]]
-        );
-        const controls = new FormArray([
-          ...data.map((item) =>
-            this.fb.group({
-              nombre: [item.nombre, Validators.required],
-              activo: true,
-            })
-          ),
-        ]);
-        this.FormTypeProcedure.setControl('requerimientos', controls);
-      };
-    }
   }
 }

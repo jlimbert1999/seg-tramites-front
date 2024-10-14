@@ -56,17 +56,10 @@ export default class UsersManageComponent implements OnInit {
     this.getData();
   }
 
-  onPageChange(event: PageEvent) {
-    this.limit.set(event.pageSize);
-    this.index.set(event.pageIndex);
-    this.getData();
-  }
-
   getData() {
     this.userService
       .findAll(this.limit(), this.offset(), this.term())
       .subscribe(({ users, length }) => {
-        console.log(users);
         this.datasource.set(users);
         this.datasize.set(length);
       });
@@ -96,6 +89,12 @@ export default class UsersManageComponent implements OnInit {
         return [...values];
       });
     });
+  }
+
+  onPageChange(event: PageEvent) {
+    this.limit.set(event.pageSize);
+    this.index.set(event.pageIndex);
+    this.getData();
   }
 
   search(term:string){

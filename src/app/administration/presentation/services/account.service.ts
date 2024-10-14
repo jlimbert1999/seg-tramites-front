@@ -52,7 +52,12 @@ export class AccountService {
       );
   }
 
-  findAll({ limit, offset, term, dependency }: FilterAccountsParams) {
+  findAll({
+    limit,
+    offset,
+    term,
+    dependency,
+  }: FilterAccountsParams) {
     const params = new HttpParams({
       fromObject: {
         limit,

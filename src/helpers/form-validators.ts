@@ -5,8 +5,8 @@ export class CustomValidators {
 
   static login(control: AbstractControl): ValidationErrors | null {
     const regex = /^[a-zA-Z0-9]+$/;
-    let eneteredValue = control.value;
-    if (!regex.test(eneteredValue)) {
+    let enteredValue = control.value;
+    if (!regex.test(enteredValue)) {
       return { invalid: true };
     }
     return null;
