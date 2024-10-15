@@ -40,10 +40,10 @@ export class ReportDependentsComponent implements OnInit {
   ];
   dataSource = signal<any[]>([]);
   ngOnInit(): void {
-    if(!this.accout?.id_dependency) return
-    this.reportService.getPendingsByUnit(this.accout!.id_dependency).subscribe((data) => {
-      this.dataSource.set(data);
-    });
+    // if(!this.accout?.id_dependency) return
+    // this.reportService.getPendingsByUnit(this.accout!.id_dependency).subscribe((data) => {
+    //   this.dataSource.set(data);
+    // });
   }
 
 

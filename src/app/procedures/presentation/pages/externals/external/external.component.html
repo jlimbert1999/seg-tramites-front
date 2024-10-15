@@ -2,20 +2,17 @@
   {{ external ? "Edicion" : "Creacion" }} Tramite Externo
 </h2>
 <mat-dialog-content>
-  <mat-stepper headerPosition="bottom" #stepper>
-    <mat-step [stepControl]="FormProcedure" errorMessage="Campos incorrectos">
-      <form [formGroup]="FormProcedure">
-        <ng-template matStepLabel>Detalles tramite</ng-template>
-        <div class="row gy-2">
+  <mat-stepper #stepper>
+    <mat-step [stepControl]="formProcedure" label="Detalles Tramite">
+      <form [formGroup]="formProcedure" class="py-2">
+        <div class="grid grid-cols-4 gap-x-2">
           @if (!external) {
-          <div class="col-md-3">
-            <simple-select-search
-              placeholder="Segmento"
-              [elements]="segments()"
-              (onSelect)="selectSegmentProcedure($event)"
-            />
-          </div>
-          <div class="col-md-9">
+          <simple-select-search
+            placeholder="Segmento"
+            [elements]="segments()"
+            (onSelect)="selectSegmentProcedure($event)"
+          />
+          <div class="col-span-3">
             <simple-select-search
               placeholder="Tipo de tramite"
               [elements]="typesProcedures()"
@@ -23,50 +20,50 @@
             />
           </div>
           }
-          <div class="col-md-6">
+          <div class="col-span-2">
             <mat-form-field>
               <mat-label>Referencia del tramite</mat-label>
               <textarea matInput formControlName="reference"></textarea>
-              @if(FormProcedure.controls['reference'].invalid){
+              @if(formProcedure.controls['reference'].invalid){
               <mat-error>
-                {{ errorMessage(FormProcedure.controls["reference"]) }}
+                {{ errorMessage(formProcedure.controls["reference"]) }}
               </mat-error>
               }
             </mat-form-field>
           </div>
-          <div class="col-md-3">
+          <div>
             <mat-form-field>
               <mat-label>Cant. Hojas / Anexos</mat-label>
               <input type="text" matInput formControlName="amount" />
-              @if(FormProcedure.controls['amount'].invalid){
+              <!-- @if(formProcedure.controls['amount'].invalid){
               <mat-error>
-                {{ errorMessage(FormProcedure.controls["amount"]) }}
+                {{ errorMessage(formProcedure.controls["amount"]) }}
               </mat-error>
-              }
+              } -->
             </mat-form-field>
           </div>
-          <div class="col-md-3">
+          <div>
             <mat-form-field>
               <mat-label>CITE</mat-label>
               <input type="text" matInput formControlName="cite" />
             </mat-form-field>
           </div>
-          <div class="col-12">
-            @if(FormProcedure.get('type')?.value){
-            <mat-selection-list style="max-height: 300px; overflow-y: scroll;">
-              @for (requirement of requirements(); track $index) {
-              <mat-list-option [(selected)]="requirement.isSelected" [lines]="3">{{$index+1}}. {{ requirement.name }}</mat-list-option>
-              } @empty {
-              <li>SIN REQUISITOS</li>
-              }
-            </mat-selection-list>
-
-            }
-          </div>
         </div>
       </form>
+      @if(formProcedure.get('type')?.value ){
+      {{ formProcedure.value | json }}
+      <ul>
+        @for (requirement of requirements(); track $index) {
+        <li>
+          <mat-checkbox [(ngModel)]="requirement.isSelected">
+            {{ requirement.name }}
+          </mat-checkbox>
+        </li>
+        }
+      </ul>
+      }
     </mat-step>
-    <mat-step [stepControl]="FormApplicant()" errorMessage="Campos incorrectos">
+    <mat-step [stepControl]="formApplicant()" errorMessage="Campos incorrectos">
       <ng-template matStepLabel>Detalles solicitante</ng-template>
       @if(!external){
       <mat-form-field>
@@ -80,16 +77,16 @@
         </mat-select>
       </mat-form-field>
       }
-      <form [formGroup]="FormApplicant()">
+      <form [formGroup]="formApplicant()">
         <div class="row gy-2">
           @if(applicantType()==='NATURAL'){
           <div class="col-sm-4">
             <mat-form-field>
               <mat-label>Nombres</mat-label>
               <input matInput formControlName="nombre" />
-              @if(FormApplicant().controls['nombre'].invalid){
+              @if(formApplicant().controls['nombre'].invalid){
               <mat-error>
-                {{ errorMessage(FormApplicant().controls["nombre"]) }}
+                {{ errorMessage(formApplicant().controls["nombre"]) }}
               </mat-error>
               }
             </mat-form-field>
@@ -98,9 +95,9 @@
             <mat-form-field>
               <mat-label>Apellido paterno</mat-label>
               <input matInput formControlName="paterno" />
-              @if(FormApplicant().controls['paterno'].invalid){
+              @if(formApplicant().controls['paterno'].invalid){
               <mat-error>
-                {{ errorMessage(FormApplicant().controls["paterno"]) }}
+                {{ errorMessage(formApplicant().controls["paterno"]) }}
               </mat-error>
               }
             </mat-form-field>
@@ -109,27 +106,9 @@
             <mat-form-field>
               <mat-label>Apellido materno</mat-label>
               <input matInput formControlName="materno" />
-              @if(FormApplicant().controls['materno'].invalid){
+              @if(formApplicant().controls['materno'].invalid){
               <mat-error>
-                {{ errorMessage(FormApplicant().controls["materno"]) }}
-              </mat-error>
-              }
-            </mat-form-field>
-          </div>
-          <div class="col-sm-4">
-            <mat-form-field #TipoDoc>
-              <mat-label>Tipo documento</mat-label>
-              <mat-select formControlName="documento">
-                <mat-option
-                  *ngFor="let document of documents"
-                  [value]="document"
-                >
-                  {{ document | uppercase }}
-                </mat-option>
-              </mat-select>
-              @if(FormApplicant().controls['documento'].invalid){
-              <mat-error>
-                {{ errorMessage(FormApplicant().controls["documento"]) }}
+                {{ errorMessage(formApplicant().controls["materno"]) }}
               </mat-error>
               }
             </mat-form-field>
@@ -138,9 +117,9 @@
             <mat-form-field>
               <mat-label>DNI</mat-label>
               <input matInput formControlName="dni" />
-              @if(FormApplicant().controls['dni'].invalid){
+              @if(formApplicant().controls['dni'].invalid){
               <mat-error>
-                {{ errorMessage(FormApplicant().controls["dni"]) }}
+                {{ errorMessage(formApplicant().controls["dni"]) }}
               </mat-error>
               }
             </mat-form-field>
@@ -149,9 +128,9 @@
             <mat-form-field>
               <mat-label>Telefono de referencia</mat-label>
               <input matInput formControlName="telefono" />
-              @if(FormApplicant().controls['telefono'].invalid){
+              @if(formApplicant().controls['telefono'].invalid){
               <mat-error>
-                {{ errorMessage(FormApplicant().controls["telefono"]) }}
+                {{ errorMessage(formApplicant().controls["telefono"]) }}
               </mat-error>
               }
             </mat-form-field>
@@ -161,9 +140,9 @@
             <mat-form-field>
               <mat-label>Nombres</mat-label>
               <input matInput formControlName="nombre" />
-              @if(FormApplicant().controls['nombre'].invalid){
+              @if(formApplicant().controls['nombre'].invalid){
               <mat-error>
-                {{ errorMessage(FormApplicant().controls["nombre"]) }}
+                {{ errorMessage(formApplicant().controls["nombre"]) }}
               </mat-error>
               }
             </mat-form-field>
@@ -172,9 +151,9 @@
             <mat-form-field>
               <mat-label>Telefono de referencia</mat-label>
               <input matInput formControlName="telefono" />
-              @if(FormApplicant().controls['telefono'].invalid){
+              @if(formApplicant().controls['telefono'].invalid){
               <mat-error>
-                {{ errorMessage(FormApplicant().controls["telefono"]) }}
+                {{ errorMessage(formApplicant().controls["telefono"]) }}
               </mat-error>
               }
             </mat-form-field>
@@ -201,10 +180,10 @@
     </mat-step>
     @if(hasRepresentative()){
     <mat-step
-      [stepControl]="FormRepresentative()"
+      [stepControl]="formRepresentative()"
       errorMessage="Campos incorrectos"
     >
-      <form [formGroup]="FormRepresentative()">
+      <form [formGroup]="formRepresentative()">
         <ng-template matStepLabel>Detalles representante</ng-template>
         <div class="row">
           <div class="col-sm-4">
@@ -227,19 +206,6 @@
           </div>
         </div>
         <div class="row">
-          <div class="col-sm-4">
-            <mat-form-field #TipoDoc>
-              <mat-label>Tipo documento</mat-label>
-              <mat-select formControlName="documento">
-                <mat-option
-                  *ngFor="let document of documents"
-                  [value]="document"
-                >
-                  {{ document | uppercase }}
-                </mat-option>
-              </mat-select>
-            </mat-form-field>
-          </div>
           <div class="col-sm-4">
             <mat-form-field>
               <mat-label>DNI</mat-label>

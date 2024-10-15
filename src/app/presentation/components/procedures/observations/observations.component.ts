@@ -76,6 +76,6 @@ export class ObservationsComponent {
   }
 
   get manager() {
-    return this.authService.account()?.id_account;
+    return ''
   }
 }

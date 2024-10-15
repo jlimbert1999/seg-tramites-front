@@ -96,7 +96,7 @@ export const routes: Routes = [
         canActivate: [updatedPasswordGuard],
         loadComponent: () =>
           import(
-            './presentation/pages/procedures/externals/externals.component'
+            './procedures/presentation/pages/externals/externals.component'
           ),
       },
       {
@@ -105,17 +105,17 @@ export const routes: Routes = [
         canActivate: [updatedPasswordGuard],
         loadComponent: () =>
           import(
-            './presentation/pages/procedures/internals/internals.component'
+            './procedures/presentation/pages/internals/internals.component'
           ),
       },
-      {
-        path: ':from/:group/:id',
-        canActivate: [updatedPasswordGuard],
-        loadComponent: () =>
-          import(
-            './presentation/pages/procedures/detail/detail.component'
-          ).then((c) => c.DetailComponent),
-      },
+      // {
+      //   path: ':from/:group/:id',
+      //   canActivate: [updatedPasswordGuard],
+      //   loadComponent: () =>
+      //     import(
+      //       './presentation/pages/procedures/detail/detail.component'
+      //     ).then((c) => c.DetailComponent),
+      // },
       {
         path: 'inbox',
         title: 'Bandeja - Entrada',

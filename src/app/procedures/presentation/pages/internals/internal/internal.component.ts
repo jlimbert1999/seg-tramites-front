@@ -19,9 +19,11 @@ import { Observable, debounceTime, filter, startWith, switchMap } from 'rxjs';
 import { InternalProcedure, Officer } from '../../../../../domain/models';
 import { handleFormErrorMessages } from '../../../../../helpers';
 import { typeProcedureResponse } from '../../../../../infraestructure/interfaces';
-import { SimpleSelectSearchComponent } from '../../../../components';
-import { AuthService, InternalService } from '../../../../services';
+
 import { MaterialModule } from '../../../../../material.module';
+import { AuthService } from '../../../../../presentation/services';
+import { SimpleSelectSearchComponent } from '../../../../../shared';
+import { InternalService } from '../../../services';
 
 interface SelectOption {
   value: typeProcedureResponse;
@@ -59,11 +61,11 @@ export class InternalComponent {
     fullname_receiver: ['', Validators.required],
     jobtitle_receiver: ['', Validators.required],
     fullname_emitter: [
-      this.authService.account()?.officer.fullname,
+      // this.authService.account()?.officer.fullname,
       Validators.required,
     ],
     jobtitle_emitter: [
-      this.authService.account()?.officer.jobtitle,
+      // this.authService.account()?.officer.jobtitle,
       Validators.required,
     ],
     cite: [this.authService.code()],

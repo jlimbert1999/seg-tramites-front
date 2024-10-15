@@ -2,12 +2,12 @@
 <mat-dialog-content>
   <form [formGroup]="FormProcedure">
     @if(!procedure){
-    <simple-select-search
+    <!-- <simple-select-search
       placeholder="Tipo de tramite"
       [initialValue]="currentOption()"
       [elements]="typesProcedures()"
       (onSelect)="setTypeProcedure($event!)"
-    />
+    /> -->
     }
     <div class="row">
       <div class="col-12">

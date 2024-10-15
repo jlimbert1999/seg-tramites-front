@@ -183,8 +183,7 @@ export class PdfService {
       footer: {
         margin: [10, 0, 10, 0],
         fontSize: 8,
-        text: `Generado por: ${this.authService.account()?.officer.fullname} (${
-          this.authService.account()?.officer.jobtitle
+        text: `Generado por: 
         })`,
       },
       pageSize: 'LETTER',
@@ -219,6 +218,6 @@ export class PdfService {
   }
 
   private get manager() {
-    return this.authService.account()?.officer.fullname ?? 'Desvinculado';
+    return 'Desvinculado';
   }
 }

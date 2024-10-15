@@ -21,7 +21,7 @@ import { AuthService } from '../../services';
 })
 export class ProfileComponent {
   private readonly authService = inject(AuthService);
-  public user = computed(() => this.authService.account()?.officer);
+  public user = computed(() => 'd');
   public isOpen = model.required<boolean>();
   onLogout = output<void>();
 

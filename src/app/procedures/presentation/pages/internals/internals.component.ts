@@ -9,22 +9,17 @@ import {
 import { MatDialog } from '@angular/material/dialog';
 import { RouterModule } from '@angular/router';
 
-import {
-  PaginatorComponent,
-  SearchInputComponent,
-  DispatcherComponent,
-} from '../../../components';
+
 import { InternalComponent } from './internal/internal.component';
-import {
-  InternalService,
-  CacheService,
-  ProcedureService,
-  PdfService,
-} from '../../../services';
+
 import { InternalProcedure } from '../../../../domain/models';
 import { transferDetails } from '../../../../infraestructure/interfaces';
-import { StateLabelPipe } from '../../../pipes';
 import { MaterialModule } from '../../../../material.module';
+import { PaginatorComponent, DispatcherComponent } from '../../../../presentation/components';
+import { StateLabelPipe } from '../../../../presentation/pipes';
+import { PdfService, CacheService } from '../../../../presentation/services';
+import { SearchInputComponent } from '../../../../shared';
+import { InternalService, ProcedureService } from '../../services';
 
 interface CacheData {
   results: InternalProcedure[];

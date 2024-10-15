@@ -77,6 +77,7 @@ export class AuthService {
         updatedPassword: boolean;
       }>(`${this.base_url}/auth`)
       .pipe(
+        tap((resp) => console.log(resp)),
         map(({ menu, token, code, permissions, updatedPassword }) => {
           this._menu.set(menu);
           this._code.set(code);
@@ -117,6 +118,7 @@ export class AuthService {
   }
 
   private _setAuthentication(token: string): boolean {
+    console.log(jwtDecode(token));
     this._account.set(jwtDecode(token));
     localStorage.setItem('token', token);
     return true;

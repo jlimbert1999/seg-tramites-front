@@ -9,23 +9,14 @@ import {
 import { RouterModule } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 
-import {
-  PaginatorComponent,
-  SearchInputComponent,
-  DispatcherComponent,
-  TransferDetails,
-} from '../../../components';
-
-import {
-  ExternalService,
-  CacheService,
-  ProcedureService,
-  PdfService,
-} from '../../../services';
-import { MaterialModule } from '../../../../material.module';
 import { ExternalComponent } from './external/external.component';
 import { ExternalProcedure } from '../../../../domain/models';
-import { StateLabelPipe } from '../../../pipes';
+import { MaterialModule } from '../../../../material.module';
+import { PaginatorComponent, TransferDetails, DispatcherComponent } from '../../../../presentation/components';
+import { StateLabelPipe } from '../../../../presentation/pipes';
+import { CacheService, PdfService } from '../../../../presentation/services';
+import { SearchInputComponent } from '../../../../shared';
+import { ExternalService, ProcedureService } from '../../services';
 
 interface CacheData {
   datasource: ExternalProcedure[];
@@ -74,7 +65,7 @@ export default class ExternalsComponent {
   }
 
   ngOnInit(): void {
-    this.loadPaginationData();
+    // this.loadPaginationData();
   }
 
   getData() {

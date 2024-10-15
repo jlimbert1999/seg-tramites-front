@@ -11,4 +11,13 @@ export class CustomValidators {
     }
     return null;
   }
+
+  static onlyLetters(control: AbstractControl): ValidationErrors | null {
+    const regex = /^[a-zA-ZñÑ\s.]*$/;
+    let enteredValue = control.value;
+    if (!regex.test(enteredValue)) {
+      return { invalid: true };
+    }
+    return null;
+  }
 }

@@ -58,7 +58,7 @@ export class ExternalDetailComponent implements OnInit {
   observations = signal<observationResponse[]>([]);
   manager = computed(() => {
     if (!this.enableOptions()) return undefined;
-    return this.authService.account()?.id_account;
+    // return this.authService.account()?.id_account;
   });
 
   ngOnInit(): void {
@@ -87,7 +87,6 @@ export class ExternalDetailComponent implements OnInit {
   get data() {
     return this.procedure()!;
   }
-
 
   print() {
     this.pdfService.GenerateIndexCard(this.procedure()!, this.workflow());

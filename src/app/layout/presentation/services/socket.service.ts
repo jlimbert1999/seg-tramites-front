@@ -1,40 +1,40 @@
 import { Injectable } from '@angular/core';
 import { Socket, io } from 'socket.io-client';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { environment } from '../../../environments/environment';
+import { environment } from '../../../../environments/environment';
 import {
   SocketClient,
   communicationResponse,
-} from '../../infraestructure/interfaces';
-import { Communication } from '../../domain/models';
-import { publication } from '../../publications/infrastructure';
+} from '../../../infraestructure/interfaces';
+import { Communication } from '../../../domain/models';
+import { publication } from '../../../publications/infrastructure';
+import { userSocket } from '../../infrastructure';
 
 @Injectable({
   providedIn: 'root',
 })
 export class SocketService {
   private socket: Socket;
+
   private onlineClientsSubject = new BehaviorSubject<SocketClient[]>([]);
   public onlineClients$ = this.onlineClientsSubject.asObservable();
 
-  constructor() {}
-
-  connect() {
+  constructor() {
     this.socket = io(environment.base_url, {
       auth: { token: localStorage.getItem('token') },
     });
   }
 
-  disconnect() {
+  disconnect(): void {
     if (this.socket) {
       this.socket.removeAllListeners();
       this.socket.disconnect();
     }
   }
 
-  listenClientConnection() {
-    this.socket.on('listar', (clients: SocketClient[]) => {
-      this.onlineClientsSubject.next(clients);
+  listenUserConnections(): void {
+    this.socket.on('listar', (users: userSocket[]) => {
+      this.onlineClientsSubject.next(users);
     });
   }
 

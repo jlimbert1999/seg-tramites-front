@@ -35,7 +35,7 @@ export default class MainComponent implements OnInit {
   private authService = inject(AuthService);
   private publicationService = inject(PostService);
 
-  fullname = this.authService.account()?.officer.fullname;
+  fullname = '"'
 
   ngOnInit(): void {
     this._showNews();

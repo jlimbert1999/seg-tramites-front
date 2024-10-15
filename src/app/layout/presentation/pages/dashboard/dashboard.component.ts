@@ -63,14 +63,13 @@ export default class DashboardComponent {
   );
 
   constructor() {
-    // this.destroyRef.onDestroy(() => {
-    //   this.socketService.disconnect();
-    // });
+    this.destroyRef.onDestroy(() => {
+      this.socketService.disconnect();
+    });
   }
 
   ngOnInit(): void {
-    this.socketService.connect();
-    this.handleOnlineClients();
+    this.listenUserConnections();
     this.handleExpelClient();
     this.handleCommunications();
     this.socketService.listNews().subscribe((pub) => {
@@ -88,8 +87,8 @@ export default class DashboardComponent {
     this.router.navigate(['/login']);
   }
 
-  private handleOnlineClients(): void {
-    this.socketService.listenClientConnection();
+  private listenUserConnections(): void {
+    this.socketService.listenUserConnections();
   }
 
   private handleExpelClient(): void {
