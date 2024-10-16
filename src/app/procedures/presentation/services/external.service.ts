@@ -8,18 +8,13 @@ import {
   externalResponse,
   typeProcedureResponse,
 } from '../../../infraestructure/interfaces';
+import { external, ExternalMapper } from '../../infrastructure';
 
-interface CreateExternalForm {
-  FormProcedure: Object;
-  FormApplicant: Object;
-  FormRepresentative: Object;
-  Requeriments: { name: string; isSelected: boolean }[];
-}
-interface UpdateExternalForm {
-  id: string;
-  FormProcedure: Object;
-  FormApplicant: Object;
-  FormRepresentative: Object;
+interface externalProps {
+  formProcedure: Object;
+  formApplicant: Object;
+  formRepresentative: Object;
+  requirements?: string[];
 }
 @Injectable({
   providedIn: 'root',
@@ -31,63 +26,61 @@ export class ExternalService {
   getSegments() {
     return this.http.get<string[]>(`${this.base_url}/segments`);
   }
+
   getTypesProceduresBySegment(segment: string) {
     return this.http.get<typeProcedureResponse[]>(
       `${this.base_url}/types-procedures/${segment}`
     );
   }
 
-  add({
-    FormApplicant,
-    FormProcedure,
-    FormRepresentative,
-    Requeriments,
-  }: CreateExternalForm) {
-    const procedure = ExternalProcedureDto.fromForm({
-      formProcedure: FormProcedure,
-      formApplicant: FormApplicant,
-      formRepresentative: FormRepresentative,
-      requeriments: Requeriments,
-    });
+  create({
+    formApplicant,
+    formProcedure,
+    formRepresentative,
+    requirements,
+  }: externalProps) {
     return this.http
-      .post<externalResponse>(`${this.base_url}`, procedure)
-      .pipe(map((response) => ExternalProcedure.ResponseToModel(response)));
+      .post<external>(`${this.base_url}`, {
+        ...formProcedure,
+        requirements,
+        applicant: formApplicant,
+        representative:
+          Object.keys(formRepresentative).length > 0
+            ? formRepresentative
+            : null,
+      })
+      .pipe(map((response) => ExternalMapper.fromResponse(response)));
   }
 
-  edit({
-    id,
-    FormProcedure,
-    FormRepresentative,
-    FormApplicant,
-  }: UpdateExternalForm) {
-    const updateProcedure = {
-      procedure: FormProcedure,
-      details: {
-        solicitante: FormApplicant,
-        ...(Object.keys(FormRepresentative).length > 0 && {
-          representante: FormRepresentative,
-        }),
-      },
-    };
+  update(
+    id: string,
+    { formProcedure, formApplicant, formRepresentative }: externalProps
+  ) {
     return this.http
-      .put<externalResponse>(`${this.base_url}/${id}`, updateProcedure)
-      .pipe(map((response) => ExternalProcedure.ResponseToModel(response)));
+      .patch<external>(`${this.base_url}/${id}`, {
+        ...formProcedure,
+        applicant: formApplicant,
+        representative:
+          Object.keys(formRepresentative).length > 0
+            ? formRepresentative
+            : null,
+      })
+      .pipe(map((response) => ExternalMapper.fromResponse(response)));
   }
 
   findAll(limit: number, offset: number) {
     const params = new HttpParams({ fromObject: { limit, offset } });
     return this.http
-      .get<{ procedures: externalResponse[]; length: number }>(
-        `${this.base_url}`,
-        { params }
-      )
+      .get<{ procedures: external[]; length: number }>(`${this.base_url}`, {
+        params,
+      })
       .pipe(
-        map((response) => {
-          const model = response.procedures.map((procedure) =>
-            ExternalProcedure.ResponseToModel(procedure)
-          );
-          return { procedures: model, length: response.length };
-        })
+        map(({ procedures, length }) => ({
+          procedures: procedures.map((item) =>
+            ExternalMapper.fromResponse(item)
+          ),
+          length,
+        }))
       );
   }
 

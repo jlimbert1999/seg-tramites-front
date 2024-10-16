@@ -9,55 +9,40 @@
       (onSelect)="setTypeProcedure($event!)"
     /> -->
     }
-    <div class="row">
-      <div class="col-12">
+    <div class="grid grid-cols-2 gap-2">
+      <div class="col-span-2">
         <mat-form-field>
           <mat-label>Referencia del tramite</mat-label>
           <textarea formControlName="reference" matInput></textarea>
-          @if(FormProcedure.controls['reference'].invalid){
-          <mat-error>
-            {{ errorMessage(FormProcedure.controls["reference"]) }}
-          </mat-error>
-          }
         </mat-form-field>
       </div>
-      <div class="col-sm-6">
+      <div>
         <mat-form-field>
-          <mat-label>Nombre del remitente</mat-label>
-          <input
-            matInput
-            type="text"
-            formControlName="fullname_emitter"
-            [matAutocomplete]="auto"
-          />
-          <mat-autocomplete #auto="matAutocomplete">
-            <mat-option
-              *ngFor="let option of filteredEmitter | async"
-              [value]="option.fullname"
-              (onSelectionChange)="setJob(option.jobtitle, 'jobtitle_emitter')"
-            >
-              {{ option.fullname | titlecase }}
-            </mat-option>
-          </mat-autocomplete>
-          @if(FormProcedure.controls['fullname_emitter'].invalid){
-          <mat-error>
-            {{ errorMessage(FormProcedure.controls["fullname_emitter"]) }}
-          </mat-error>
-          }
+          <mat-label>Cite</mat-label>
+          <input formControlName="cite" matInput />
         </mat-form-field>
+      </div>
+      <div>
+        <mat-form-field>
+          <mat-label>Cantidad: Hojas / Anexos</mat-label>
+          <input formControlName="numberOfDocuments" matInput />
+        </mat-form-field>
+      </div>
+
+      <div class="col-sm-6">
+        <autocomplete
+          title="Opcion"
+          (onSearch)="test($event)"
+          [options]="example()"
+        />
       </div>
       <div class="col-sm-6">
         <mat-form-field>
           <mat-label>Cargo del remitente</mat-label>
           <input matInput type="text" formControlName="jobtitle_emitter" />
-          @if(FormProcedure.controls['jobtitle_emitter'].invalid){
-          <mat-error>
-            {{ errorMessage(FormProcedure.controls["jobtitle_emitter"]) }}
-          </mat-error>
-          }
         </mat-form-field>
       </div>
-      <div class="col-sm-6">
+      <!-- <div class="col-sm-6">
         <mat-form-field>
           <mat-label>Nombre del destinatario</mat-label>
           <input
@@ -82,8 +67,8 @@
           </mat-error>
           }
         </mat-form-field>
-      </div>
-      <div class="col-sm-6">
+      </div> -->
+      <!-- <div class="col-sm-6">
         <mat-form-field>
           <mat-label>Cargo del destinatario</mat-label>
           <input
@@ -96,25 +81,8 @@
             {{ errorMessage(FormProcedure.controls["jobtitle_receiver"]) }}
           </mat-error>
           }
-        </mat-form-field>
-      </div>
-      <div class="col-sm-6">
-        <mat-form-field>
-          <mat-label>CITE</mat-label>
-          <input formControlName="cite" matInput />
-        </mat-form-field>
-      </div>
-      <div class="col-sm-6">
-        <mat-form-field>
-          <mat-label>Cantidad: Hojas / Anexos</mat-label>
-          <input formControlName="amount" matInput />
-          @if(FormProcedure.controls['amount'].invalid){
-          <mat-error>
-            {{ errorMessage(FormProcedure.controls["amount"]) }}
-          </mat-error>
-          }
-        </mat-form-field>
-      </div>
+        </mat-form-field> -->
+      <!-- </div> -->
     </div>
   </form>
 </mat-dialog-content>

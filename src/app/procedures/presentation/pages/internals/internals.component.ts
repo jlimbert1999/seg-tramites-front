@@ -9,13 +9,15 @@ import {
 import { MatDialog } from '@angular/material/dialog';
 import { RouterModule } from '@angular/router';
 
-
 import { InternalComponent } from './internal/internal.component';
 
 import { InternalProcedure } from '../../../../domain/models';
 import { transferDetails } from '../../../../infraestructure/interfaces';
 import { MaterialModule } from '../../../../material.module';
-import { PaginatorComponent, DispatcherComponent } from '../../../../presentation/components';
+import {
+  PaginatorComponent,
+  DispatcherComponent,
+} from '../../../../presentation/components';
 import { StateLabelPipe } from '../../../../presentation/pipes';
 import { PdfService, CacheService } from '../../../../presentation/services';
 import { SearchInputComponent } from '../../../../shared';
@@ -90,7 +92,8 @@ export default class InternalsComponent {
 
   add() {
     const dialogRef = this.dialog.open(InternalComponent, {
-      maxWidth: '1000px',
+      maxWidth: '800px',
+      width: '800px',
     });
     dialogRef.afterClosed().subscribe((procedure) => {
       if (!procedure) return;

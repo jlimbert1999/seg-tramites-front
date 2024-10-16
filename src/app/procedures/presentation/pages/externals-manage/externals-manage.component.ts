@@ -9,14 +9,18 @@ import {
 import { RouterModule } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 
-import { ExternalComponent } from './external/external.component';
-import { ExternalProcedure } from '../../../../domain/models';
+import { ExternalDialogComponent } from './external-dialog/external-dialog.component';
 import { MaterialModule } from '../../../../material.module';
-import { PaginatorComponent, TransferDetails, DispatcherComponent } from '../../../../presentation/components';
+import {
+  PaginatorComponent,
+  TransferDetails,
+  DispatcherComponent,
+} from '../../../../presentation/components';
 import { StateLabelPipe } from '../../../../presentation/pipes';
 import { CacheService, PdfService } from '../../../../presentation/services';
 import { SearchInputComponent } from '../../../../shared';
 import { ExternalService, ProcedureService } from '../../services';
+import { ExternalProcedure } from '../../../domain';
 
 interface CacheData {
   datasource: ExternalProcedure[];
@@ -24,7 +28,7 @@ interface CacheData {
   text: string;
 }
 @Component({
-  selector: 'app-externals',
+  selector: 'app-externals-manage',
   standalone: true,
   imports: [
     CommonModule,
@@ -35,11 +39,10 @@ interface CacheData {
     SearchInputComponent,
     StateLabelPipe,
   ],
-  templateUrl: './externals.component.html',
-  styleUrl: './externals.component.scss',
+  templateUrl: './externals-manage.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export default class ExternalsComponent {
+export default class ExternalsManageComponent {
   private dialog = inject(MatDialog);
   private externalService = inject(ExternalService);
   private cacheService: CacheService<CacheData> = inject(CacheService);
@@ -66,13 +69,11 @@ export default class ExternalsComponent {
 
   ngOnInit(): void {
     // this.loadPaginationData();
+    this.getData();
   }
 
   getData() {
-    const subscription = this.term
-      ? this.externalService.search(this.term, this.limit, this.offset)
-      : this.externalService.findAll(this.limit, this.offset);
-    subscription.subscribe((data) => {
+    this.externalService.findAll(this.limit, this.offset).subscribe((data) => {
       this.datasource.set(data.procedures);
       this.datasize.set(data.length);
     });
@@ -84,8 +85,8 @@ export default class ExternalsComponent {
     this.getData();
   }
 
-  add() {
-    const dialogRef = this.dialog.open(ExternalComponent, {
+  create(): void {
+    const dialogRef = this.dialog.open(ExternalDialogComponent, {
       maxWidth: '1000px',
       width: '1000px',
     });
@@ -100,8 +101,8 @@ export default class ExternalsComponent {
     });
   }
 
-  edit(procedure: ExternalProcedure) {
-    const dialogRef = this.dialog.open(ExternalComponent, {
+  update(procedure: ExternalProcedure): void {
+    const dialogRef = this.dialog.open(ExternalDialogComponent, {
       maxWidth: '1000px',
       width: '1000px',
       data: procedure,
@@ -120,7 +121,7 @@ export default class ExternalsComponent {
     const transfer: TransferDetails = {
       id_procedure: procedure._id,
       code: procedure.code,
-      attachmentQuantity: procedure.amount,
+      attachmentQuantity: procedure.numberOfDocuments,
     };
     const dialogRef = this.dialog.open(DispatcherComponent, {
       maxWidth: '1200px',
@@ -139,12 +140,10 @@ export default class ExternalsComponent {
   }
 
   generateRouteMap(procedure: ExternalProcedure) {
-    this.procedureService.getWorkflow(procedure._id).subscribe((workflow) => {
-      this.pdfService.generateRouteSheet(procedure, workflow);
-    });
+    // this.procedureService.getWorkflow(procedure._id).subscribe((workflow) => {
+    //   this.pdfService.generateRouteSheet(procedure, workflow);
+    // });
   }
-
-  generateTicket(tramite: ExternalProcedure) {}
 
   changePage(params: { limit: number; index: number }) {
     this.cacheService.pageSize.set(params.limit);

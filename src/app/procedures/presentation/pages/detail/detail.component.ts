@@ -10,12 +10,10 @@ import {
 import { ActivatedRoute } from '@angular/router';
 import { Location } from '@angular/common';
 import { GroupProcedure } from '../../../../domain/models';
-import {
-  ExternalDetailComponent,
-  InternalDetailComponent,
-} from '../../../components';
-import { CacheService } from '../../../services';
+
 import { MaterialModule } from '../../../../material.module';
+import { ExternalDetailComponent, InternalDetailComponent } from '../../../../presentation/components';
+import { CacheService } from '../../../../presentation/services';
 
 type procedureProps = { id: string; group: GroupProcedure };
 

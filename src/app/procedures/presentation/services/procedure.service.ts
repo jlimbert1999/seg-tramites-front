@@ -9,7 +9,7 @@ import {
   workflowResponse,
 } from '../../../infraestructure/interfaces';
 
-import { map } from 'rxjs';
+import { map, Observable } from 'rxjs';
 import {
   ExternalProcedure,
   GroupProcedure,
@@ -32,6 +32,8 @@ type valid = InternalProcedure | ExternalProcedure;
 export class ProcedureService {
   private readonly url = `${environment.base_url}/procedure`;
   private readonly http = inject(HttpClient);
+
+
 
   getWorkflow(id_procedure: string) {
     return this.http

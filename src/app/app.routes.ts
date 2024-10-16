@@ -13,6 +13,7 @@ import { VALID_RESOURCES } from './infraestructure/interfaces';
 import { ReportsComponent } from './presentation/pages/reports/reports.component';
 import { ReportUnitComponent } from './presentation/pages/reports/report-unit/report-unit.component';
 import { InfoComponent } from './layout/presentation/pages/info/info.component';
+import { accountGuard } from './procedures/presentation/guards/account.guard';
 
 export const routes: Routes = [
   {
@@ -23,8 +24,7 @@ export const routes: Routes = [
       import('./layout/presentation/pages/login/login.component'),
   },
   {
-    path: 'home',
-    title: 'Inicio',
+    path: '',
     canActivate: [isAuthenticatedGuard],
     // canActivateChild: [roleGuard],
     loadComponent: () =>
@@ -89,25 +89,31 @@ export const routes: Routes = [
             './administration/presentation/pages/types-procedures/types-procedures.component'
           ),
       },
+      {
+        path: 'manage',
+        canActivate: [accountGuard],
+        children: [
+          {
+            path: 'external',
+            title: 'Externos',
+            canActivate: [updatedPasswordGuard],
+            loadComponent: () =>
+              import(
+                './procedures/presentation/pages/externals-manage/externals-manage.component'
+              ),
+          },
+          {
+            path: 'internal',
+            title: 'Internos',
+            canActivate: [updatedPasswordGuard],
+            loadComponent: () =>
+              import(
+                './procedures/presentation/pages/internals/internals.component'
+              ),
+          },
+        ],
+      },
 
-      {
-        path: 'external',
-        title: 'Externos',
-        canActivate: [updatedPasswordGuard],
-        loadComponent: () =>
-          import(
-            './procedures/presentation/pages/externals/externals.component'
-          ),
-      },
-      {
-        path: 'internal',
-        title: 'Internos',
-        canActivate: [updatedPasswordGuard],
-        loadComponent: () =>
-          import(
-            './procedures/presentation/pages/internals/internals.component'
-          ),
-      },
       // {
       //   path: ':from/:group/:id',
       //   canActivate: [updatedPasswordGuard],

@@ -20,13 +20,13 @@ export class InternalService {
   private http = inject(HttpClient);
   private readonly url = `${environment.base_url}/internal`;
 
-  add(form: Object) {
+  create(form: Object) {
     const procedure = CreateInternalProcedureDto.fromForm(form);
     return this.http
       .post<internalResponse>(`${this.url}`, procedure)
       .pipe(map((response) => InternalProcedure.ResponseToModel(response)));
   }
-  edit(id: string, form: Object) {
+  update(id: string, form: Object) {
     const procedure = UpdateInternalProcedureDto.fromForm(form);
     return this.http
       .put<internalResponse>(`${this.url}/${id}`, procedure)

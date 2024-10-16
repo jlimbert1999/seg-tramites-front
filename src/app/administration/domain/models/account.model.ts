@@ -12,6 +12,7 @@ interface AccountProps {
 interface dependency {
   _id: string;
   nombre: string;
+  codigo: string;
 }
 
 interface user {
