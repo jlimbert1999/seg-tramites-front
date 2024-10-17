@@ -142,12 +142,6 @@ export class InternalComponent {
     });
   }
 
-  private _filterOfficers(term: string) {
-    return this.internalService
-      .findParticipant(term)
-      .pipe((officers) => officers);
-  }
-
   searchOfficers(worker: 'emitter' | 'receiver', term: string): void {
     this.formProcedure.get(`${worker}.fullname`)?.setValue(term);
     if (!term) return;
@@ -160,7 +154,5 @@ export class InternalComponent {
     });
   }
 
-  sett(value: Officer) {
-    this.formProcedure.get('fullname_emitter')?.setValue(value.jobtitle);
-  }
+
 }
