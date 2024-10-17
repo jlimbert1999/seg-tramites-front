@@ -2,19 +2,19 @@ import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
-  ElementRef,
+  DestroyRef,
+  effect,
+  inject,
   input,
-  model,
   OnInit,
   output,
-  ViewChild,
 } from '@angular/core';
+import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
-import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatInputModule } from '@angular/material/input';
 
-import { debounceTime, map, Observable, startWith, switchMap } from 'rxjs';
+import { BehaviorSubject, debounceTime, Subject } from 'rxjs';
 
 export type AutocompleteOption<T> = {
   text: string;
@@ -30,63 +30,106 @@ export type AutocompleteOption<T> = {
     MatInputModule,
     MatAutocompleteModule,
   ],
-  template: ` <form>
-    <mat-form-field>
-      <mat-label>{{ title() }}</mat-label>
-      <input
-        matInput
-        #input
-        aria-label="Autocomplete"
-        [matAutocomplete]="auto"
-        [placeholder]="placeholder()"
-        [formControl]="stateCtrl"
-      />
-      <mat-autocomplete
-        requireSelection
-        #auto="matAutocomplete"
-        (optionSelected)="select($event.option.value)"
-      >
-        @for (state of options(); track $index) {
-        <mat-option [value]="state">
-          {{ state.text }}
-        </mat-option>
-        }
-      </mat-autocomplete>
-    </mat-form-field>
-  </form>`,
+  template: `
+    <form>
+      <mat-form-field>
+        <mat-label>{{ title() }}</mat-label>
+        <input
+          #input
+          type="text"
+          matInput
+          [matAutocomplete]="auto"
+          (input)="onInputChange(input.value)"
+          [formControl]="control"
+        />
+        <mat-autocomplete
+          [requireSelection]="requireSelection()"
+          #auto="matAutocomplete"
+          [displayWith]="displayFn"
+          (optionSelected)="select($event.option.value)"
+        >
+          @for (option of filteredOptions|async; track $index) {
+          <mat-option [value]="option">{{ option.text }}</mat-option>
+          }
+        </mat-autocomplete>
+      </mat-form-field>
+    </form>
+  `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AutocompleteComponent<T> implements OnInit {
-  title = input.required<string>();
-  placeholder = input<string>('Buscar');
-  value = input<string>();
-  options = model<AutocompleteOption<T>[]>();
-  customFilter = input<boolean>(false);
+  private destroyRef = inject(DestroyRef);
 
-  onSearch = output<string | null>();
+  private searchSubject$ = new Subject<string>();
+  control = new FormControl('');
+  filteredOptions = new BehaviorSubject<AutocompleteOption<T>[]>([]);
+
+  title = input<string>();
+  initialValue = input<string>();
+  autoFilter = input<boolean>(false);
+  requireSelection = input<boolean>(false);
+  isRequired = input<boolean>();
+  options = input.required<AutocompleteOption<T>[]>();
+
+  onTyped = output<string>();
   onSelect = output<T>();
 
-  stateCtrl = new FormControl('');
-  filteredStates: Observable<AutocompleteOption<T>[]>;
-  @ViewChild('input') input: ElementRef<HTMLInputElement>;
-
   constructor() {
-    this.stateCtrl.valueChanges
-      .pipe(debounceTime(350), takeUntilDestroyed())
-      .subscribe((term) => {
-        this.onSearch.emit(term);
-      });
+    effect(() => {
+      // Local filter: Set initial values
+      // Server filter: Update values after options change
+      this.filteredOptions.next(this.options());
+    });
   }
 
   ngOnInit(): void {
-    this.stateCtrl.setValue(this.value() ?? null);
+    this._setInitialValues();
+
+    // Listen event (input) from input, valueChanges with requireSelection block values
+    this.searchSubject$
+      .pipe(
+        debounceTime(this.autoFilter() ? 0 : 350),
+        takeUntilDestroyed(this.destroyRef)
+      )
+      .subscribe((value) => {
+        this.onTyped.emit(value);
+        if (this.autoFilter()) {
+          this.filter(value);
+        }
+      });
   }
 
-  displayFn(user: AutocompleteOption<T>): string {
-    return user && user.text ? user.text : '';
+  filter(term: string | undefined): void {
+    const elements = term
+      ? this.options().filter(({ text }) =>
+          text.toLowerCase().includes(term.toLowerCase())
+        )
+      : this.options().slice();
+    this.filteredOptions.next(elements);
   }
 
-  select(e: any) {
-    console.log(e);
+  onInputChange(value: string): void {
+    // Emit values for searchSubject$ activated
+    this.searchSubject$.next(value);
+  }
+
+  displayFn(option: AutocompleteOption<T> | string): string {
+    // if init value is stablish, values is a text, but value of mat-option is AutocompleteOption<T>
+    if (typeof option === 'string') {
+      return option;
+    }
+    return option && option.text ? option.text : '';
+  }
+
+  select(option: AutocompleteOption<T>): void {
+    this.onSelect.emit(option.value);
+  }
+
+  private _setInitialValues() {
+    this.filter(this.initialValue());
+    this.control.setValue(this.initialValue() ?? '');
+    if (this.isRequired()) {
+      this.control.setValidators([Validators.required]);
+    }
   }
 }

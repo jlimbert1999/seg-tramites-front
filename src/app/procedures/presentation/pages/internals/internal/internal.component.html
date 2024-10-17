@@ -1,6 +1,7 @@
 <h1 mat-dialog-title>Tramite interno</h1>
 <mat-dialog-content>
-  <form [formGroup]="FormProcedure">
+  <pre>{{ formProcedure.value | json }}</pre>
+  <form [formGroup]="formProcedure">
     @if(!procedure){
     <!-- <simple-select-search
       placeholder="Tipo de tramite"
@@ -9,80 +10,51 @@
       (onSelect)="setTypeProcedure($event!)"
     /> -->
     }
-    <div class="grid grid-cols-2 gap-2">
-      <div class="col-span-2">
-        <mat-form-field>
-          <mat-label>Referencia del tramite</mat-label>
-          <textarea formControlName="reference" matInput></textarea>
-        </mat-form-field>
-      </div>
-      <div>
-        <mat-form-field>
-          <mat-label>Cite</mat-label>
-          <input formControlName="cite" matInput />
-        </mat-form-field>
-      </div>
-      <div>
-        <mat-form-field>
-          <mat-label>Cantidad: Hojas / Anexos</mat-label>
-          <input formControlName="numberOfDocuments" matInput />
-        </mat-form-field>
-      </div>
-
-      <div class="col-sm-6">
+    <mat-form-field>
+      <mat-label>Referencia del tramite</mat-label>
+      <textarea formControlName="reference" matInput></textarea>
+    </mat-form-field>
+    <div class="flex gap-x-2">
+      <mat-form-field>
+        <mat-label>Cite</mat-label>
+        <input formControlName="cite" matInput />
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>Cantidad: Hojas / Anexos</mat-label>
+        <input formControlName="numberOfDocuments" matInput />
+      </mat-form-field>
+    </div>
+    <div formGroupName="emitter" class="flex gap-x-2">
+      <div class="flex-1">
         <autocomplete
-          title="Opcion"
-          (onSearch)="test($event)"
-          [options]="example()"
+          title="Remitente"
+          [options]="officers().emitter"
+          [initialValue]="fullname('emitter').fullname"
+          (onTyped)="searchOfficers('emitter', $event)"
         />
       </div>
-      <div class="col-sm-6">
+      <div class="flex-1">
         <mat-form-field>
-          <mat-label>Cargo del remitente</mat-label>
-          <input matInput type="text" formControlName="jobtitle_emitter" />
+          <mat-label>Cargo</mat-label>
+          <input formControlName="jobtitle" matInput />
         </mat-form-field>
       </div>
-      <!-- <div class="col-sm-6">
+    </div>
+    <div formGroupName="receiver" class="flex gap-x-2">
+      <div class="flex-1">
+        <autocomplete
+          title="Destinatario"
+          [options]="officers().receiver"
+          [initialValue]="fullname('receiver').fullname"
+          (onTyped)="searchOfficers('receiver', $event)"
+        />
+      </div>
+      <div class="flex-1">
         <mat-form-field>
-          <mat-label>Nombre del destinatario</mat-label>
-          <input
-            class="uppercase"
-            type="text"
-            matInput
-            formControlName="fullname_receiver"
-            [matAutocomplete]="auto1"
-          />
-          <mat-autocomplete matau #auto1="matAutocomplete">
-            <mat-option
-              *ngFor="let option of filteredReceiver | async"
-              [value]="option.fullname"
-              (onSelectionChange)="setJob(option.jobtitle, 'jobtitle_receiver')"
-            >
-              {{ option.fullname | titlecase }}
-            </mat-option>
-          </mat-autocomplete>
-          @if(FormProcedure.controls['fullname_receiver'].invalid){
-          <mat-error>
-            {{ errorMessage(FormProcedure.controls["fullname_receiver"]) }}
-          </mat-error>
-          }
+          <mat-label>Cargo</mat-label>
+          <input formControlName="jobtitle" matInput />
         </mat-form-field>
-      </div> -->
-      <!-- <div class="col-sm-6">
-        <mat-form-field>
-          <mat-label>Cargo del destinatario</mat-label>
-          <input
-            class="uppercase"
-            formControlName="jobtitle_receiver"
-            matInput
-          />
-          @if(FormProcedure.controls['jobtitle_receiver'].invalid){
-          <mat-error>
-            {{ errorMessage(FormProcedure.controls["jobtitle_receiver"]) }}
-          </mat-error>
-          }
-        </mat-form-field> -->
-      <!-- </div> -->
+      </div>
     </div>
   </form>
 </mat-dialog-content>
@@ -91,7 +63,7 @@
   <button
     mat-button
     color="primary"
-    [disabled]="FormProcedure.invalid"
+    [disabled]="formProcedure.invalid"
     (click)="save()"
   >
     Guardar

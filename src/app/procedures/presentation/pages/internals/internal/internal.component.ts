@@ -32,6 +32,10 @@ import { typeProcedure } from '../../../../../administration/infrastructure';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 
+interface workers {
+  emitter: AutocompleteOption<Officer>[];
+  receiver: AutocompleteOption<Officer>[];
+}
 @Component({
   selector: 'app-internal',
   standalone: true,
@@ -56,27 +60,30 @@ export class InternalComponent {
 
   public procedure: InternalProcedure = inject(MAT_DIALOG_DATA);
   public typesProcedures = signal<SimpleSelectOption<string>[]>([]);
-  public filteredEmitter!: Observable<Officer[]>;
-  public filteredReceiver!: Observable<Officer[]>;
   public currentOption = signal<typeProcedure | undefined>(undefined);
-  public FormProcedure: FormGroup = this.fb.group({
+  public formProcedure: FormGroup = this.fb.group({
     type: ['', Validators.required],
     numberOfDocuments: ['', Validators.required],
     segment: ['', Validators.required],
     reference: ['', Validators.required],
-    fullname_receiver: ['', Validators.required],
-    jobtitle_receiver: ['', Validators.required],
-    fullname_emitter: [this.account?.officer?.fullname, Validators.required],
-    jobtitle_emitter: [this.account?.jobtitle, Validators.required],
     cite: [this.account?.dependencia.codigo],
+    emitter: this.fb.group({
+      fullname: [this.account?.officer?.fullname, Validators.required],
+      jobtitle: [this.account?.jobtitle, Validators.required],
+    }),
+    receiver: this.fb.group({
+      fullname: ['', Validators.required],
+      jobtitle: ['', Validators.required],
+    }),
   });
-
-  example = signal<AutocompleteOption<Officer>[]>([]);
+  emitters = signal<AutocompleteOption<Officer>[]>([]);
+  receivers = signal<AutocompleteOption<Officer>[]>([]);
+  officers = signal<workers>({ emitter: [], receiver: [] });
 
   ngOnInit(): void {
     if (this.procedure) {
-      this.FormProcedure.removeControl('type');
-      this.FormProcedure.removeControl('segment');
+      this.formProcedure.removeControl('type');
+      this.formProcedure.removeControl('segment');
       this.loadFormData();
     } else {
       this.internalService.getTypesProcedures().subscribe((data) => {
@@ -90,8 +97,8 @@ export class InternalComponent {
         }
       });
     }
-    this.filteredEmitter = this.setAutocomplete('fullname_emitter');
-    this.filteredReceiver = this.setAutocomplete('fullname_receiver');
+    // this.filteredEmitter = this.setAutocomplete('fullname_emitter');
+    // this.filteredReceiver = this.setAutocomplete('fullname_receiver');
   }
 
   save() {
@@ -102,13 +109,23 @@ export class InternalComponent {
   }
 
   setTypeProcedure(type: typeProcedure) {
-    this.FormProcedure.get('type')?.setValue(type._id);
-    this.FormProcedure.get('segment')?.setValue(type.segmento);
+    this.formProcedure.get('type')?.setValue(type._id);
+    this.formProcedure.get('segment')?.setValue(type.segmento);
     this.currentOption.set(type);
   }
 
   setJob(value: string, path: string) {
-    this.FormProcedure.get(path)?.setValue(value);
+    this.formProcedure.get(path)?.setValue(value);
+  }
+
+  fullname(path: string): { fullname: string; jobtitle: string } {
+    const { fullname = '', jobtitle = '' } = this.formProcedure.get(
+      `${path}`
+    )?.value;
+    return {
+      fullname,
+      jobtitle,
+    };
   }
 
   private loadFormData() {
@@ -116,7 +133,7 @@ export class InternalComponent {
       details: { remitente, destinatario },
       ...values
     } = this.procedure;
-    this.FormProcedure.patchValue({
+    this.formProcedure.patchValue({
       fullname_emitter: remitente.nombre,
       jobtitle_emitter: remitente.cargo,
       fullname_receiver: destinatario.nombre,
@@ -125,27 +142,25 @@ export class InternalComponent {
     });
   }
 
-  private setAutocomplete(path: 'fullname_emitter' | 'fullname_receiver') {
-    return this.FormProcedure.controls[path].valueChanges.pipe(
-      debounceTime(300),
-      startWith(''),
-      filter((value) => !!value),
-      switchMap((value) => this._filterOfficers(value))
-    );
-  }
-
   private _filterOfficers(term: string) {
     return this.internalService
       .findParticipant(term)
       .pipe((officers) => officers);
   }
 
-  test(term: string | null) {
-    console.log(term);
+  searchOfficers(worker: 'emitter' | 'receiver', term: string): void {
+    this.formProcedure.get(`${worker}.fullname`)?.setValue(term);
     if (!term) return;
-    this.internalService.findParticipant(term).subscribe((resp) => {
-      console.log(resp);
-      this.example.set(resp.map((el) => ({ text: el.fullname, value: el })));
+    this.internalService.findParticipant(term).subscribe((data) => {
+      const options: AutocompleteOption<Officer>[] = data.map((el) => ({
+        text: el.fullname,
+        value: el,
+      }));
+      this.officers.update((values) => ({ ...values, [worker]: options }));
     });
+  }
+
+  sett(value: Officer) {
+    this.formProcedure.get('fullname_emitter')?.setValue(value.jobtitle);
   }
 }
