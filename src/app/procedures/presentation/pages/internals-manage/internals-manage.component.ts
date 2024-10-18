@@ -9,19 +9,18 @@ import {
 import { MatDialog } from '@angular/material/dialog';
 import { RouterModule } from '@angular/router';
 
-import { InternalComponent } from './internal/internal.component';
+import { InternalDialogComponent } from './internal-dialog/internal-dialog.component';
 
-import { InternalProcedure } from '../../../../domain/models';
 import { transferDetails } from '../../../../infraestructure/interfaces';
 import { MaterialModule } from '../../../../material.module';
 import {
   PaginatorComponent,
   DispatcherComponent,
 } from '../../../../presentation/components';
-import { StateLabelPipe } from '../../../../presentation/pipes';
 import { PdfService, CacheService } from '../../../../presentation/services';
 import { SearchInputComponent } from '../../../../shared';
 import { InternalService, ProcedureService } from '../../services';
+import { InternalProcedure } from '../../../domain/models/internal.model';
 
 interface CacheData {
   results: InternalProcedure[];
@@ -29,7 +28,7 @@ interface CacheData {
   term: string;
 }
 @Component({
-  selector: 'app-internals',
+  selector: 'app-internals-manage',
   standalone: true,
   imports: [
     CommonModule,
@@ -38,13 +37,11 @@ interface CacheData {
     PaginatorComponent,
     SearchInputComponent,
     SearchInputComponent,
-    StateLabelPipe,
   ],
-  templateUrl: './internals.component.html',
-  styleUrl: './internals.component.scss',
+  templateUrl: './internals-manage.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export default class InternalsComponent {
+export default class InternalsManageComponent {
   private dialog = inject(MatDialog);
   private internalService = inject(InternalService);
   private procedureService = inject(ProcedureService);
@@ -74,14 +71,12 @@ export default class InternalsComponent {
   }
 
   getData(): void {
-    const subscription =
-      this.term !== ''
-        ? this.internalService.search(this.term, this.limit, this.offset)
-        : this.internalService.findAll(this.limit, this.offset);
-    subscription.subscribe((data) => {
-      this.datasource.set(data.procedures);
-      this.datasize.set(data.length);
-    });
+    this.internalService
+      .findAll({ limit: this.limit, offset: this.offset })
+      .subscribe((data) => {
+        this.datasource.set(data.procedures);
+        this.datasize.set(data.length);
+      });
   }
 
   applyFilter(term: string) {
@@ -90,8 +85,8 @@ export default class InternalsComponent {
     this.getData();
   }
 
-  add() {
-    const dialogRef = this.dialog.open(InternalComponent, {
+  create() {
+    const dialogRef = this.dialog.open(InternalDialogComponent, {
       maxWidth: '800px',
       width: '800px',
     });
@@ -106,9 +101,10 @@ export default class InternalsComponent {
     });
   }
 
-  edit(procedure: InternalProcedure) {
-    const dialogRef = this.dialog.open(InternalComponent, {
-      maxWidth: '1000px',
+  update(procedure: InternalProcedure) {
+    const dialogRef = this.dialog.open(InternalDialogComponent, {
+      maxWidth: '800px',
+      width: '800px',
       data: procedure,
     });
     dialogRef.afterClosed().subscribe((procedure) => {
@@ -122,30 +118,30 @@ export default class InternalsComponent {
   }
 
   send(procedure: InternalProcedure) {
-    const transfer: transferDetails = {
-      id_procedure: procedure._id,
-      code: procedure.code,
-      attachmentQuantity: procedure.amount,
-    };
-    const dialogRef = this.dialog.open(DispatcherComponent, {
-      maxWidth: '1200px',
-      width: '1200px',
-      data: transfer,
-    });
-    dialogRef.afterClosed().subscribe((message) => {
-      if (!message) return;
-      this.datasource.update((values) => {
-        const index = values.findIndex(({ _id }) => _id === procedure._id);
-        values[index].isSend = true;
-        return [...values];
-      });
-    });
+    // const transfer: transferDetails = {
+    //   id_procedure: procedure._id,
+    //   code: procedure.code,
+    //   attachmentQuantity: procedure.amount,
+    // };
+    // const dialogRef = this.dialog.open(DispatcherComponent, {
+    //   maxWidth: '1200px',
+    //   width: '1200px',
+    //   data: transfer,
+    // });
+    // dialogRef.afterClosed().subscribe((message) => {
+    //   if (!message) return;
+    //   this.datasource.update((values) => {
+    //     const index = values.findIndex(({ _id }) => _id === procedure._id);
+    //     values[index].isSend = true;
+    //     return [...values];
+    //   });
+    // });
   }
 
   generateRouteMap(procedure: InternalProcedure) {
-    this.procedureService.getWorkflow(procedure._id).subscribe((workflow) => {
-      this.pdfService.generateRouteSheet(procedure, workflow);
-    });
+    // this.procedureService.getWorkflow(procedure._id).subscribe((workflow) => {
+    //   this.pdfService.generateRouteSheet(procedure, workflow);
+    // });
   }
 
   private savePaginationData(): void {

@@ -1,15 +1,6 @@
-<h1 mat-dialog-title>Tramite interno</h1>
+<h2 mat-dialog-title>{{ data ? "Edicion" : "Creacion" }} Tramite Interno</h2>
 <mat-dialog-content>
-  <pre>{{ formProcedure.value | json }}</pre>
   <form [formGroup]="formProcedure">
-    @if(!procedure){
-    <!-- <simple-select-search
-      placeholder="Tipo de tramite"
-      [initialValue]="currentOption()"
-      [elements]="typesProcedures()"
-      (onSelect)="setTypeProcedure($event!)"
-    /> -->
-    }
     <mat-form-field>
       <mat-label>Referencia del tramite</mat-label>
       <textarea formControlName="reference" matInput></textarea>
@@ -29,8 +20,9 @@
         <autocomplete
           title="Remitente"
           [options]="officers().emitter"
-          [initialValue]="fullname('emitter').fullname"
-          (onTyped)="searchOfficers('emitter', $event)"
+          [initialValue]="formProcedure.get('emitter.fullname')?.value"
+          (onTyped)="searchAccounts('emitter', $event)"
+          (onSelect)="selectAcount('emitter', $event)"
         />
       </div>
       <div class="flex-1">
@@ -45,8 +37,9 @@
         <autocomplete
           title="Destinatario"
           [options]="officers().receiver"
-          [initialValue]="fullname('receiver').fullname"
-          (onTyped)="searchOfficers('receiver', $event)"
+          [initialValue]="formProcedure.get('receiver.fullname')?.value"
+          (onTyped)="searchAccounts('receiver', $event)"
+          (onSelect)="selectAcount('receiver', $event)"
         />
       </div>
       <div class="flex-1">

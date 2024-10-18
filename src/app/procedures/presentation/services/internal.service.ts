@@ -7,12 +7,20 @@ import {
   UpdateInternalProcedureDto,
 } from '../../../infraestructure/dtos';
 import {
+  account,
   internalResponse,
   officerResponse,
   typeProcedureResponse,
 } from '../../../infraestructure/interfaces';
 import { InternalProcedure, Officer } from '../../../domain/models';
+import { AccountMapper } from '../../../administration/infrastructure';
+import { internal, InternalMapper } from '../../infrastructure';
 
+interface findProps {
+  term?: string;
+  limit: number;
+  offset: number;
+}
 @Injectable({
   providedIn: 'root',
 })
@@ -21,33 +29,33 @@ export class InternalService {
   private readonly url = `${environment.base_url}/internal`;
 
   create(form: Object) {
-    const procedure = CreateInternalProcedureDto.fromForm(form);
     return this.http
-      .post<internalResponse>(`${this.url}`, procedure)
-      .pipe(map((response) => InternalProcedure.ResponseToModel(response)));
-  }
-  update(id: string, form: Object) {
-    const procedure = UpdateInternalProcedureDto.fromForm(form);
-    return this.http
-      .put<internalResponse>(`${this.url}/${id}`, procedure)
-      .pipe(map((response) => InternalProcedure.ResponseToModel(response)));
+      .post<internal>(`${this.url}`, form)
+      .pipe(map((response) => InternalMapper.fromResponse(response)));
   }
 
-  findAll(limit: number, offset: number) {
-    const params = new HttpParams({ fromObject: { limit, offset } });
+  update(id: string, form: Object) {
     return this.http
-      .get<{ procedures: internalResponse[]; length: number }>(`${this.url}`, {
+      .patch<internal>(`${this.url}/${id}`, form)
+      .pipe(map((response) => InternalMapper.fromResponse(response)));
+  }
+
+  findAll({ limit, offset, term }: findProps) {
+    const params = new HttpParams({
+      fromObject: { limit, offset, ...(term && { term }) },
+    });
+    return this.http
+      .get<{ procedures: internal[]; length: number }>(`${this.url}`, {
         params,
       })
       .pipe(
-        map((response) => {
-          const model = response.procedures.map((procedure) =>
-            InternalProcedure.ResponseToModel(procedure)
-          );
-          return { procedures: model, length: response.length };
-        })
+        map(({ procedures, length }) => ({
+          procedures: procedures.map((el) => InternalMapper.fromResponse(el)),
+          length,
+        }))
       );
   }
+
   search(text: string, limit: number, offset: number) {
     const params = new HttpParams({ fromObject: { limit, offset } });
     return this.http
@@ -65,10 +73,10 @@ export class InternalService {
       );
   }
 
-  findParticipant(text: string) {
+  searchAccounts(text: string) {
     return this.http
-      .get<officerResponse[]>(`${this.url}/participant/${text}`)
-      .pipe(map((resp) => resp.map((el) => Officer.officerFromJson(el))));
+      .get<account[]>(`${this.url}/participant/${text}`)
+      .pipe(map((resp) => resp.map((el) => AccountMapper.fromResponse(el))));
   }
 
   getTypesProcedures() {

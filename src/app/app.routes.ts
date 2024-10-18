@@ -103,12 +103,19 @@ export const routes: Routes = [
               ),
           },
           {
+            path: 'external/:id',
+            loadComponent: () =>
+              import(
+                './procedures/presentation/pages/externals-manage/external-detail/external-detail.component'
+              ),
+          },
+          {
             path: 'internal',
             title: 'Internos',
             canActivate: [updatedPasswordGuard],
             loadComponent: () =>
               import(
-                './procedures/presentation/pages/internals/internals.component'
+                './procedures/presentation/pages/internals-manage/internals-manage.component'
               ),
           },
         ],

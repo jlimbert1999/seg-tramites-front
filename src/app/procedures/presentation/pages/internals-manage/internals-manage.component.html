@@ -1,0 +1,106 @@
+<div class="animate-fadeIn">
+  <mat-toolbar>
+    <span>Internos</span>
+    <span class="flex-1"></span>
+    <button mat-icon-button (click)="create()">
+      <mat-icon>add</mat-icon>
+    </button>
+  </mat-toolbar>
+
+  <!-- <search-input
+    placeholder="Alterno / Referencia"
+    [initialValue]="term"
+    (onSearch)="applyFilter($event)"
+  /> -->
+  <div class="mat-elevation-z8">
+    <table mat-table [dataSource]="datasource()">
+      <ng-container matColumnDef="code">
+        <th mat-header-cell *matHeaderCellDef>Alterno</th>
+        <td mat-cell *matCellDef="let element" [id]="element._id">
+          <a
+            class="underline text-blue-600"
+            [routerLink]="['/home/internal', element.group, element._id]"
+            [queryParams]="PageParam"
+          >
+            {{ element.code }}
+          </a>
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="reference">
+        <th mat-header-cell *matHeaderCellDef>Referencia</th>
+        <td mat-cell *matCellDef="let element">
+          {{ element.reference }}
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="applicant">
+        <th mat-header-cell *matHeaderCellDef>Destinatario</th>
+        <td mat-cell *matCellDef="let element">
+          <!-- {{ element.details.destinatario.nombre | titlecase }} -->
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="state">
+        <th mat-header-cell *matHeaderCellDef>Estado</th>
+        <td mat-cell *matCellDef="let element">
+          {{ element.state }}
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="startDate">
+        <th mat-header-cell *matHeaderCellDef>Fecha</th>
+        <td mat-cell *matCellDef="let element">
+          {{ element.startDate | date : "short" }}
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="send">
+        <th mat-header-cell *matHeaderCellDef></th>
+        <td mat-cell *matCellDef="let element">
+          <mat-icon
+            [ngStyle]="element.isSend ? { color: 'green' } : { color: 'red' }"
+            >{{ element.isSend ? "mark_email_read" : "unsubscribe" }}</mat-icon
+          >
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="options">
+        <th mat-header-cell *matHeaderCellDef></th>
+        <td mat-cell *matCellDef="let row" class="w-8">
+          <button
+            mat-icon-button
+            [matMenuTriggerFor]="menu"
+            aria-label="menu options"
+          >
+            <mat-icon>more_vert</mat-icon>
+          </button>
+          <mat-menu #menu="matMenu">
+            <button
+              mat-menu-item
+              [disabled]="!row.isEditable"
+              (click)="update(row)"
+            >
+              <mat-icon>edit</mat-icon>
+              <span>Editar tramite</span>
+            </button>
+            <button mat-menu-item [disabled]="row.isSend" (click)="send(row)">
+              <mat-icon>send</mat-icon>
+              <span>Remitir tramite</span>
+            </button>
+            <button mat-menu-item (click)="generateRouteMap(row)">
+              <mat-icon>feed</mat-icon>
+              <span>Hoja de ruta</span>
+            </button>
+          </mat-menu>
+        </td>
+      </ng-container>
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+      <tr class="mat-row" *matNoDataRow>
+        <td class="p-3" colspan="7">No se encontraron resultados</td>
+      </tr>
+    </table>
+    <paginator
+      [pageSizeOptions]="[10, 20, 30, 50]"
+      [limit]="limit"
+      [index]="index"
+      [length]="datasize()"
+      (onPageChage)="changePage($event)"
+    />
+  </div>
+</div>

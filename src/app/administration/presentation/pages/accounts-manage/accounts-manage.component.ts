@@ -66,7 +66,7 @@ export default class AccountsManageComponent {
   term = signal<string>('');
 
   ngOnInit(): void {
-    this._getRequiredProps();
+    // this._getRequiredProps();
     this.getData();
   }
 
