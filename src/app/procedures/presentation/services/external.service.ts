@@ -84,6 +84,10 @@ export class ExternalService {
       );
   }
 
+  // getDetail(id:STR){
+
+  // }
+
   search(text: string, limit: number, offset: number) {
     const params = new HttpParams().set('limit', limit).set('offset', offset);
     return this.http

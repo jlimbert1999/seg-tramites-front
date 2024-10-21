@@ -7,7 +7,7 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
   imports: [
     CommonModule,
   ],
-  template: `<p>internal-detail works!</p>`,
+  templateUrl: './internal-detail.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class InternalDetailComponent { }

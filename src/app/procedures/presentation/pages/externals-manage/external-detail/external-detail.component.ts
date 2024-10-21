@@ -10,6 +10,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { ActivatedRoute } from '@angular/router';
+import { switchMap } from 'rxjs';
 
 @Component({
   selector: 'app-external-detail',
@@ -27,14 +28,9 @@ import { ActivatedRoute } from '@angular/router';
 export default class ExternalDetailComponent implements OnInit {
   private route = inject(ActivatedRoute);
 
-
-
   ngOnInit(): void {
-    // this.heroes$ = this.route.paramMap.pipe(
-    //   switchMap((params) => {
-    //     this.selectedId = Number(params.get('id'));
-    //     return this.service.getHeroes();
-    //   })
-    // );
+    this.route.paramMap.pipe().subscribe((params) => {
+      console.log(params);
+    });
   }
 }
