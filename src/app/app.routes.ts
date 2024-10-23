@@ -135,9 +135,7 @@ export const routes: Routes = [
         data: { resource: VALID_RESOURCES.communication },
         canActivate: [updatedPasswordGuard],
         loadComponent: () =>
-          import(
-            './presentation/pages/communications/inbox/inbox.component'
-          ).then((c) => c.InboxComponent),
+          import('./communications/pages/inbox/inbox.component'),
       },
       {
         path: 'inbox/:id',

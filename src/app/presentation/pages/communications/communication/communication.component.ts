@@ -21,7 +21,8 @@ import {
 } from '../../../../domain/models';
 import { CacheService, InboxService } from '../../../services';
 import { MaterialModule } from '../../../../material.module';
-import { InboxCache } from '../inbox/inbox.component';
+import { InboxCache } from '../../../../communications/pages/inbox/inbox.component';
+
 
 @Component({
   selector: 'app-communication',

@@ -38,7 +38,7 @@ interface SelectOption {
 }
 
 @Component({
-  selector: 'dispatcher',
+  selector: 'submission-dialog',
   standalone: true,
   imports: [
     CommonModule,
@@ -117,12 +117,12 @@ export class DispatcherComponent implements OnInit {
       'Enviando el tramite.....',
       'Por favor espere'
     );
-    this.inboxService
-      .create(this.FormEnvio.value, this.data, this.selectedReceivers())
-      .subscribe(() => {
-        this.alertService.CloseLoadingAlert();
-        this.dialogRef.close(true);
-      });
+    // this.inboxService
+    //   .create(this.FormEnvio.value, this.data, this.selectedReceivers())
+    //   .subscribe(() => {
+    //     this.alertService.CloseLoadingAlert();
+    //     this.dialogRef.close(true);
+    //   });
   }
 
   getInstitutions() {
@@ -149,13 +149,13 @@ export class DispatcherComponent implements OnInit {
   }
 
   getAccounts(id_dependency: string) {
-    this.inboxService
-      .getAccountsForSend(id_dependency)
-      .pipe(switchMap((receivers) => this._checkOnlineClients(receivers)))
-      .subscribe((accounts) => {
-        this.receivers.set(accounts);
-        this.filteredReceivers$.next(accounts);
-      });
+    // this.inboxService
+    //   .getAccountsForSend(id_dependency)
+    //   .pipe(switchMap((receivers) => this._checkOnlineClients(receivers)))
+    //   .subscribe((accounts) => {
+    //     this.receivers.set(accounts);
+    //     this.filteredReceivers$.next(accounts);
+    //   });
   }
 
   get isValidForm() {

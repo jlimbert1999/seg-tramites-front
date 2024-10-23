@@ -22,6 +22,7 @@ import {
 import { transferDetails } from '../../../../infraestructure/interfaces';
 import { DispatcherComponent } from '../dispatcher/dispatcher.component';
 
+
 const ActionMap = {
   [StateProcedure.Concluido]: 'Concluir',
   [StateProcedure.Suspendido]: 'Suspender',

@@ -12,29 +12,15 @@ import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { forkJoin } from 'rxjs';
-import {
-  AlertService,
-  ArchiveService,
-  CacheService,
-  InboxService,
-  PdfService,
-  ProcedureService,
-  SocketService,
-} from '../../../services';
-import {
-  PaginatorComponent,
-  SearchInputComponent,
-  SidenavButtonComponent,
-} from '../../../components';
-import {
-  Communication,
-  StateProcedure,
-  StatusMail,
-} from '../../../../domain/models';
-import { StateLabelPipe } from '../../../pipes';
-import { transferDetails } from '../../../../infraestructure/interfaces';
-import { DispatcherComponent } from '../../../components/procedures/dispatcher/dispatcher.component';
-import { MaterialModule } from '../../../../material.module';
+import { Communication, StatusMail, StateProcedure } from '../../../domain/models';
+import { transferDetails } from '../../../infraestructure/interfaces';
+import { MaterialModule } from '../../../material.module';
+import { PaginatorComponent, SidenavButtonComponent, DispatcherComponent } from '../../../presentation/components';
+import { StateLabelPipe } from '../../../presentation/pipes';
+import { InboxService, SocketService, AlertService, ProcedureService, PdfService, ArchiveService, CacheService } from '../../../presentation/services';
+import { SearchInputComponent } from '../../../shared';
+
+
 
 export interface InboxCache {
   datasource: Communication[];
@@ -59,7 +45,7 @@ export interface InboxCache {
   styleUrl: './inbox.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class InboxComponent implements OnInit {
+export default class InboxComponent implements OnInit {
   private inboxService = inject(InboxService);
   private socketService = inject(SocketService);
   private destroyRef = inject(DestroyRef);

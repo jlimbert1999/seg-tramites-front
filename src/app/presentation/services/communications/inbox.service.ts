@@ -8,21 +8,28 @@ import {
   communicationResponse,
   dependencyResponse,
   institution,
-  receiver,
 } from '../../../infraestructure/interfaces';
 import {
   Communication,
-  Officer,
   StateProcedure,
   StatusMail,
 } from '../../../domain/models';
 import { CreateCommunicationDto } from '../../../infraestructure/dtos';
+import { OfficerMapper } from '../../../administration/infrastructure';
+import { Officer } from '../../../administration/domain';
 
 interface SearchParams {
   text: string;
   limit: number;
   offset: number;
   status?: StatusMail;
+}
+
+export interface receiver {
+  accountId: string;
+  officer: Officer;
+  jobtitle: string;
+  online: boolean;
 }
 
 @Injectable({
@@ -36,32 +43,32 @@ export class InboxService {
   getInstitucions() {
     return this.http.get<institution[]>(`${this.url}/institutions`);
   }
+
   getDependenciesInInstitution(id_institution: string) {
     return this.http.get<dependencyResponse[]>(
       `${this.url}/dependencies/${id_institution}`
     );
   }
-  getAccountsForSend(id_dependency: string): Observable<receiver[]> {
-    return this.http
-      .get<account[]>(`${this.url}/accounts/${id_dependency}`)
-      .pipe(
-        map((resp) =>
-          resp.map(({ _id, officer }) => ({
-            id_account: _id,
-            officer: {} as any,
-            online: false,
-          }))
-        )
-      );
+  searchRecipients(term: string): Observable<receiver[]> {
+    return this.http.get<account[]>(`${this.url}/recipients/${term}`).pipe(
+      map((resp) =>
+        resp.map((el) => ({
+          accountId: el._id,
+          officer: OfficerMapper.fromResponse(el.officer!),
+          jobtitle: el.jobtitle,
+          online: false,
+        }))
+      )
+    );
   }
 
   create(FormSend: Object, details: transferDetails, receivers: receiver[]) {
-    const mail = CreateCommunicationDto.fromFormData(
-      FormSend,
-      details,
-      receivers
-    );
-    return this.http.post<{ message: string }>(`${this.url}`, mail);
+    // const mail = CreateCommunicationDto.fromFormData(
+    //   FormSend,
+    //   details,
+    //   receivers
+    // );
+    return this.http.post<{ message: string }>(`${this.url}`, null);
   }
 
   findAll(limit: number, offset: number, status?: StatusMail) {

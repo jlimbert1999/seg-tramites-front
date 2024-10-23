@@ -21,6 +21,7 @@ import { CacheService, PdfService } from '../../../../presentation/services';
 import { SearchInputComponent } from '../../../../shared';
 import { ExternalService, ProcedureService } from '../../services';
 import { ExternalProcedure } from '../../../domain';
+import { SubmissionDialogComponent } from '../../../../communications/pages/inbox/submission-dialog/submission-dialog.component';
 
 interface CacheData {
   datasource: ExternalProcedure[];
@@ -123,7 +124,7 @@ export default class ExternalsManageComponent {
       code: procedure.code,
       attachmentQuantity: procedure.numberOfDocuments,
     };
-    const dialogRef = this.dialog.open(DispatcherComponent, {
+    const dialogRef = this.dialog.open(SubmissionDialogComponent, {
       maxWidth: '1200px',
       width: '1200px',
       data: transfer,
