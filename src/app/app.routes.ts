@@ -135,7 +135,7 @@ export const routes: Routes = [
         data: { resource: VALID_RESOURCES.communication },
         canActivate: [updatedPasswordGuard],
         loadComponent: () =>
-          import('./communications/pages/inbox/inbox.component'),
+          import('./communications/presentation/pages/inbox/inbox.component'),
       },
       {
         path: 'inbox/:id',
@@ -151,9 +151,7 @@ export const routes: Routes = [
         title: 'Bandeja - Salida',
         canActivate: [updatedPasswordGuard],
         loadComponent: () =>
-          import(
-            './presentation/pages/communications/outbox/outbox.component'
-          ).then((c) => c.OutboxComponent),
+          import('./communications/presentation/pages/outbox/outbox.component'),
       },
       {
         path: 'archives',

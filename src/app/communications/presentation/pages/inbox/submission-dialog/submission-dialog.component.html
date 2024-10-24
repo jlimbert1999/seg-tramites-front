@@ -1,5 +1,12 @@
 <h2 mat-dialog-title>Remision Tramite</h2>
 <mat-dialog-content>
+  <div class="mb-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+    <dt class="text-lg font-medium leading-6">TRAMITE:</dt>
+    <dd class="mt-1 text-lg leading-6 sm:col-span-2 sm:mt-0">
+      <!-- {{ data.code }} -->
+    </dd>
+  </div>
+
   <!-- <form [formGroup]="FormEnvio">
     <div class="row">
       <div class="col-sm-4">
@@ -102,8 +109,37 @@
     </div>
   </form> -->
 
-  <div class="grid grid-cols-3 gap-4">
-    <div>
+  <form [formGroup]="FormEnvio">
+    <div class="grid grid-cols-3 gap-x-2">
+      <div class="col-span-3">
+        <mat-form-field>
+          <mat-label>Instruccion / Proveido</mat-label>
+          <textarea formControlName="reference" matInput required> </textarea>
+          <mat-error *ngIf="FormEnvio.controls['reference'].invalid">
+            Ingrese el motivo
+          </mat-error>
+        </mat-form-field>
+      </div>
+      <div>
+        <mat-form-field>
+          <mat-label>Cantidad: hojas / anexos</mat-label>
+          <input formControlName="attachmentsCount" matInput required />
+          <mat-error *ngIf="FormEnvio.controls['attachmentsCount'].invalid">
+            Ingrese la cantidad
+          </mat-error>
+        </mat-form-field>
+      </div>
+      <div>
+        <mat-form-field>
+          <mat-label>Numero de registro interno</mat-label>
+          <input formControlName="internalNumber" matInput />
+        </mat-form-field>
+      </div>
+    </div>
+  </form>
+  <div class="py-3 text-lg font-medium">DESTINATARIOS:</div>
+  <div class="grid grid-cols-3 gap-x-2">
+    <div class="col-start-1">
       <simple-select-search
         placeholder="Buscar institucion"
         [elements]="institutions()"
@@ -114,7 +150,7 @@
       <simple-select-search
         placeholder="Buscar dependencia"
         [elements]="dependencies()"
-        (onSelect)="getAccounts($event)"
+        (onSelect)="getRecipientsByDependency($event)"
       />
     </div>
     <div class="col-span-2">
@@ -122,27 +158,56 @@
         <mat-select
           [formControl]="bankServerSideCtrl"
           placeholder="Buscar destinatarios"
-          (selectionChange)="set($event)"
         >
           <mat-option>
             <ngx-mat-select-search
               [formControl]="filterReceiverCtrl"
-            ></ngx-mat-select-search>
+              placeholderLabel="Nombre del destinatario"
+              noEntriesFoundLabel="Sin destinatarios"
+            />
           </mat-option>
-          <mat-option
-            *ngFor="let bank of filteredReceivers$ | async"
-            [value]="bank"
-          >
-            {{ bank.officer.fullname }}
+          @for (receiver of filteredReceivers$|async; track $index) {
+          <mat-option [value]="receiver">
+            <div class="flex gap-x-3 items-center">
+              <span
+                class="inline-flex text-xs h-2 w-2 rounded-full"
+                [ngClass]="receiver.online ? 'bg-green-600' : 'bg-red-600'"
+              >
+              </span>
+              <div class="flex flex-col">
+                <span> {{ receiver.officer.fullname | titlecase }}</span>
+                <small> {{ receiver.jobtitle }}</small>
+              </div>
+            </div>
           </mat-option>
+          }
         </mat-select>
       </mat-form-field>
     </div>
-    <div class="...">02</div>
-    <div class="...">03</div>
-    <div class="...">05</div>
-    <div class="...">06</div>
-    <div class="col-span-2 ...">07</div>
+    <div class="flex justify-center gap-x-2">
+      <button mat-stroked-button (click)="add('original')">Original</button>
+      <button mat-stroked-button (click)="add('copy')">Copia</button>
+    </div>
+    <div class="col-span-3">
+      <mat-list role="list">
+        @for (item of recipients(); track $index) {
+        <mat-list-item role="listitem">
+          <img matListItemAvatar src="assets/img/account.png" alt="" />
+          <span matListItemTitle> {{ item.fullname }}</span>
+          <div matListItemLine>
+            {{ item.isOriginal ? "Original" : "Copia" }}
+          </div>
+          <button
+            mat-icon-button
+            matListItemMeta
+            (click)="remove(item.accountId)"
+          >
+            <mat-icon>cancel</mat-icon>
+          </button>
+        </mat-list-item>
+        }
+      </mat-list>
+    </div>
   </div>
 </mat-dialog-content>
 <mat-dialog-actions align="end">

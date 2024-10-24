@@ -1,0 +1,49 @@
+<mat-toolbar color="primary">
+  <span>Bandeja de salida</span>
+</mat-toolbar>
+<div class="container-fluid">
+  <search-input
+    placeholder="Alterno / Referencia "
+    (onSearch)="applyFilter($event)"
+  />
+
+  <div class="emat-elevation-z8">
+    <table mat-table [dataSource]="datasource()" class="mat-elevation-z8">
+      <ng-container matColumnDef="code">
+        <th mat-header-cell *matHeaderCellDef>No.</th>
+        <td mat-cell *matCellDef="let element">{{ element.procedure.code }}</td>
+      </ng-container>
+
+      <!-- Name Column -->
+      <ng-container matColumnDef="reference">
+        <th mat-header-cell *matHeaderCellDef>Name</th>
+        <td mat-cell *matCellDef="let element">{{ element.isOriginal }}</td>
+      </ng-container>
+
+      <!-- Weight Column -->
+      <ng-container matColumnDef="sentDate">
+        <th mat-header-cell *matHeaderCellDef>Weight</th>
+        <td mat-cell *matCellDef="let element">
+          {{ element.sentDate | date : "short" }}
+        </td>
+      </ng-container>
+
+      <!-- Symbol Column -->
+      <ng-container matColumnDef="options">
+        <th mat-header-cell *matHeaderCellDef>Symbol</th>
+        <td mat-cell *matCellDef="let element"></td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+    </table>
+
+    <paginator
+      [pageSizeOptions]="[10, 20, 30, 50]"
+      [limit]="limit"
+      [index]="index"
+      [length]="datasize()"
+      (onPageChage)="changePage($event)"
+    />
+  </div>
+</div>

@@ -4,6 +4,7 @@ import { map } from 'rxjs';
 import { environment } from '../../../../environments/environment';
 import { GroupedCommunication } from '../../../domain/models';
 import { groupedCommunicationResponse } from '../../../infraestructure/interfaces';
+import { communication } from '../../../communications/infrastructure';
 
 @Injectable({
   providedIn: 'root',
@@ -14,19 +15,12 @@ export class OutboxService {
 
   findAll(limit: number, offset: number) {
     const params = new HttpParams({ fromObject: { limit, offset } });
-    return this.http
-      .get<{ mails: groupedCommunicationResponse[]; length: number }>(
-        `${this.url}/outbox`,
-        { params }
-      )
-      .pipe(
-        map((resp) => ({
-          mails: resp.mails.map((el) =>
-            GroupedCommunication.responseToModel(el)
-          ),
-          length: resp.length,
-        }))
-      );
+    return this.http.get<{ mails: communication[]; length: number }>(
+      `${this.url}/outbox`,
+      {
+        params,
+      }
+    );
   }
   cancelMails(id_procedure: string, ids: string[]) {
     return this.http.delete<{ message: string }>(

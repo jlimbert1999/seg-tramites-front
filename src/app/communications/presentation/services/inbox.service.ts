@@ -9,11 +9,7 @@ import {
   dependencyResponse,
   institution,
 } from '../../../infraestructure/interfaces';
-import {
-  Communication,
-  StateProcedure,
-  StatusMail,
-} from '../../../domain/models';
+import { Communication, StateProcedure, StatusMail } from '../../../domain/models';
 import { CreateCommunicationDto } from '../../../infraestructure/dtos';
 import { OfficerMapper } from '../../../administration/infrastructure';
 import { Officer } from '../../../administration/domain';
@@ -25,11 +21,25 @@ interface SearchParams {
   status?: StatusMail;
 }
 
-export interface receiver {
+interface sendMailProps {
+  form: Object;
+  recipients: recipient[];
+  procedureId: string;
+  mailId?: string;
+}
+
+export interface onlineAccount {
   accountId: string;
   officer: Officer;
   jobtitle: string;
   online: boolean;
+}
+
+export interface recipient {
+  accountId: string;
+  fullname: string;
+  jobtitle: string;
+  isOriginal: boolean;
 }
 
 @Injectable({
@@ -49,7 +59,8 @@ export class InboxService {
       `${this.url}/dependencies/${id_institution}`
     );
   }
-  searchRecipients(term: string): Observable<receiver[]> {
+  
+  searchRecipients(term: string): Observable<onlineAccount[]> {
     return this.http.get<account[]>(`${this.url}/recipients/${term}`).pipe(
       map((resp) =>
         resp.map((el) => ({
@@ -62,13 +73,13 @@ export class InboxService {
     );
   }
 
-  create(FormSend: Object, details: transferDetails, receivers: receiver[]) {
-    // const mail = CreateCommunicationDto.fromFormData(
-    //   FormSend,
-    //   details,
-    //   receivers
-    // );
-    return this.http.post<{ message: string }>(`${this.url}`, null);
+  create({ form, recipients, procedureId, mailId }: sendMailProps) {
+    return this.http.post<{ message: string }>(`${this.url}`, {
+      ...form,
+      recipients,
+      procedureId,
+      mailId,
+    });
   }
 
   findAll(limit: number, offset: number, status?: StatusMail) {

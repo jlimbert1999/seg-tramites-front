@@ -13,7 +13,6 @@ import { ExternalDialogComponent } from './external-dialog/external-dialog.compo
 import { MaterialModule } from '../../../../material.module';
 import {
   PaginatorComponent,
-  TransferDetails,
   DispatcherComponent,
 } from '../../../../presentation/components';
 import { StateLabelPipe } from '../../../../presentation/pipes';
@@ -21,7 +20,10 @@ import { CacheService, PdfService } from '../../../../presentation/services';
 import { SearchInputComponent } from '../../../../shared';
 import { ExternalService, ProcedureService } from '../../services';
 import { ExternalProcedure } from '../../../domain';
-import { SubmissionDialogComponent } from '../../../../communications/pages/inbox/submission-dialog/submission-dialog.component';
+import {
+  SubmissionDialogComponent,
+  TransferDetails,
+} from '../../../../communications/presentation/pages/inbox/submission-dialog/submission-dialog.component';
 
 interface CacheData {
   datasource: ExternalProcedure[];
@@ -120,13 +122,14 @@ export default class ExternalsManageComponent {
 
   send(procedure: ExternalProcedure) {
     const transfer: TransferDetails = {
-      id_procedure: procedure._id,
+      procedureId: procedure._id,
       code: procedure.code,
-      attachmentQuantity: procedure.numberOfDocuments,
+      attachmentsCount: procedure.numberOfDocuments,
+      isOriginal: true,
     };
     const dialogRef = this.dialog.open(SubmissionDialogComponent, {
-      maxWidth: '1200px',
-      width: '1200px',
+      maxWidth: '1000px',
+      width: '1000px',
       data: transfer,
       disableClose: true,
     });

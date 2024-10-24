@@ -24,21 +24,22 @@ import {
   trigger,
 } from '@angular/animations';
 
+import { forkJoin } from 'rxjs';
+import { GroupedCommunication } from '../../../../domain/models';
 import {
-  SidenavButtonComponent,
   PaginatorComponent,
-  SearchInputComponent,
-} from '../../../components';
+  SidenavButtonComponent,
+} from '../../../../presentation/components';
+import { StateLabelPipe } from '../../../../presentation/pipes';
 import {
   AlertService,
-  CacheService,
   OutboxService,
-  PdfService,
   ProcedureService,
-} from '../../../services';
-import { GroupedCommunication } from '../../../../domain/models';
-import { StateLabelPipe } from '../../../pipes';
-import { forkJoin } from 'rxjs';
+  PdfService,
+  CacheService,
+} from '../../../../presentation/services';
+import { SearchInputComponent } from '../../../../shared';
+import { communication } from '../../../infrastructure';
 
 interface PaginationOptions {
   limit: number;
@@ -82,21 +83,15 @@ interface CacheData {
     ]),
   ],
 })
-export class OutboxComponent {
+export default class OutboxComponent {
   private alertService = inject(AlertService);
   private outboxService = inject(OutboxService);
   private procedureService = inject(ProcedureService);
   private pdfService = inject(PdfService);
   private cacheService: CacheService<CacheData> = inject(CacheService);
 
-  public displayedColumns = [
-    'code',
-    'reference',
-    'startDate',
-    'expand',
-    'menu-options',
-  ];
-  public datasource = signal<GroupedCommunication[]>([]);
+  public displayedColumns = ['code', 'reference', 'sentDate', 'options'];
+  public datasource = signal<communication[]>([]);
   public datasize = signal<number>(0);
   public expandedElement: GroupedCommunication | null = null;
   public term: string = '';
@@ -108,14 +103,12 @@ export class OutboxComponent {
   }
 
   ngOnInit(): void {
-    this.loadPaginationData();
+    // this.loadPaginationData();
+    this.getData();
   }
 
   getData() {
-    const observable = this.term
-      ? this.outboxService.search(this.limit, this.offset, this.term)
-      : this.outboxService.findAll(this.limit, this.offset);
-    observable.subscribe((data) => {
+    this.outboxService.findAll(this.limit, this.offset).subscribe((data) => {
       this.datasource.set(data.mails);
       this.datasize.set(data.length);
     });
@@ -171,39 +164,39 @@ export class OutboxComponent {
   }
 
   private removeElementDatasource(outboundDate: Date, ids: string[]) {
-    this.datasource.update((values) => {
-      const index = values.findIndex((item) => item.date === outboundDate);
-      const filteredDispatches = values[index].dispatches.filter(
-        (mail) => !ids.includes(mail._id)
-      );
-      values[index].dispatches = filteredDispatches;
-      if (filteredDispatches.length === 0) {
-        this.datasize.update((length) => (length -= 1));
-        values.splice(index, 1);
-      }
-      return [...values];
-    });
+    // this.datasource.update((values) => {
+    //   const index = values.findIndex((item) => item.date === outboundDate);
+    //   const filteredDispatches = values[index].dispatches.filter(
+    //     (mail) => !ids.includes(mail._id)
+    //   );
+    //   values[index].dispatches = filteredDispatches;
+    //   if (filteredDispatches.length === 0) {
+    //     this.datasize.update((length) => (length -= 1));
+    //     values.splice(index, 1);
+    //   }
+    //   return [...values];
+    // });
   }
 
   private savePaginationData(): void {
-    this.cacheService.resetPagination();
-    const cache: CacheData = {
-      results: this.datasource(),
-      length: this.datasize(),
-      term: this.term,
-    };
-    this.cacheService.save('outbox', cache);
+    // this.cacheService.resetPagination();
+    // const cache: CacheData = {
+    //   results: this.datasource(),
+    //   length: this.datasize(),
+    //   term: this.term,
+    // };
+    // this.cacheService.save('outbox', cache);
   }
 
   private loadPaginationData(): void {
-    const cacheData = this.cacheService.load('outbox');
-    if (!this.cacheService.keepAliveData() || !cacheData) {
-      this.getData();
-      return;
-    }
-    this.datasource.set(cacheData.results);
-    this.datasize.set(cacheData.length);
-    this.term = cacheData.term;
+    // const cacheData = this.cacheService.load('outbox');
+    // if (!this.cacheService.keepAliveData() || !cacheData) {
+    //   this.getData();
+    //   return;
+    // }
+    // this.datasource.set(cacheData.results);
+    // this.datasize.set(cacheData.length);
+    // this.term = cacheData.term;
   }
 
   changePage({ limit, index }: PaginationOptions) {

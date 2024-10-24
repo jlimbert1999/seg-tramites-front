@@ -12,13 +12,13 @@ import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { forkJoin } from 'rxjs';
-import { Communication, StatusMail, StateProcedure } from '../../../domain/models';
-import { transferDetails } from '../../../infraestructure/interfaces';
-import { MaterialModule } from '../../../material.module';
-import { PaginatorComponent, SidenavButtonComponent, DispatcherComponent } from '../../../presentation/components';
-import { StateLabelPipe } from '../../../presentation/pipes';
-import { InboxService, SocketService, AlertService, ProcedureService, PdfService, ArchiveService, CacheService } from '../../../presentation/services';
-import { SearchInputComponent } from '../../../shared';
+import { Communication, StatusMail, StateProcedure } from '../../../../domain/models';
+import { transferDetails } from '../../../../infraestructure/interfaces';
+import { MaterialModule } from '../../../../material.module';
+import { PaginatorComponent, SidenavButtonComponent, DispatcherComponent } from '../../../../presentation/components';
+import { StateLabelPipe } from '../../../../presentation/pipes';
+import { InboxService, SocketService, AlertService, ProcedureService, PdfService, ArchiveService, CacheService } from '../../../../presentation/services';
+import { SearchInputComponent } from '../../../../shared';
 
 
 
